@@ -2,11 +2,12 @@
 ORACLE Super-Intelligent Agent 1 Verification Runner
 Demonstrates:
 1. Macroeconomic Event Radar (VIX & Live Treasury Yields)
-2. Trade Memory & Win-Rate Context (67 Historical Trades)
+2. Trade Memory & Win-Rate Context (69 Historical Trades)
 3. Full Quantitative Screener Table (Greeks, Expected Move, Break-Evens, 25-Delta Skew, ToT Highest EV)
 4. Multi-Turn AI Reasoning: Pass 1 (Draft) -> Pass 2 (Red Team Self-Critique) -> Pass 3 (Master Synthesis)
-5. Deterministic Code Risk Validator (5 Hard Veto Rules)
-6. Final Hardened Strategy Blueprint
+5. Deterministic Code Risk Validator + Sector Guard + Automatic Runner-Up Fallback
+6. Dynamic Fractional Kelly Position Sizing ($350 - $900)
+7. Final Hardened Strategy Blueprint
 """
 import sys
 from pathlib import Path
@@ -29,7 +30,7 @@ from tools.macro_calendar_tools import MacroCalendarTool
 
 def main():
     print("\n" + "=" * 85)
-    print("🚀 ORACLE: SUPER-INTELLIGENT AGENT #1 (TREE-OF-THOUGHTS & SELF-CORRECTION ENGINE)")
+    print("🚀 ORACLE: SUPER-INTELLIGENT AGENT #1 (RUNNER-UP FALLBACK & KELLY SIZING ENGINE)")
     print("=" * 85 + "\n")
 
     # 1. Macro Radar
@@ -46,7 +47,7 @@ def main():
 
     # 2. Historical Trade Memory
     agent = StrategyBrainAgent()
-    print("[*] 2. HISTORICAL TRADE MEMORY & REINFORCEMENT (67 VERIFIED TRADES)")
+    print("[*] 2. HISTORICAL TRADE MEMORY & REINFORCEMENT (69 VERIFIED TRADES)")
     print("-" * 85)
     print(agent._get_trade_memory_summary())
     print("-" * 85 + "\n")
@@ -65,9 +66,8 @@ def main():
         print(f"{a['symbol']:<5} ${a['current_price']:<7.2f} {a['iv_rank']:<5.1f}% ±${a['expected_move_usd']:<8.2f} {skew_str:<9} {a['tot_highest_ev_strategy']:<26} {ev_str:<8} {a['bid_ask_spread_pct']:<5.1f}%")
     print("-" * 85 + "\n")
 
-    # 4. Multi-Turn AI Strategic Reasoning (Pass 1 -> Pass 2 -> Pass 3)
-    # Passes precomputed assets directly to eliminate duplicate network calls and console clutter
-    print("[*] 4. EXECUTING MULTI-TURN AI COGNITIVE LOOP (AIML API)...")
+    # 4. Multi-Turn AI Strategic Reasoning (Pass 1 -> Pass 2 -> Fallback Loop -> Kelly Sizing)
+    print("[*] 4. EXECUTING MULTI-TURN AI COGNITIVE LOOP WITH RUNNER-UP FALLBACK...")
     decision = agent.analyze_and_decide(
         symbols=symbols,
         portfolio_cash=100000.0,
@@ -87,20 +87,29 @@ def main():
 
     # 6. Final Hardened Blueprint
     print("\n" + "=" * 85)
-    print(f"🎯 FINAL AGENT 1 MASTER BLUEPRINT ({'TRADE APPROVED' if decision.strategy != 'NO_TRADE' else 'CAPITAL PRESERVATION / NO_TRADE'}):")
+    status_str = "RUNNER-UP APPROVED" if decision.fallback_used else ("TRADE APPROVED" if decision.strategy != "NO_TRADE" else "CAPITAL PRESERVATION")
+    print(f"🎯 FINAL AGENT 1 MASTER BLUEPRINT ({status_str}):")
     print("=" * 85)
-    print(f"  • Selected Symbol       : {decision.symbol}")
+    print(f"  • Selected Symbol       : {decision.symbol} {'(Runner-Up Fallback Activated)' if decision.fallback_used else '(Primary Pick)'}")
     print(f"  • Recommended Strategy  : {decision.strategy}")
     print(f"  • Market Regime         : {decision.regime}")
     print(f"  • Directional Skew      : {decision.direction}")
     print(f"  • AI Confidence Rating  : {decision.confidence_score * 100:.1f}%")
     print(f"  • Risk Validator Status : {decision.validator_status}")
-    print(f"  • Allocated Risk Budget : ${decision.suggested_risk_budget_usd:.2f}")
+    print(f"  • Dynamic Kelly Budget  : ${decision.suggested_risk_budget_usd:.2f}")
     print(f"  • Profit Target Rule    : +{decision.target_profit_percent:.0f}% of max profit (Strict Discipline)")
     print(f"  • Stop Loss Rule        : -${decision.max_loss_usd:.2f} (Hard Cap)")
     print(f"  • AI Strategic Reasoning: {decision.reasoning}")
     print(f"  • Macro Risk Assessment : {decision.macro_risk_assessment}")
     
+    if decision.kelly_metadata:
+        km = decision.kelly_metadata
+        print("-" * 85)
+        print("  • Dynamic Fractional Kelly Sizing Audit:")
+        print(f"    * Full Kelly Fraction: {km.get('full_kelly_fraction')} | Quarter-Kelly Fraction: {km.get('quarter_kelly_fraction')}")
+        print(f"    * Confidence Multiplier: {km.get('confidence_multiplier')}x | EV Multiplier: {km.get('ev_multiplier')}x")
+        print(f"    * Kelly Sizing Regime: {km.get('sizing_regime')} (Final Allocated Risk: ${decision.suggested_risk_budget_usd:.2f})")
+
     if decision.quantitative_metadata:
         qm = decision.quantitative_metadata
         tot = decision.tot_scenario_data
@@ -112,7 +121,7 @@ def main():
         print(f"    * Tree-of-Thoughts Highest EV Strategy: {tot.get('highest_ev_strategy')} (+${tot.get('highest_ev_usd'):.2f} EV)")
     print("=" * 85)
 
-    print("\n✅ SUPER-INTELLIGENT AGENT 1 (TOT + SELF-CORRECTION) IS 100% OPERATIONAL!\n")
+    print("\n✅ SUPER-INTELLIGENT AGENT 1 (RUNNER-UP FALLBACK & KELLY SIZING) IS 100% OPERATIONAL!\n")
 
 if __name__ == "__main__":
     main()

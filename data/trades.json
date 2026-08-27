@@ -1044,5 +1044,39 @@
         "filled_avg_price": 100.0
       }
     ]
+  },
+  {
+    "trade_id": "ORD-1787842000",
+    "symbol": "TSLA",
+    "strategy": "EARNINGS_STRADDLE",
+    "entry_date": "2026-08-28",
+    "underlying_entry_price": 354.66,
+    "cost_or_credit_usd": 2482.0,
+    "is_credit": false,
+    "profit_target_usd": 1241.0,
+    "stop_loss_usd": 150.0,
+    "status": "OPEN_ACTIVE",
+    "orders": [
+      {
+        "order_id": "ORACLE-1787842000",
+        "symbol": "TSLA",
+        "qty": 1,
+        "side": "buy",
+        "type": "market",
+        "status": "FILLED_SIMULATED",
+        "filled_at": "2026-08-27T19:46:40.335167",
+        "filled_avg_price": 100.0
+      },
+      {
+        "order_id": "ORACLE-1787842000",
+        "symbol": "TSLA",
+        "qty": 1,
+        "side": "buy",
+        "type": "market",
+        "status": "FILLED_SIMULATED",
+        "filled_at": "2026-08-27T19:46:40.335167",
+        "filled_avg_price": 100.0
+      }
+    ]
   }
 ]
