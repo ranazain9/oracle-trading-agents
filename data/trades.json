@@ -956,5 +956,93 @@
         "filled_avg_price": 100.0
       }
     ]
+  },
+  {
+    "trade_id": "ORD-1787828100",
+    "symbol": "SPY",
+    "strategy": "DIRECTIONAL_VERTICAL_CALL_SPREAD",
+    "entry_date": "2026-08-27",
+    "underlying_entry_price": 770.85,
+    "cost_or_credit_usd": 460.0,
+    "is_credit": false,
+    "profit_target_usd": 230.0,
+    "stop_loss_usd": 150.0,
+    "status": "OPEN_ACTIVE",
+    "orders": [
+      {
+        "order_id": "ORACLE-1787828100",
+        "symbol": "SPY",
+        "qty": 2,
+        "side": "buy",
+        "type": "market",
+        "status": "FILLED_SIMULATED",
+        "filled_at": "2026-08-27T15:55:00.509722",
+        "filled_avg_price": 100.0
+      },
+      {
+        "order_id": "ORACLE-1787828100",
+        "symbol": "SPY",
+        "qty": 2,
+        "side": "sell",
+        "type": "market",
+        "status": "FILLED_SIMULATED",
+        "filled_at": "2026-08-27T15:55:00.509722",
+        "filled_avg_price": 100.0
+      }
+    ]
+  },
+  {
+    "trade_id": "ORD-1787829149",
+    "symbol": "MSFT",
+    "strategy": "THETA_IRON_CONDOR",
+    "entry_date": "2026-08-27",
+    "underlying_entry_price": 500.21,
+    "cost_or_credit_usd": 500.0,
+    "is_credit": true,
+    "profit_target_usd": 250.0,
+    "stop_loss_usd": 150.0,
+    "status": "OPEN_ACTIVE",
+    "orders": [
+      {
+        "order_id": "ORACLE-1787829149",
+        "symbol": "MSFT",
+        "qty": 2,
+        "side": "sell",
+        "type": "market",
+        "status": "FILLED_SIMULATED",
+        "filled_at": "2026-08-27T16:12:29.997830",
+        "filled_avg_price": 100.0
+      },
+      {
+        "order_id": "ORACLE-1787829149",
+        "symbol": "MSFT",
+        "qty": 2,
+        "side": "buy",
+        "type": "market",
+        "status": "FILLED_SIMULATED",
+        "filled_at": "2026-08-27T16:12:29.997830",
+        "filled_avg_price": 100.0
+      },
+      {
+        "order_id": "ORACLE-1787829149",
+        "symbol": "MSFT",
+        "qty": 2,
+        "side": "sell",
+        "type": "market",
+        "status": "FILLED_SIMULATED",
+        "filled_at": "2026-08-27T16:12:29.997830",
+        "filled_avg_price": 100.0
+      },
+      {
+        "order_id": "ORACLE-1787829149",
+        "symbol": "MSFT",
+        "qty": 2,
+        "side": "buy",
+        "type": "market",
+        "status": "FILLED_SIMULATED",
+        "filled_at": "2026-08-27T16:12:29.997830",
+        "filled_avg_price": 100.0
+      }
+    ]
   }
 ]

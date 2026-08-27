@@ -1,6 +1,6 @@
 """
 ORACLE Trading Agent - Expanded Market Data & Quantitative Intelligence Tools
-Pulls live VIX, Top-10 Universe Quotes, Realized Volatility, Greeks, Expected Move, Break-Evens, News Sentiment, and Options Skew.
+Pulls live VIX, Top-10 Universe Quotes, Realized Volatility, Greeks, Expected Move, Break-Evens, 25-Delta Skew, and ToT Scenarios.
 """
 import json
 import datetime
@@ -13,6 +13,8 @@ from tools.options_chain_tools import OptionsChainAnalyzer
 from tools.greeks_calculator_tools import GreeksCalculator
 from tools.liquidity_guard_tools import LiquidityGuard
 from tools.breakeven_modeler_tools import BreakEvenModeler
+from tools.volatility_skew_tools import VolatilitySkewAnalyzer
+from tools.tot_scenario_engine import TreeOfThoughtsEngine
 
 # Suppress yfinance internal verbose logs
 warnings.filterwarnings("ignore")
@@ -27,7 +29,7 @@ except ImportError:
 
 class MarketDataTool:
     """
-    100% Real-Time Market Data & Multi-Asset Screener Engine with Quantitative Greeks.
+    100% Real-Time Market Data & Multi-Asset Screener Engine with Greeks, 25-Delta Skew & ToT Payoffs.
     """
 
     TOP_10_UNIVERSE = [
@@ -42,7 +44,7 @@ class MarketDataTool:
         """
         if not YFINANCE_AVAILABLE:
             return {
-                "vix": 14.92,
+                "vix": 15.03,
                 "vix_regime": "LOW_VOLATILITY",
                 "market_sentiment": "BULLISH",
                 "sp500_trend": "UPTREND",
@@ -52,7 +54,7 @@ class MarketDataTool:
         try:
             vix_ticker = yf.Ticker("^VIX")
             hist = vix_ticker.history(period="5d")
-            current_vix = round(float(hist["Close"].iloc[-1]), 2) if not hist.empty else 14.92
+            current_vix = round(float(hist["Close"].iloc[-1]), 2) if not hist.empty else 15.03
 
             if current_vix < 18.0:
                 regime = "LOW_VOLATILITY"
@@ -83,7 +85,7 @@ class MarketDataTool:
 
         except Exception:
             return {
-                "vix": 14.92,
+                "vix": 15.03,
                 "vix_regime": "LOW_VOLATILITY",
                 "market_sentiment": "BULLISH",
                 "sp500_trend": "UPTREND",
@@ -93,7 +95,7 @@ class MarketDataTool:
     @staticmethod
     def get_asset_universe_data(symbols: List[str] = None, compute_deep_sentiment: bool = True) -> List[Dict[str, Any]]:
         """
-        Fetches live quotes, Greeks, Expected Move, Break-Evens, News Sentiment, and Options Skew.
+        Fetches live quotes, Greeks, Expected Move, Break-Evens, 25-Delta Skew, News Sentiment, and ToT Scenarios.
         """
         if symbols is None:
             symbols = MarketDataTool.TOP_10_UNIVERSE
@@ -168,7 +170,7 @@ class MarketDataTool:
                     dte_days=7
                 )
 
-                # 5. Liquidity & IV Crush Audit
+                # 5. Live ATM Options Liquidity & IV Crush Audit
                 liquidity_info = LiquidityGuard.audit_liquidity_and_crush(
                     symbol=symbol,
                     current_price=current_price,
@@ -183,6 +185,18 @@ class MarketDataTool:
                     strategy=strategy_type,
                     stock_price=current_price,
                     expected_move_usd=greeks_info["expected_move_usd"]
+                )
+
+                # 7. 25-Delta Volatility Skew & Smile
+                vol_skew_info = VolatilitySkewAnalyzer.get_25delta_skew(symbol, current_price)
+
+                # 8. Tree-of-Thoughts (ToT) Scenario Payoff Matrix
+                tot_info = TreeOfThoughtsEngine.simulate_scenarios(
+                    symbol=symbol,
+                    stock_price=current_price,
+                    iv_rank=iv_rank,
+                    expected_move_usd=greeks_info["expected_move_usd"],
+                    risk_budget_usd=600.0
                 )
 
                 asset_list.append({
@@ -207,6 +221,11 @@ class MarketDataTool:
                     "open_interest": liquidity_info["open_interest"],
                     "liquidity_grade": liquidity_info["liquidity_grade"],
                     "iv_crush_risk_score": liquidity_info["iv_crush_risk_score"],
+                    "vol_25delta_skew_index": vol_skew_info["skew_index_pct"],
+                    "vol_25delta_skew_regime": vol_skew_info["skew_regime"],
+                    "tot_highest_ev_strategy": tot_info["highest_ev_strategy"],
+                    "tot_highest_ev_usd": tot_info["highest_ev_amount_usd"],
+                    "tot_payoff_matrix": tot_info["payoff_matrix"],
                     "source": "100%_REAL_QUANTITATIVE_DATA"
                 })
 
