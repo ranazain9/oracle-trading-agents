@@ -40,6 +40,25 @@ Traditional algorithmic trading bots rely on rigid if/else rules that fail when 
 
 ## 🏛️ System Architecture: 4 Primary Agents & 24 Sub-Agents
 
+```text
+                                  👑 MASTER ORCHESTRATOR AGENT (FUND COO)
+                                             │
+      ┌──────────────────────────────┬───────┴──────────────────────┬──────────────────────────────┐
+      │                              │                              │                              │
+      ▼                              ▼                              ▼                              ▼
+🧠 AGENT 1: STRATEGY BRAIN      ⚡ AGENT 2: EXECUTION TRADER   🛡️ AGENT 3: THE BODYGUARD      👑 ORCHESTRATION ENGINES
+  ├─ 1.1 Market Scout Node       ├─ 2.1 CBOE Strike Snapper     ├─ 3.1 Live Broker Sync        ├─ 4.1 Pre-Market Diagnostics
+  ├─ 1.2 Tree-of-Thoughts (EV)   ├─ 2.2 OCC Symbol Generator    ├─ 3.2 Profit Ratchet Engine   ├─ 4.2 LangGraph State Machine
+  ├─ 1.3 Red Team Critic         ├─ 2.3 Midpoint Price Engine   ├─ 3.3 VIX Circuit Breaker     ├─ 4.3 Intraday Supervisor
+  ├─ 1.4 5-Tier Gatekeeper       ├─ 2.4 Margin Validator        ├─ 3.4 0-DTE Gamma Guard       ├─ 4.4 Post-Market Tearsheet
+  ├─ 1.5 Bayesian Sizer          ├─ 2.5 Multi-Leg Router        ├─ 3.5 Butterfly Salvage       └─ 4.5 Command Center CLI
+  ├─ 1.6 News Sentiment                                         └─ 3.6 Adaptive Speed Guard
+  ├─ 1.7 Volatility Skew
+  └─ 1.8 Runner-Up Fallback
+```
+
+### 🔄 Multi-Agent Interactive Pipeline Flowchart:
+
 ```mermaid
 flowchart TD
     %% Styling
