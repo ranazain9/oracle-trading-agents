@@ -101,7 +101,8 @@ def strategy_brain_node(state: OracleState) -> Dict[str, Any]:
     decision = brain.analyze_and_decide(
         symbols=state.get("symbols"),
         portfolio_cash=state.get("portfolio_cash", 100000.0),
-        precomputed_assets=state.get("assets_data")
+        precomputed_assets=state.get("assets_data"),
+        macro_assessment=state.get("macro_assessment")
     )
     return {
         "decision": decision,

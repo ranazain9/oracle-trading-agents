@@ -111,7 +111,8 @@ class StrategyBrainAgent:
         symbols: Optional[List[str]] = None,
         portfolio_cash: float = 100000.0,
         active_positions_count: int = 0,
-        precomputed_assets: Optional[List[Dict[str, Any]]] = None
+        precomputed_assets: Optional[List[Dict[str, Any]]] = None,
+        macro_assessment: Optional[Dict[str, Any]] = None
     ) -> StrategyDecision:
         """
         Executes Cognitive Flow:
@@ -121,13 +122,13 @@ class StrategyBrainAgent:
         4. Pass 3: Sector Concentration Guard on Candidate #1
         5. Pass 4: Deterministic 4-Hard-Veto Validation on Candidate #1
         6. Pass 5 (Fallback Loop): If Candidate #1 fails, automatically test Candidate #2 (Runner-Up)
-        7. Pass 6: Bayesian-Shrunk Quarter-Kelly Position Sizing ($450 - $600) with Soft Sentiment Multiplier
+        7. Pass 6: Bayesian-Shrunk Quarter-Kelly Position Sizing ($450 - $600) scaled by Macro Shock Index
         """
         if symbols is None:
             symbols = ["NVDA", "AAPL", "MSFT", "TSLA", "AMZN", "GOOGL", "META", "AMD", "NFLX", "SPY"]
 
         # 1. Ingest Data
-        macro_env = MacroCalendarTool.get_macro_environment()
+        macro_env = (macro_assessment.get("raw_macro_data") if macro_assessment else None) or MacroCalendarTool.get_macro_environment()
         market_overview = MarketDataTool.get_market_overview()
         assets_data = precomputed_assets if precomputed_assets is not None else MarketDataTool.get_asset_universe_data(symbols=symbols, compute_deep_sentiment=True)
         stats = self._get_trade_memory_stats()
@@ -228,9 +229,10 @@ class StrategyBrainAgent:
             base_budget_usd=500.0,
             sentiment_score=sentiment_score
         )
-        dynamic_budget = kelly_info["dynamic_risk_budget_usd"]
+        macro_multiplier = float(macro_assessment.get("max_allocation_multiplier", 1.0)) if macro_assessment else 1.0
+        dynamic_budget = round(kelly_info["dynamic_risk_budget_usd"] * macro_multiplier, 2)
         chosen_decision["suggested_risk_budget_usd"] = dynamic_budget
-        print(f"📊 [BayesianKelly] Shrunk Win Rate: {kelly_info['bayesian_shrunk_win_rate_pct']}% | Sizing: ${dynamic_budget:.2f} (Regime: {kelly_info['sizing_regime']})")
+        print(f"📊 [BayesianKelly] Shrunk Win Rate: {kelly_info['bayesian_shrunk_win_rate_pct']}% | Sizing: ${dynamic_budget:.2f} (Macro Multiplier: {macro_multiplier}x | Regime: {kelly_info['sizing_regime']})")
 
         # Package Final Output
         greeks_dict = {

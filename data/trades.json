@@ -242,5 +242,54 @@
       "status": "CLOSED_PAPER_FALLBACK",
       "closed_at": "2026-08-28T12:15:30.112252"
     }
+  },
+  {
+    "trade_id": "ORD-1787902736",
+    "symbol": "AAPL",
+    "strategy": "EARNINGS_STRADDLE",
+    "entry_date": "2026-08-28",
+    "underlying_entry_price": 314.58,
+    "cost_or_credit_usd": 2202.0,
+    "package_limit_price_usd": 2202.0,
+    "margin_requirement_usd": 0.0,
+    "is_credit": false,
+    "profit_target_usd": 1101.0,
+    "stop_loss_usd": 150.0,
+    "status": "CLOSED_STOPPED",
+    "orders": [
+      {
+        "order_id": "ORACLE-1787902736",
+        "symbol": "AAPL260904C00315000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_FALLBACK",
+        "filled_at": "2026-08-28T12:38:56.435264",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 11.01,
+        "occ_symbol": "AAPL260904C00315000"
+      },
+      {
+        "order_id": "ORACLE-1787902736",
+        "symbol": "AAPL260904P00315000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_FALLBACK",
+        "filled_at": "2026-08-28T12:38:56.723136",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 11.01,
+        "occ_symbol": "AAPL260904P00315000"
+      }
+    ],
+    "exit_date": "2026-08-28",
+    "exit_price": 314.58,
+    "pnl_usd": -150.0,
+    "exit_reason": "Hard stop-loss triggered (-$440.40 <= -$150.00).",
+    "broker_exit_result": {
+      "symbol": "AAPL",
+      "status": "CLOSED_PAPER_FALLBACK",
+      "closed_at": "2026-08-28T12:39:05.464566"
+    }
   }
 ]

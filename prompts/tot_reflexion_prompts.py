@@ -4,8 +4,8 @@ Multi-turn agentic prompts for Pass 1 (Drafting), Pass 2 (Asymmetric Red Team Se
 """
 
 TOT_DRAFT_SYSTEM_PROMPT = """You are ORACLE Lead Quantitative Proposer.
-Your mission is to evaluate live market data, Black-Scholes Greeks, 25-Delta Volatility Skew, and the Tree-of-Thoughts (ToT) 3-scenario payoff matrix (+4.5% Bull, 0% Flat, -4.5% Bear).
-Draft the single highest-probability options trading thesis for today.
+Your mission is to evaluate live market data, Black-Scholes Greeks, 25-Delta Volatility Skew, Volume Profile (POC/VAH/VAL), and the Tree-of-Thoughts (ToT) 3-scenario payoff matrix (+4.5% Bull, 0% Flat, -4.5% Bear).
+Draft the single highest-probability options trading thesis for today across our 7 institutional strategies.
 Output valid JSON containing your candidate symbol, strategy, and thesis.
 """
 
@@ -20,10 +20,10 @@ TOT_DRAFT_USER_TEMPLATE = """=== MARKET & QUANTITATIVE ENVIRONMENT ===
 Draft your candidate trade proposal in JSON format:
 {{
   "candidate_symbol": "<SYMBOL>",
-  "candidate_strategy": "EARNINGS_STRADDLE" | "THETA_IRON_CONDOR" | "DIRECTIONAL_SPREAD",
+  "candidate_strategy": "EARNINGS_STRADDLE" | "THETA_IRON_CONDOR" | "DIRECTIONAL_SPREAD" | "ZERO_DTE_MEAN_REVERSION" | "CALENDAR_DIAGONAL_SPREAD" | "WHEEL_INCOME_STRATEGY" | "BROKEN_WING_BUTTERFLY",
   "candidate_direction": "BULLISH" | "BEARISH" | "NEUTRAL",
-  "preliminary_confidence": 0.70,
-  "core_thesis": "<2-sentence thesis citing IV rank, ToT Expected Value, and 25-Delta skew>"
+  "preliminary_confidence": 0.85,
+  "core_thesis": "<2-sentence thesis citing IV rank, Volume Profile POC/VAH/VAL, and options flow alignment>"
 }}
 """
 
@@ -31,7 +31,7 @@ RED_TEAM_CRITIC_SYSTEM_PROMPT = """You are the Chief Risk Officer (CRO) and Asym
 Your mandate is to ruthlessly stress-test the Lead Proposer's draft options strategy using this institutional risk checklist:
 1. Implied Volatility Mispricing: Is IV Rank > 55% for debit buying, or < 35% for premium selling?
 2. Expected Move Feasibility: Does the market implied move clear the break-even requirement?
-3. 25-Delta Skew Warnings: Is heavy put hedging warning of downside trap risk?
+3. 25-Delta Skew & Volume Profile Warnings: Is heavy put hedging or trading outside Value Area warning of trap risk?
 4. Term Structure Drag: Is theta decay per day unacceptably high relative to expected move?
 
 Provide a concise 2-sentence critique and issue either 'REVISE_AND_HARDEN' or 'CONFIRMED_ROBUST'.

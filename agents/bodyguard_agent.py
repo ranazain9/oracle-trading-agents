@@ -16,6 +16,7 @@ from tools.market_data_tools import MarketDataTool
 from tools.alpaca_tools import AlpacaTool
 from tools.profit_ratchet_tools import ProfitRatchetEngine
 from tools.circuit_breaker_tools import CircuitBreakerGuard
+from tools.leg_roller_tools import OptionLegRoller
 from strategies.adaptive_adjustment import AdaptiveAdjustmentStrategy
 
 
@@ -157,19 +158,26 @@ class BodyguardAgent:
                 trade["exit_reason"] = zero_dte_info["reason"]
                 actions_taken.append({"trade_id": trade_id, "action": "CLOSE_0DTE", "pnl_usd": current_pnl})
 
-            # Action 4: Adaptive Position Salvage (Threatened Iron Condor Wing)
+            # Action 4: Adaptive Position Salvage & Dynamic Wing Rolling (Threatened Iron Condor Wing)
             elif strategy == "THETA_IRON_CONDOR" and abs(current_price - entry_price) / entry_price >= 0.03:
-                print(f"     🦋 [ADAPTIVE SALVAGE TRIGGERED] Short wing threatened. Converting into Iron Butterfly.", flush=True)
+                print(f"     🦋 [ADAPTIVE SALVAGE TRIGGERED] Short wing threatened. Calculating Untested Wing Roll...", flush=True)
+                wing_roll = OptionLegRoller.calculate_wing_roll(trade, current_price)
                 salvage_bp = self.salvage_engine.calculate_order(
                     symbol=symbol,
                     current_price=current_price,
                     risk_budget_usd=300.0
                 )
                 trade["strategy"] = "SALVAGED_IRON_BUTTERFLY"
-                trade["salvage_notes"] = salvage_bp.execution_notes
+                trade["salvage_notes"] = f"{salvage_bp.execution_notes} | {wing_roll['rationale']}"
+                trade["wing_roll_credit_usd"] = wing_roll["additional_credit_collected_usd"]
                 trade["salvaged_at"] = datetime.datetime.utcnow().isoformat()
                 requires_high_alert_15s = True
-                actions_taken.append({"trade_id": trade_id, "action": "SALVAGE_IRON_BUTTERFLY", "pnl_usd": current_pnl})
+                actions_taken.append({
+                    "trade_id": trade_id,
+                    "action": "SALVAGE_WING_ROLL",
+                    "additional_credit_usd": wing_roll["additional_credit_collected_usd"],
+                    "pnl_usd": current_pnl
+                })
 
             else:
                 print(f"     🛡️ [GUARDIAN STATUS: SAFE] Position within risk parameters. Holding.", flush=True)

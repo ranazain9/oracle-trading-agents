@@ -68,7 +68,7 @@ class RiskValidator:
                 veto_details={"open_interest": open_interest, "threshold": cls.MIN_OPEN_INTEREST}
             )
 
-        # --- VETO RULE 3: Break-Even Clearance (Straddles only) ---
+        # --- VETO RULE 3: Break-Even & Strategy Specific Risk Checks ---
         if strategy == "EARNINGS_STRADDLE":
             is_be_feasible = breakeven.get("is_breakeven_feasible", True)
             if not is_be_feasible:
@@ -79,6 +79,14 @@ class RiskValidator:
                     status_code="REJECTED_VETO",
                     veto_reason=f"VETO: Market Expected Move (±${exp_move:.2f}) does not clear required break-even move (${req_move:.2f}).",
                     veto_details={"expected_move": exp_move, "required_move": req_move}
+                )
+        elif strategy in ["ZERO_DTE_MEAN_REVERSION", "0DTE_SPREAD"]:
+            if spread_pct > 3.0:
+                return ValidationResult(
+                    is_approved=False,
+                    status_code="REJECTED_VETO",
+                    veto_reason=f"VETO: 0DTE strategy requires tight liquidity (spread {spread_pct:.1f}% > 3.0% maximum).",
+                    veto_details={"spread_pct": spread_pct, "threshold": 3.0}
                 )
 
         # --- VETO RULE 4: Maximum Post-Earnings IV Crush Score ---

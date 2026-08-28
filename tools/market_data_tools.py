@@ -179,7 +179,18 @@ class MarketDataTool:
                 # 7. 25-Delta Volatility Skew & Smile
                 vol_skew_info = VolatilitySkewAnalyzer.get_25delta_skew(symbol, current_price)
 
-                # 8. Tree-of-Thoughts (ToT) Scenario Payoff Matrix
+                # 8. Volume Profile (POC/VAH/VAL) & Anchored VWAP
+                from tools.technical_volume_tools import TechnicalVolumeProfileTool
+                vp_info = TechnicalVolumeProfileTool.calculate_volume_profile(symbol)
+                vwap_info = TechnicalVolumeProfileTool.calculate_anchored_vwap(symbol)
+
+                # 9. Alternative Sentiment & Unusual Flow
+                from tools.alternative_sentiment_tools import AlternativeSentimentTool
+                from tools.unusual_flow_tools import UnusualFlowTool
+                alt_sent_info = AlternativeSentimentTool.get_alternative_sentiment(symbol)
+                flow_info = UnusualFlowTool.scan_unusual_flow(symbol)
+
+                # 10. Tree-of-Thoughts (ToT) Scenario Payoff Matrix
                 tot_info = TreeOfThoughtsEngine.simulate_scenarios(
                     symbol=symbol,
                     stock_price=current_price,
@@ -196,6 +207,17 @@ class MarketDataTool:
                     "earnings_date": earnings_date_str,
                     "news_sentiment_score": sentiment_info["sentiment_score"],
                     "news_sentiment_label": sentiment_info["sentiment_label"],
+                    "social_sentiment_score": alt_sent_info["social_sentiment_score"],
+                    "retail_crowd_bias": alt_sent_info["retail_crowd_bias"],
+                    "insider_status": alt_sent_info["sec_form4_insider_status"],
+                    "unusual_flow_type": flow_info["flow_type"],
+                    "institutional_conviction": flow_info["institutional_sentiment"],
+                    "point_of_control_poc": vp_info["point_of_control_poc"],
+                    "value_area_high_vah": vp_info["value_area_high_vah"],
+                    "value_area_low_val": vp_info["value_area_low_val"],
+                    "volume_profile_regime": vp_info["profile_regime"],
+                    "anchored_vwap": vwap_info["anchored_vwap"],
+                    "vwap_bias": vwap_info["vwap_bias"],
                     "put_call_volume_ratio": skew_info["put_call_volume_ratio"],
                     "options_flow_sentiment": skew_info["options_flow_sentiment"],
                     "call_delta": greeks_info["call_delta"],

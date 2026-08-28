@@ -1,17 +1,17 @@
-# ORACLE Trading System - FastAPI Backend Architecture Specification
+# ORACLE Trading System - Master FastAPI Backend Specification (Redesigned)
 
-This document serves as the master engineering blueprint for implementing the **FastAPI Backend Server** that powers the ORACLE Multi-Agent Options Trading Fund.
+This document serves as the master engineering blueprint and endpoint inventory for implementing the **FastAPI Backend Server** that powers the ORACLE Multi-Agent Options Trading Fund.
 
 ---
 
-## 1. System Overview & Objectives
+## 1. Executive Summary & Architecture
 
-The FastAPI backend exposes RESTful endpoints, asynchronous background execution runners, and real-time WebSockets to:
-1. **Trigger & Monitor Multi-Agent LangGraph Pipelines**: Run on-demand or scheduled trading cycles and stream state transitions live.
-2. **Expose Agent Reasoning & Telemetry**: Provide structured data on Macro Sentinels, Strategy Brain (Tree-of-Thoughts + Red Team), Trader Execution, Greek Hedging, and Bodyguard audits.
-3. **Handle Human-In-The-Loop (HITL) Authorizations**: Deliver interactive approval gates for high-capital trades ($>\$10,000$) or blackout regime overrides.
-4. **Deliver Live Greek & Portfolio Telemetry**: Feed real-time portfolio metrics, Greeks ($\Delta, \Gamma, \Theta, \text{Vega}$), open positions, and profit ratchet floors to the frontend.
-5. **Serve Alternative Data & Signal Scanners**: Expose Volume Profile (POC/VAH/VAL), Anchored VWAP, Social Sentiment, SEC Form 4 Insiders, and Unusual Flow sweeps.
+The FastAPI backend wraps the **6-Agent LangGraph State Machine**, **7 Quantitative Alpha Strategies**, **Real-Time Data Engines**, and **Multi-Broker Execution Router** into a unified, high-performance async API with real-time WebSockets.
+
+### Total Backend Endpoint Capacity:
+* **Total REST API Endpoints**: **33 Endpoints** across 7 Functional Routers
+* **Total Real-Time WebSocket Channels**: **2 High-Frequency Channels**
+* **Grand Total**: **35 API Endpoints**
 
 ```mermaid
 graph TD
@@ -20,37 +20,38 @@ graph TD
         MobileBot["Telegram / Discord Bot / CLI"]
     end
 
-    subgraph FastAPI Backend Layer (Port 8000)
-        RouterPipe["/api/v1/pipeline"]
-        RouterAgents["/api/v1/agents"]
-        RouterHITL["/api/v1/hitl"]
-        RouterPort["/api/v1/portfolio"]
-        RouterStrats["/api/v1/strategies"]
-        RouterSignals["/api/v1/signals"]
-        RouterTrades["/api/v1/trades"]
-        WSManager["WebSocket Connection Manager (/ws)"]
+    subgraph FastAPI Backend Server (Port 8000)
+        R1["1. Pipeline Router (/api/v1/pipeline) [4 Endpoints]"]
+        R2["2. Agents Router (/api/v1/agents) [6 Endpoints]"]
+        R3["3. HITL Governance Router (/api/v1/hitl) [4 Endpoints]"]
+        R4["4. Portfolio & Greeks Router (/api/v1/portfolio) [5 Endpoints]"]
+        R5["5. Alpha Strategies Router (/api/v1/strategies) [4 Endpoints]"]
+        R6["6. Signals & Indicators Router (/api/v1/signals) [6 Endpoints]"]
+        R7["7. Trades & Analytics Router (/api/v1/trades) [4 Endpoints]"]
+        WS["8. WebSocket Manager (/ws) [2 Channels]"]
     end
 
-    subgraph Multi-Agent Engine
-        LangGraph["LangGraph Master State Machine (graph.py)"]
+    subgraph Core Quant Engine
+        Graph["Master LangGraph State Machine (graph.py)"]
         Agents["6 Specialized Agents"]
-        Tools["Institutional Tools & Pricing Engines"]
+        Strats["7 Strategy Blueprints"]
+        Tools["Institutional Tools & Sizers"]
     end
 
-    WebUI & MobileBot <-->|REST API + WebSockets| FastAPI Backend Layer
-    FastAPI Backend Layer <--> Multi-Agent Engine
+    WebUI & MobileBot <-->|REST + WebSockets| FastAPI Backend Server
+    FastAPI Backend Server <--> Core Quant Engine
 ```
 
 ---
 
-## 2. Target Directory & Modular File Structure
+## 2. Directory Layout (`backend/`)
 
 ```
 d:\ALPACA\backend\
 ├── __init__.py
-├── main.py                     # FastAPI app factory, CORS, lifecycle, router mounting
-├── config.py                   # API configuration, CORS origins, server settings
-├── dependencies.py             # Shared dependencies (Alpaca instance, graph runner)
+├── main.py                     # FastAPI app factory, CORS, OpenAPI metadata, lifecycle
+├── config.py                   # Environment settings, CORS origins, server configuration
+├── dependencies.py             # Shared singletons (Alpaca instance, graph runner)
 ├── schemas/                    # Strict Pydantic v2 Request/Response Models
 │   ├── __init__.py
 │   ├── pipeline_schemas.py     # Pipeline trigger and status schemas
@@ -62,146 +63,151 @@ d:\ALPACA\backend\
 │   └── trade_schemas.py        # Trade log and memory reflection schemas
 ├── routers/                    # Clean modular API routes
 │   ├── __init__.py
-│   ├── pipeline_router.py      # /api/v1/pipeline
-│   ├── agents_router.py        # /api/v1/agents
-│   ├── hitl_router.py          # /api/v1/hitl
-│   ├── portfolio_router.py     # /api/v1/portfolio
-│   ├── strategies_router.py    # /api/v1/strategies
-│   ├── signals_router.py       # /api/v1/signals
-│   ├── trades_router.py        # /api/v1/trades
-│   └── websocket_router.py     # /ws/telemetry, /ws/positions
+│   ├── pipeline_router.py      # /api/v1/pipeline (4 endpoints)
+│   ├── agents_router.py        # /api/v1/agents (6 endpoints)
+│   ├── hitl_router.py          # /api/v1/hitl (4 endpoints)
+│   ├── portfolio_router.py     # /api/v1/portfolio (5 endpoints)
+│   ├── strategies_router.py    # /api/v1/strategies (4 endpoints)
+│   ├── signals_router.py       # /api/v1/signals (6 endpoints)
+│   ├── trades_router.py        # /api/v1/trades (4 endpoints)
+│   └── websocket_router.py     # /ws (2 WebSocket channels)
 └── services/                   # Business logic and background tasks
     ├── __init__.py
-    ├── pipeline_runner.py      # Asynchronous LangGraph pipeline execution manager
+    ├── pipeline_runner.py      # Non-blocking async LangGraph runner & progress tracker
     ├── websocket_manager.py    # Multi-client WebSocket broadcast manager
     └── hitl_service.py         # State manager for pending human approvals
 ```
 
 ---
 
-## 3. Core Dependencies & Technology Stack
-
-* **Framework**: `FastAPI` (High-performance async Python web framework)
-* **ASGI Server**: `uvicorn[standard]` (Lightning-fast ASGI server)
-* **Data Validation**: `pydantic` (v2 data validation and schema generation)
-* **WebSockets**: Native FastAPI `WebSocket` and `websockets` for live streaming
-* **Async Runtime**: Python `asyncio` with background task execution
-* **CORS Middleware**: `fastapi.middleware.cors.CORSMiddleware` for frontend integration
+## 3. Complete Master Endpoint Inventory (35 Endpoints)
 
 ---
 
-## 4. API Endpoints Specification
+### Router 1: Pipeline & LangGraph Orchestration (`/api/v1/pipeline`) — 4 Endpoints
+*Prefix: `/api/v1/pipeline` | Tag: `Pipeline Orchestration`*
 
-### 4.1 Pipeline & LangGraph Orchestration (`/api/v1/pipeline`)
-| Method | Endpoint | Description | Request Body | Response Model |
-| :--- | :--- | :--- | :--- | :--- |
-| `POST` | `/run` | Triggers a full 8-node LangGraph execution cycle asynchronously | `PipelineRunRequest` | `PipelineRunResponse` |
-| `GET` | `/status` | Retrieves status and progress of the current/latest pipeline run | None | `PipelineStatusResponse` |
-| `GET` | `/latest-state` | Retrieves complete `OracleState` snapshot from last run | None | `OracleStateResponse` |
-
-### 4.2 Agent Diagnostics & Telemetry (`/api/v1/agents`)
-| Method | Endpoint | Description | Query / Body | Response Model |
-| :--- | :--- | :--- | :--- | :--- |
-| `GET` | `/macro` | Runs live Macro Sentinel audit (MSI, Yield Curve, Fed catalysts) | None | `MacroAssessmentSchema` |
-| `POST`| `/brain/decide` | Queries Strategy Brain directly for specific symbol list | `BrainAnalysisRequest` | `StrategyDecisionSchema` |
-| `GET` | `/hedge/evaluate` | Evaluates net portfolio Greek risk and tail-risk hedge suggestions | None | `HedgeDecisionSchema` |
-| `GET` | `/bodyguard/scan` | Runs immediate active position scan (+50% profit lock / stop loss) | None | `BodyguardScanResponse` |
-| `GET` | `/analyst/reflections` | Returns last 50 trade performance reflections and lessons | None | `List[TradeReflectionSchema]` |
-
-### 4.3 Human-In-The-Loop (HITL) Governance (`/api/v1/hitl`)
-| Method | Endpoint | Description | Request Body | Response Model |
-| :--- | :--- | :--- | :--- | :--- |
-| `GET` | `/pending` | Lists all trade proposals awaiting manual operator sign-off | None | `List[PendingApprovalSchema]` |
-| `POST` | `/approve/{proposal_id}`| Approves pending trade proposal and dispatches to Trader | `HITLDecisionRequest` | `HITLDecisionResponse` |
-| `POST` | `/reject/{proposal_id}` | Vetoes pending trade proposal and triggers capital preservation | `HITLDecisionRequest` | `HITLDecisionResponse` |
-
-### 4.4 Portfolio, Greeks & Positions (`/api/v1/portfolio`)
-| Method | Endpoint | Description | Query Params | Response Model |
-| :--- | :--- | :--- | :--- | :--- |
-| `GET` | `/account` | Retrieves buying power, cash, equity, and portfolio status | None | `AccountStatusSchema` |
-| `GET` | `/positions` | Lists all active open equity and option contracts | None | `List[PositionSchema]` |
-| `GET` | `/greeks` | Computes net portfolio $\Delta, \Gamma, \Theta, \text{Vega}$ & Beta weighting | None | `PortfolioGreeksSchema` |
-| `POST`| `/close/{symbol}` | Manually closes / liquidates a specific position | None | `ClosePositionResponse` |
-
-### 4.5 Strategies & Order Blueprint Engine (`/api/v1/strategies`)
-| Method | Endpoint | Description | Request Body | Response Model |
-| :--- | :--- | :--- | :--- | :--- |
-| `GET` | `/list` | Lists all 7 available institutional strategy calculators | None | `List[str]` |
-| `POST` | `/calculate` | Formulates exact OCC multi-leg order blueprint with midpoint limits | `CalculateStrategyRequest` | `StrategyOrderBlueprintSchema` |
-| `POST` | `/execute` | Formulates and immediately executes strategy via TraderAgent | `ExecuteStrategyRequest` | `ExecutionResultSchema` |
-
-### 4.6 Alternative Signals & Technical Indicators (`/api/v1/signals`)
-| Method | Endpoint | Description | Query Params | Response Model |
-| :--- | :--- | :--- | :--- | :--- |
-| `GET` | `/volume-profile`| Calculates Volume Profile (POC, VAH, VAL) and regime | `symbol: str = "NVDA"` | `VolumeProfileSchema` |
-| `GET` | `/anchored-vwap` | Calculates Anchored VWAP with ±1SD and ±2SD bands | `symbol: str = "NVDA"` | `AnchoredVWAPSchema` |
-| `GET` | `/sentiment` | Returns social sentiment polarity & SEC Form 4 insider flow | `symbol: str = "NVDA"` | `SentimentSchema` |
-| `GET` | `/unusual-flow` | Scans for institutional option sweep prints and block trades | `symbol: str = "NVDA"` | `UnusualFlowSchema` |
-
-### 4.7 Trade History & Reflection Memory (`/api/v1/trades`)
-| Method | Endpoint | Description | Query Params | Response Model |
-| :--- | :--- | :--- | :--- | :--- |
-| `GET` | `/history` | Returns complete live trade execution ledger (`data/trades.json`) | None | `List[TradeRecordSchema]` |
-| `GET` | `/memory` | Returns long-term AI reflection memory (`data/trade_memory.json`) | None | `List[TradeMemorySchema]` |
-| `GET` | `/stats` | Returns win rate, realized PnL, profit factor, and Sharpe ratio | None | `TradeStatsSchema` |
+| # | Method | Path | Description | Request Body | Response Schema |
+| :-: | :--- | :--- | :--- | :--- | :--- |
+| 1 | `POST` | `/run` | Dispatches asynchronous 8-node LangGraph execution cycle | `PipelineRunRequest` | `PipelineRunResponse` |
+| 2 | `GET` | `/status` | Returns real-time progress percentage, active node, and status | None | `PipelineStatusResponse` |
+| 3 | `POST` | `/cancel` | Cancels/halts an ongoing pipeline execution | None | `GenericActionResponse` |
+| 4 | `GET` | `/latest-state` | Retrieves complete serialized `OracleState` snapshot from the last run | None | `OracleStateResponse` |
 
 ---
 
-## 5. Real-Time WebSockets Architecture
+### Router 2: Agent Telemetry & Diagnostics (`/api/v1/agents`) — 6 Endpoints
+*Prefix: `/api/v1/agents` | Tag: `Agent Diagnostics`*
 
-FastAPI will provide two high-frequency WebSocket channels:
+| # | Method | Path | Description | Request / Query | Response Schema |
+| :-: | :--- | :--- | :--- | :--- | :--- |
+| 5 | `GET` | `/macro` | Runs live Macro Sentinel audit (MSI score, Yield curve spread, Fed catalysts) | None | `MacroAssessmentSchema` |
+| 6 | `POST` | `/brain/decide` | Queries Strategy Brain directly for custom ticker list with ToT & Red Team | `BrainAnalysisRequest` | `StrategyDecisionSchema` |
+| 7 | `POST` | `/trader/simulate-order` | Generates OCC option legs, package limit price, and margin without broker submission | `SimulateOrderRequest` | `StrategyOrderBlueprintSchema` |
+| 8 | `GET` | `/hedge/evaluate` | Evaluates net portfolio Greeks and synthesizes tail-risk hedge recommendations | None | `HedgeDecisionSchema` |
+| 9 | `POST` | `/bodyguard/scan` | Runs immediate active position scan (+50% profit ratchet, -$150 stop loss, wing roll) | None | `BodyguardScanResponse` |
+| 10 | `GET` | `/analyst/reflections` | Returns last 50 trade performance reflections, PnL attribution, and AI lessons | None | `List[TradeReflectionSchema]` |
 
-### 1. `/ws/telemetry` (Agent & Pipeline State Stream)
-Streams JSON events whenever an agent completes a node or initiates a decision:
-```json
-{
-  "event_type": "NODE_COMPLETED",
-  "node_name": "strategy_brain_node",
-  "timestamp": "2026-08-28T17:30:00Z",
-  "data": {
-    "symbol": "MSFT",
-    "strategy": "THETA_IRON_CONDOR",
-    "confidence": 0.85,
-    "pass1_proposal": "MSFT",
-    "pass2_red_team": "CONFIRMED_ROBUST",
-    "kelly_sizing_usd": 450.0
-  }
-}
+---
+
+### Router 3: Human-In-The-Loop (HITL) Governance (`/api/v1/hitl`) — 4 Endpoints
+*Prefix: `/api/v1/hitl` | Tag: `HITL Governance`*
+
+| # | Method | Path | Description | Request / Query | Response Schema |
+| :-: | :--- | :--- | :--- | :--- | :--- |
+| 11 | `GET` | `/pending` | Lists all pending trade proposals awaiting operator authorization | None | `List[PendingApprovalSchema]` |
+| 12 | `GET` | `/history` | Returns historical operator decisions, overrides, and timestamps | None | `List[HITLHistorySchema]` |
+| 13 | `POST` | `/approve/{proposal_id}` | Approves pending trade proposal and dispatches order to TraderAgent | `HITLDecisionRequest` | `HITLDecisionResponse` |
+| 14 | `POST` | `/reject/{proposal_id}` | Rejects pending proposal with operator veto reason, triggering Capital Preservation | `HITLDecisionRequest` | `HITLDecisionResponse` |
+
+---
+
+### Router 4: Portfolio, Greeks & Positions (`/api/v1/portfolio`) — 5 Endpoints
+*Prefix: `/api/v1/portfolio` | Tag: `Portfolio & Risk`*
+
+| # | Method | Path | Description | Request / Query | Response Schema |
+| :-: | :--- | :--- | :--- | :--- | :--- |
+| 15 | `GET` | `/account` | Retrieves real-time buying power, cash, portfolio equity, and day trading status | None | `AccountStatusSchema` |
+| 16 | `GET` | `/positions` | Lists all active open equity and multi-leg option positions from Alpaca | None | `List[PositionSchema]` |
+| 17 | `GET` | `/greeks` | Computes net portfolio $\Delta, \Gamma, \Theta, \text{Vega}$ & Beta weighting vs SPY | None | `PortfolioGreeksSchema` |
+| 18 | `POST` | `/close/{symbol}` | Manually closes / liquidates a specific position on exchange | None | `ClosePositionResponse` |
+| 19 | `POST` | `/close-all` | Emergency Fund Kill-Switch: Liquidates all open positions immediately | `KillSwitchRequest` | `CloseAllPositionsResponse` |
+
+---
+
+### Router 5: Quantitative Alpha Strategies (`/api/v1/strategies`) — 4 Endpoints
+*Prefix: `/api/v1/strategies` | Tag: `Alpha Strategies`*
+
+| # | Method | Path | Description | Request / Query | Response Schema |
+| :-: | :--- | :--- | :--- | :--- | :--- |
+| 20 | `GET` | `/list` | Returns metadata, rules, and parameters for all 7 strategy calculators | None | `List[StrategyInfoSchema]` |
+| 21 | `POST` | `/calculate` | Formulates exact OCC multi-leg order blueprint for any strategy with custom strikes | `CalculateStrategyRequest` | `StrategyOrderBlueprintSchema` |
+| 22 | `POST` | `/execute` | Formulates and immediately submits multi-leg order via TraderAgent | `ExecuteStrategyRequest` | `ExecutionResultSchema` |
+| 23 | `POST` | `/roll-wing` | Calculates dynamic untested wing roll or defensive roll-out via OptionLegRoller | `RollWingRequest` | `RollWingResponse` |
+
+---
+
+### Router 6: Signals & Technical Indicators (`/api/v1/signals`) — 6 Endpoints
+*Prefix: `/api/v1/signals` | Tag: `Signals & Alternative Data`*
+
+| # | Method | Path | Description | Request / Query | Response Schema |
+| :-: | :--- | :--- | :--- | :--- | :--- |
+| 24 | `GET` | `/universe` | Scans entire asset universe with Greeks, expected moves, and liquidity grades | `symbols: Optional[List[str]]` | `List[AssetUniverseDataSchema]` |
+| 25 | `GET` | `/volume-profile` | Computes 14-day Point of Control (POC), Value Area High (VAH), and VAL | `symbol: str = "NVDA"` | `VolumeProfileSchema` |
+| 26 | `GET` | `/anchored-vwap` | Computes Anchored VWAP with ±1SD and ±2SD standard deviation bands | `symbol: str = "NVDA"` | `AnchoredVWAPSchema` |
+| 27 | `GET` | `/sentiment` | Returns social sentiment score, retail crowd bias, and SEC Form 4 insider flow | `symbol: str = "NVDA"` | `SentimentSchema` |
+| 28 | `GET` | `/unusual-flow` | Scans for institutional option sweep prints, block trades, and Put/Call bursts | `symbol: str = "NVDA"` | `UnusualFlowSchema` |
+| 29 | `GET` | `/tot-matrix` | Computes 3-scenario Tree-of-Thoughts (+4.5% Bull, 0% Flat, -4.5% Bear) payoff matrix | `symbol: str = "NVDA"` | `ToTMatrixSchema` |
+
+---
+
+### Router 7: Trade History, Analytics & Memory (`/api/v1/trades`) — 4 Endpoints
+*Prefix: `/api/v1/trades` | Tag: `Trade Ledger & Memory`*
+
+| # | Method | Path | Description | Request / Query | Response Schema |
+| :-: | :--- | :--- | :--- | :--- | :--- |
+| 30 | `GET` | `/history` | Returns live trade execution ledger from `data/trades.json` | None | `List[TradeRecordSchema]` |
+| 31 | `GET` | `/memory` | Returns long-term AI reflection memory logs from `data/trade_memory.json` | None | `List[TradeMemorySchema]` |
+| 32 | `GET` | `/stats` | Computes win rate, cumulative realized PnL, profit factor, max drawdown, Sharpe | None | `TradeStatsSchema` |
+| 33 | `POST` | `/export` | Exports trade history and reflections as CSV or JSON | `ExportRequest` | `ExportResponse` |
+
+---
+
+### Router 8: Real-Time WebSockets (`/ws`) — 2 Streaming Channels
+*Prefix: `/ws` | Tag: `WebSockets`*
+
+| # | Protocol | Path | Description | Message Payload |
+| :-: | :--- | :--- | :--- | :--- |
+| 34 | `WS` | `/ws/telemetry` | Real-time stream of LangGraph agent state transitions and decisions | `{ event_type: "NODE_COMPLETED", node_name: str, data: dict }` |
+| 35 | `WS` | `/ws/positions` | High-frequency stream of Mark-to-Market PnL, profit ratchet floors, stops | `{ event_type: "POSITION_UPDATE", positions: list, net_greeks: dict }` |
+
+---
+
+## 4. Asynchronous Pipeline Runner Specification
+
+```python
+class PipelineRunner:
+    """
+    Manages non-blocking asynchronous execution of the 8-node LangGraph state machine.
+    """
+    def __init__(self):
+        self.is_running: bool = False
+        self.current_node: str = "IDLE"
+        self.progress_pct: int = 0
+        self.latest_state: Optional[Dict[str, Any]] = None
+        self.last_run_timestamp: Optional[str] = None
+
+    async def run_pipeline_async(self, symbols: List[str], portfolio_cash: float) -> Dict[str, Any]:
+        # Dispatches graph execution to background thread pool
+        # Broadcasts progress events over WebSocket /ws/telemetry
 ```
 
-### 2. `/ws/positions` (Live Greek & Bodyguard Stream)
-Broadcasts live Mark-to-Market PnL, ratchet floor adjustments, and stop-loss triggers every 5 seconds.
-
 ---
 
-## 6. Asynchronous Pipeline Runner (`pipeline_runner.py`)
+## 5. Implementation Roadmap
 
-To prevent blocking the API event loop during LLM reasoning and data fetching, pipeline runs are dispatched to an async background worker using Python `concurrent.futures.ThreadPoolExecutor` / `asyncio.to_thread`.
-* Updates progress percentage (0% to 100%).
-* Emits events to all connected WebSocket subscribers.
-* Retains the latest execution state in memory for fast querying.
-
----
-
-## 7. Security, CORS & Production Readiness
-
-1. **CORS Configuration**: Allow `http://localhost:3000`, `http://localhost:5173` (Vite/Next.js), and configurable production domains via `backend/config.py`.
-2. **Interactive OpenAPI / Swagger Documentation**: Auto-generated docs available at `http://localhost:8000/docs` and `http://localhost:8000/redoc`.
-3. **Structured Logging**: All API requests and agent events logged to `logs/oracle_api.log`.
-
----
-
-## 8. Implementation Steps Roadmap
-
-When executing the backend creation, we will proceed in these exact steps:
-1. **Step 1: Core App & Schemas**
-   * Create `backend/schemas/` with strict Pydantic models matching our agents and strategies.
-   * Create `backend/config.py` and `backend/services/websocket_manager.py`.
-2. **Step 2: Business Logic & Runners**
-   * Create `backend/services/pipeline_runner.py` and `backend/services/hitl_service.py`.
-3. **Step 3: Modular API Routers**
-   * Implement all 7 routers in `backend/routers/`.
-4. **Step 4: Master Entrypoint & App Factory**
-   * Create `backend/main.py` and assemble all routers and WebSocket listeners.
-5. **Step 5: Testing & Verification**
-   * Create `test_backend_api.py` and run end-to-end endpoint tests via `TestClient` and live uvicorn.
+1. **Step 1**: Build Pydantic v2 Schemas in `backend/schemas/`.
+2. **Step 2**: Implement core services in `backend/services/` (`websocket_manager.py`, `pipeline_runner.py`, `hitl_service.py`).
+3. **Step 3**: Implement all 7 API routers and the WebSocket router in `backend/routers/`.
+4. **Step 4**: Assemble `backend/main.py` with CORS, Swagger docs, and lifecycle event handlers.
+5. **Step 5**: Write and run `test_backend_api.py` to verify all 35 endpoints with `pytest` / `TestClient`.
