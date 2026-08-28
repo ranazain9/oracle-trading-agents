@@ -14,6 +14,10 @@ from strategies import (
     ThetaIronCondorStrategy,
     DirectionalSpreadStrategy,
     AdaptiveAdjustmentStrategy,
+    ZeroDTEMeanReversionStrategy,
+    CalendarDiagonalSpreadStrategy,
+    WheelStrategy,
+    BrokenWingButterflyStrategy,
     StrategyOrderBlueprint
 )
 
@@ -29,6 +33,10 @@ class TraderAgent:
         self.condor_calc = ThetaIronCondorStrategy()
         self.spread_calc = DirectionalSpreadStrategy()
         self.salvage_calc = AdaptiveAdjustmentStrategy()
+        self.zero_dte_calc = ZeroDTEMeanReversionStrategy()
+        self.calendar_calc = CalendarDiagonalSpreadStrategy()
+        self.wheel_calc = WheelStrategy()
+        self.bwb_calc = BrokenWingButterflyStrategy()
 
     def construct_and_execute(
         self,
@@ -53,8 +61,9 @@ class TraderAgent:
 
         # Step 2: Select Strategy Engine
         risk_budget = getattr(decision, "suggested_risk_budget_usd", 500.0)
+        strat = decision.strategy.upper()
         
-        if decision.strategy == "EARNINGS_STRADDLE":
+        if strat == "EARNINGS_STRADDLE":
             blueprint = self.straddle_calc.calculate_order(
                 symbol=decision.symbol,
                 current_price=current_stock_price,
@@ -62,7 +71,7 @@ class TraderAgent:
                 target_profit_percent=decision.target_profit_percent,
                 max_loss_usd=decision.max_loss_usd
             )
-        elif decision.strategy == "THETA_IRON_CONDOR":
+        elif strat == "THETA_IRON_CONDOR":
             blueprint = self.condor_calc.calculate_order(
                 symbol=decision.symbol,
                 current_price=current_stock_price,
@@ -70,7 +79,7 @@ class TraderAgent:
                 target_profit_percent=decision.target_profit_percent,
                 max_loss_usd=decision.max_loss_usd
             )
-        elif decision.strategy == "DIRECTIONAL_SPREAD":
+        elif strat == "DIRECTIONAL_SPREAD":
             blueprint = self.spread_calc.calculate_order(
                 symbol=decision.symbol,
                 current_price=current_stock_price,
@@ -79,7 +88,42 @@ class TraderAgent:
                 target_profit_percent=decision.target_profit_percent,
                 max_loss_usd=decision.max_loss_usd
             )
-        elif decision.strategy == "ADAPTIVE_ADJUSTMENT":
+        elif strat in ["ZERO_DTE_MEAN_REVERSION", "0DTE_SPREAD"]:
+            blueprint = self.zero_dte_calc.calculate_order(
+                symbol=decision.symbol,
+                current_price=current_stock_price,
+                direction=decision.direction,
+                risk_budget_usd=risk_budget,
+                target_profit_percent=decision.target_profit_percent,
+                max_loss_usd=decision.max_loss_usd
+            )
+        elif strat in ["CALENDAR_DIAGONAL_SPREAD", "CALENDAR_SPREAD", "DIAGONAL_SPREAD"]:
+            blueprint = self.calendar_calc.calculate_order(
+                symbol=decision.symbol,
+                current_price=current_stock_price,
+                direction=decision.direction,
+                risk_budget_usd=risk_budget,
+                target_profit_percent=decision.target_profit_percent,
+                max_loss_usd=decision.max_loss_usd
+            )
+        elif strat in ["WHEEL_INCOME_STRATEGY", "WHEEL_STRATEGY", "CASH_SECURED_PUT", "COVERED_CALL"]:
+            blueprint = self.wheel_calc.calculate_order(
+                symbol=decision.symbol,
+                current_price=current_stock_price,
+                risk_budget_usd=risk_budget,
+                target_profit_percent=decision.target_profit_percent,
+                max_loss_usd=decision.max_loss_usd
+            )
+        elif strat in ["BROKEN_WING_BUTTERFLY", "BWB", "BUTTERFLY"]:
+            blueprint = self.bwb_calc.calculate_order(
+                symbol=decision.symbol,
+                current_price=current_stock_price,
+                direction=decision.direction,
+                risk_budget_usd=risk_budget,
+                target_profit_percent=decision.target_profit_percent,
+                max_loss_usd=decision.max_loss_usd
+            )
+        elif strat == "ADAPTIVE_ADJUSTMENT":
             blueprint = self.salvage_calc.calculate_order(
                 symbol=decision.symbol,
                 current_price=current_stock_price,

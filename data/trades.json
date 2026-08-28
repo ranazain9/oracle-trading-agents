@@ -11,7 +11,7 @@
     "is_credit": true,
     "profit_target_usd": 125.0,
     "stop_loss_usd": 150.0,
-    "status": "OPEN_ACTIVE",
+    "status": "CLOSED_PROFIT",
     "orders": [
       {
         "order_id": "ORACLE-1787892987",
@@ -61,7 +61,16 @@
         "midpoint_limit_price": 0.9,
         "occ_symbol": "MSFT260904P00455000"
       }
-    ]
+    ],
+    "exit_date": "2026-08-28",
+    "exit_price": 505.06,
+    "pnl_usd": 125.0,
+    "exit_reason": "Profit target achieved (+$125.00, +50.0%).",
+    "broker_exit_result": {
+      "symbol": "MSFT",
+      "status": "CLOSED_PAPER_FALLBACK",
+      "closed_at": "2026-08-28T12:13:29.736626"
+    }
   },
   {
     "trade_id": "ORD-1787892989",
@@ -75,7 +84,7 @@
     "is_credit": false,
     "profit_target_usd": 1243.0,
     "stop_loss_usd": 150.0,
-    "status": "OPEN_ACTIVE",
+    "status": "CLOSED_STOPPED",
     "orders": [
       {
         "order_id": "ORACLE-1787892989",
@@ -101,6 +110,137 @@
         "midpoint_limit_price": 12.43,
         "occ_symbol": "TSLA260904P00355000"
       }
-    ]
+    ],
+    "exit_date": "2026-08-28",
+    "exit_price": 354.81,
+    "pnl_usd": -150.0,
+    "exit_reason": "Hard stop-loss triggered (-$497.20 <= -$150.00).",
+    "broker_exit_result": {
+      "symbol": "TSLA",
+      "status": "CLOSED_PAPER_FALLBACK",
+      "closed_at": "2026-08-28T12:13:29.978426"
+    }
+  },
+  {
+    "trade_id": "ORD-1787901197",
+    "symbol": "NVDA",
+    "strategy": "EARNINGS_STRADDLE",
+    "entry_date": "2026-08-28",
+    "underlying_entry_price": 227.98,
+    "cost_or_credit_usd": 1596.0,
+    "package_limit_price_usd": 1596.0,
+    "margin_requirement_usd": 0.0,
+    "is_credit": false,
+    "profit_target_usd": 798.0,
+    "stop_loss_usd": 150.0,
+    "status": "CLOSED_STOPPED",
+    "orders": [
+      {
+        "order_id": "ORACLE-1787901197",
+        "symbol": "NVDA260904C00230000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_FALLBACK",
+        "filled_at": "2026-08-28T12:13:17.530423",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 7.98,
+        "occ_symbol": "NVDA260904C00230000"
+      },
+      {
+        "order_id": "ORACLE-1787901197",
+        "symbol": "NVDA260904P00230000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_FALLBACK",
+        "filled_at": "2026-08-28T12:13:17.749153",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 7.98,
+        "occ_symbol": "NVDA260904P00230000"
+      }
+    ],
+    "exit_date": "2026-08-28",
+    "exit_price": 227.98,
+    "pnl_usd": -150.0,
+    "exit_reason": "Hard stop-loss triggered (-$319.20 <= -$150.00).",
+    "broker_exit_result": {
+      "symbol": "NVDA",
+      "status": "CLOSED_PAPER_FALLBACK",
+      "closed_at": "2026-08-28T12:13:30.213035"
+    }
+  },
+  {
+    "trade_id": "ORD-1787901320",
+    "symbol": "MSFT",
+    "strategy": "THETA_IRON_CONDOR",
+    "entry_date": "2026-08-28",
+    "underlying_entry_price": 505.06,
+    "cost_or_credit_usd": 250.0,
+    "package_limit_price_usd": 250.0,
+    "margin_requirement_usd": 2500.0,
+    "is_credit": true,
+    "profit_target_usd": 125.0,
+    "stop_loss_usd": 150.0,
+    "status": "CLOSED_PROFIT",
+    "orders": [
+      {
+        "order_id": "ORACLE-1787901319",
+        "symbol": "MSFT260904C00530000",
+        "qty": 1,
+        "side": "sell",
+        "type": "limit",
+        "status": "FILLED_PAPER_FALLBACK",
+        "filled_at": "2026-08-28T12:15:20.141532",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 2.1,
+        "occ_symbol": "MSFT260904C00530000"
+      },
+      {
+        "order_id": "ORACLE-1787901320",
+        "symbol": "MSFT260904C00555000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_FALLBACK",
+        "filled_at": "2026-08-28T12:15:20.380392",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 0.9,
+        "occ_symbol": "MSFT260904C00555000"
+      },
+      {
+        "order_id": "ORACLE-1787901320",
+        "symbol": "MSFT260904P00480000",
+        "qty": 1,
+        "side": "sell",
+        "type": "limit",
+        "status": "FILLED_PAPER_FALLBACK",
+        "filled_at": "2026-08-28T12:15:20.596526",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 2.2,
+        "occ_symbol": "MSFT260904P00480000"
+      },
+      {
+        "order_id": "ORACLE-1787901320",
+        "symbol": "MSFT260904P00455000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_FALLBACK",
+        "filled_at": "2026-08-28T12:15:20.813625",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 0.9,
+        "occ_symbol": "MSFT260904P00455000"
+      }
+    ],
+    "exit_date": "2026-08-28",
+    "exit_price": 505.06,
+    "pnl_usd": 125.0,
+    "exit_reason": "Profit target achieved (+$125.00, +50.0%).",
+    "broker_exit_result": {
+      "symbol": "MSFT",
+      "status": "CLOSED_PAPER_FALLBACK",
+      "closed_at": "2026-08-28T12:15:30.112252"
+    }
   }
 ]

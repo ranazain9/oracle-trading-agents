@@ -19,7 +19,10 @@ except ImportError:
     ALPACA_SDK_AVAILABLE = False
 
 
-class AlpacaTool:
+from tools.base_broker import BaseBroker
+
+
+class AlpacaTool(BaseBroker):
     """
     Brokerage interface for Alpaca Paper Trading.
     """

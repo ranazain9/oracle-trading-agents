@@ -34,7 +34,7 @@ class OCCSymbolFormatter:
     @staticmethod
     def format_occ_symbol(
         root_symbol: str,
-        expiration_date: datetime.date,
+        expiration_date: Any,
         option_type: str,
         strike_price: float
     ) -> str:
@@ -45,8 +45,20 @@ class OCCSymbolFormatter:
         Example: MSFT, 2026-08-28, PUT,  $500.00 -> 'MSFT260828P00500000'
         """
         root = root_symbol.upper().strip()
-        yymmdd = expiration_date.strftime("%y%m%d")
-        opt_char = "C" if option_type.upper().startswith("C") else "P"
+        if isinstance(expiration_date, str):
+            clean_date = expiration_date.replace("-", "")
+            if len(clean_date) == 8: # YYYYMMDD
+                yymmdd = clean_date[2:]
+            elif len(clean_date) == 6: # YYMMDD
+                yymmdd = clean_date
+            else:
+                yymmdd = datetime.date.today().strftime("%y%m%d")
+        elif hasattr(expiration_date, "strftime"):
+            yymmdd = expiration_date.strftime("%y%m%d")
+        else:
+            yymmdd = datetime.date.today().strftime("%y%m%d")
+
+        opt_char = "C" if str(option_type).upper().startswith("C") else "P"
         
         # Strike format: 5 digits for dollar, 3 digits for cents (e.g. 315.00 -> 00315000)
         strike_int = int(round(strike_price * 1000))

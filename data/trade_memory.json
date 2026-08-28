@@ -1,0 +1,42 @@
+[
+  {
+    "timestamp": "2026-08-28T12:12:44.062823",
+    "symbol": "NVDA",
+    "strategy": "EARNINGS_STRADDLE",
+    "pnl_usd": 250.0,
+    "outcome": "OPTIMAL_ALPHA",
+    "primary_driver": "IV_CRUSH",
+    "grade": "A",
+    "lesson": "The trade successfully capitalized on the anticipated volatility crush post-earnings, resulting in a favorable PnL. Future earnings straddle strategies should consider locking in profits when IV ranks decline significantly post-event."
+  },
+  {
+    "timestamp": "2026-08-28T12:13:32.963759",
+    "symbol": "NVDA",
+    "strategy": "EARNINGS_STRADDLE",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "IV_CRUSH",
+    "grade": "B",
+    "lesson": "The trade did not realize any profit due to a decrease in implied volatility from entry to exit, indicating that the market's expectations were overly optimistic prior to earnings. Future strategies should consider tighter IV thresholds and potential adjustments based on pre-earnings sentiment."
+  },
+  {
+    "timestamp": "2026-08-28T12:14:48.503587",
+    "symbol": "NVDA",
+    "strategy": "EARNINGS_STRADDLE",
+    "pnl_usd": 250.0,
+    "outcome": "OPTIMAL_ALPHA",
+    "primary_driver": "IV_CRUSH",
+    "grade": "A",
+    "lesson": "The strategy effectively capitalized on the volatility crush post-earnings, leading to a significant profit. Maintaining a disciplined exit strategy, such as profit ratchet locking, can enhance overall performance while managing risk."
+  },
+  {
+    "timestamp": "2026-08-28T12:15:32.678448",
+    "symbol": "MSFT",
+    "strategy": "THETA_IRON_CONDOR",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "THETA_DECAY",
+    "grade": "B",
+    "lesson": "The trade successfully captured theta decay over a short holding period, but the lack of realized PnL indicates that the strategy may need refinement in terms of entry and exit timing. Future trades should consider tighter management of implied volatility to enhance profitability."
+  }
+]
