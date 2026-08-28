@@ -96,15 +96,15 @@ flowchart TD
     CMD & COO --> LG
     LG --> S1 --> A1
     A1 --> S2 & S3 & S4 & S5 & S6 & S7 & S8
-    A1 -->|Validated Master Blueprint| A2
+    A1 -->|"Validated Master Blueprint"| A2
     A2 --> T1 & T2 & T3 & T4 & T5
-    A2 -->|Dispatches OCC Complex Limit Orders| ALP
-    A2 -->|Appends Executed Trade| LED
-    COO -->|Supervises Intraday (9:35 AM - 4:00 PM)| A3
+    A2 -->|"Dispatches OCC Complex Limit Orders"| ALP
+    A2 -->|"Appends Executed Trade"| LED
+    COO -->|"Supervises Intraday (9:35 AM - 4:00 PM)"| A3
     A3 --> G1 & G2 & G3 & G4 & G5 & G6
-    A3 -->|Syncs Live Broker P&L| ALP
-    A3 -->|Executes Physical Exits / Salvage| ALP
-    A3 -->|Updates Realized P&L| LED
+    A3 -->|"Syncs Live Broker P&L"| ALP
+    A3 -->|"Executes Physical Exits / Salvage"| ALP
+    A3 -->|"Updates Realized P&L"| LED
 ```
 
 ---
@@ -212,11 +212,11 @@ flowchart TD
 
     A["Bodyguard 60s/15s Active Position Scan"]:::check --> B{"Current Unrealized P&L"}:::check
     
-    B -->|P&L >= +50%| C["🎉 TIER 3: FULL PROFIT TAKE<br>Liquidate on Alpaca Brokerage"]:::win
-    B -->|P&L >= +45%| D["🔒 TIER 2: +25% PROFIT LOCK<br>Ratchet Stop Floor to +$125.00"]:::ratchet
-    B -->|P&L >= +30%| E["🛡️ TIER 1: BREAK-EVEN FLOOR<br>Ratchet Stop Floor to $0.00"]:::ratchet
-    B -->|P&L <= -$150.00| F["🛑 HARD STOP LOSS TRIGGERED<br>Liquidate on Alpaca Brokerage"]:::stop
-    B -->|Wing Threatened| G["🦋 ADAPTIVE POSITION SALVAGE<br>Convert into Iron Butterfly"]:::win
+    B -->|"P&L >= +50%"| C["🎉 TIER 3: FULL PROFIT TAKE<br>Liquidate on Alpaca Brokerage"]:::win
+    B -->|"P&L >= +45%"| D["🔒 TIER 2: +25% PROFIT LOCK<br>Ratchet Stop Floor to +$125.00"]:::ratchet
+    B -->|"P&L >= +30%"| E["🛡️ TIER 1: BREAK-EVEN FLOOR<br>Ratchet Stop Floor to $0.00"]:::ratchet
+    B -->|"P&L <= -$150.00"| F["🛑 HARD STOP LOSS TRIGGERED<br>Liquidate on Alpaca Brokerage"]:::stop
+    B -->|"Wing Threatened"| G["🦋 ADAPTIVE POSITION SALVAGE<br>Convert into Iron Butterfly"]:::win
 ```
 
 ---
