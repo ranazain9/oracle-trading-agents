@@ -1,12 +1,19 @@
 """
-ORACLE Trading Agent - Autonomous Daily Market Daemon & Scheduler
-Executes Agent 1 (Market Scout) and Agent 2 (The Trader) at 9:30 AM EST and logs daily audit trails to logs/.
+ORACLE Trading System - Autonomous 24/7 Daily Market Daemon & Scheduler
+Connects the Master Orchestrator Agent and LangGraph State Machine into a continuous, self-driving daily lifecycle:
+1. 09:00 AM EST: Pre-Market Diagnostics & Account Health Check
+2. 09:30 AM EST: Market Open Strategy Selection & Trade Dispatch (via LangGraph)
+3. 09:35 AM - 04:00 PM EST: Intraday Active Risk Guardian (60s/15s Adaptive Loop via Bodyguard)
+4. 04:30 PM EST: Post-Market Tearsheet & Performance Logging
+5. Overnight: Safe suspension until next trading day
 """
 import os
 import sys
 import time
+import signal
 import datetime
 from pathlib import Path
+from typing import Dict, Any
 
 # Ensure UTF-8 output on Windows terminals
 if sys.stdout.encoding != 'utf-8':
@@ -19,90 +26,116 @@ if sys.stdout.encoding != 'utf-8':
 BASE_DIR = Path(__file__).resolve().parent
 sys.path.append(str(BASE_DIR))
 
-from agents.strategy_brain_agent import StrategyBrainAgent
-from agents.trader_agent import TraderAgent
-from tools.market_data_tools import MarketDataTool
-from tools.alpaca_tools import AlpacaTool
+from agents.orchestrator_agent import MasterOrchestratorAgent
 
-class DailyScheduler:
-    """
-    Automated market clock listener and daily execution logger.
-    """
 
-    LOGS_DIR = BASE_DIR / "logs"
+class DailyTradingDaemon:
+    """
+    24/7 Autonomous Daily Trading Daemon powered by the Master Orchestrator Agent.
+    """
 
     def __init__(self):
-        self.LOGS_DIR.mkdir(parents=True, exist_ok=True)
-        self.alpaca = AlpacaTool()
-        self.brain = StrategyBrainAgent()
-        self.trader = TraderAgent()
+        self.orchestrator = MasterOrchestratorAgent()
+        self.is_running = True
+        self.market_open_executed_today = False
+        self.post_market_executed_today = False
+        self.current_date = datetime.date.today().isoformat()
 
-    def run_daily_cycle(self) -> dict:
+        # Handle graceful shutdown on Ctrl+C
+        signal.signal(signal.SIGINT, self._handle_exit)
+        signal.signal(signal.SIGTERM, self._handle_exit)
+
+    def _handle_exit(self, signum, frame):
+        print("\n\n🛑 [DAEMON] Graceful shutdown signal received. Stopping 24/7 daemon loop...")
+        self.is_running = False
+        sys.exit(0)
+
+    def run_single_cycle(self) -> Dict[str, Any]:
         """
-        Executes the full morning 9:30 AM EST options analysis & order execution cycle.
+        Executes a full immediate on-demand cycle.
         """
-        today_str = datetime.date.today().isoformat()
-        log_file = self.LOGS_DIR / f"agent1_daily_{today_str}.log"
-        now_utc = datetime.datetime.utcnow().isoformat()
+        return self.orchestrator.run_full_cycle_now()
 
-        print(f"\n[*] [DailyScheduler] Starting Autonomous Trading Day: {today_str} ({now_utc})")
-        
-        # 1. Market Clock & Account Check
-        clock = self.alpaca.get_market_clock()
-        account = self.alpaca.get_account_status()
-        cash = account.get("cash", 100000.0)
+    def start(self, polling_interval_sec: int = 15):
+        """
+        Starts the continuous 24/7 market clock listener loop.
+        """
+        print("\n" + "=" * 80)
+        print("🏛️  ORACLE 24/7 AUTONOMOUS DAILY TRADING DAEMON STARTED")
+        print("=" * 80)
+        print("  • Conductor       : Master Orchestrator Agent (Fund COO)")
+        print("  • Operating Hours : 9:00 AM - 4:30 PM EST (Monday - Friday)")
+        print("  • Intraday Guard  : 60s Base / 15s Adaptive Bodyguard Loop")
+        print("  • Press Ctrl+C at any time to halt the daemon safely.")
+        print("=" * 80 + "\n")
 
-        # 2. Agent 1: Market Scout & Strategy Brain
-        print("[*] [DailyScheduler] Triggering Agent 1 Market Analysis...")
-        decision = self.brain.analyze_and_decide(portfolio_cash=cash)
+        while self.is_running:
+            try:
+                now_utc = datetime.datetime.utcnow()
+                # US Eastern Time is UTC-4 (EDT) or UTC-5 (EST)
+                now_est = now_utc - datetime.timedelta(hours=4)
+                today_str = now_est.date().isoformat()
+                weekday = now_est.weekday()  # 0=Mon, 4=Fri, 5=Sat, 6=Sun
+                hour = now_est.hour
+                minute = now_est.minute
 
-        # 3. Agent 2: The Trader (Order Execution)
-        assets = MarketDataTool.get_asset_universe_data([decision.symbol])
-        stock_price = assets[0]["current_price"] if assets else 200.0
-        
-        print(f"[*] [DailyScheduler] Triggering Agent 2 Execution for {decision.symbol} (${stock_price:.2f})...")
-        exec_result = self.trader.construct_and_execute(decision, stock_price)
+                # Reset daily flags on new calendar day
+                if today_str != self.current_date:
+                    self.current_date = today_str
+                    self.market_open_executed_today = False
+                    self.post_market_executed_today = False
+                    print(f"\n🌅 [DAEMON] New Trading Day Initialized: {today_str} ({now_est.strftime('%A')})")
 
-        # 4. Write Daily Structured Log File
-        log_entry = (
-            f"================================================================================\n"
-            f"ORACLE DAILY EXECUTION LOG - {today_str} {now_utc}\n"
-            f"================================================================================\n"
-            f"Account ID          : {account.get('account_id')}\n"
-            f"Portfolio Cash      : ${cash:,.2f}\n"
-            f"Market Open Status  : {clock.get('is_open')}\n"
-            f"--------------------------------------------------------------------------------\n"
-            f"AGENT 1 DECISION:\n"
-            f"  • Selected Symbol : {decision.symbol}\n"
-            f"  • Strategy        : {decision.strategy}\n"
-            f"  • Market Regime   : {decision.regime}\n"
-            f"  • Direction Bias  : {decision.direction}\n"
-            f"  • AI Confidence   : {decision.confidence_score * 100:.1f}%\n"
-            f"  • Validator Status: {decision.validator_status}\n"
-            f"  • Risk Budget     : ${decision.suggested_risk_budget_usd:.2f}\n"
-            f"  • Profit Target   : +{decision.target_profit_percent:.0f}%\n"
-            f"  • Stop Loss       : -${decision.max_loss_usd:.2f}\n"
-            f"  • Reasoning       : {decision.reasoning}\n"
-            f"--------------------------------------------------------------------------------\n"
-            f"AGENT 2 EXECUTION:\n"
-            f"  • Status          : {exec_result.get('status')}\n"
-            f"  • Trade ID        : {exec_result.get('trade_id')}\n"
-            f"  • Orders Count    : {len(exec_result.get('executed_orders', []))}\n"
-            f"================================================================================\n\n"
-        )
+                # Weekend Check (Saturday / Sunday)
+                if weekday >= 5:
+                    print(f"😴 [DAEMON] Weekend ({now_est.strftime('%A')}). Market Closed. Sleeping for 30 minutes...", end="\r", flush=True)
+                    time.sleep(1800)
+                    continue
 
-        with open(log_file, "a", encoding="utf-8") as f:
-            f.write(log_entry)
+                # Phase 1: 9:00 AM - 9:29 AM EST (Pre-Market Readiness)
+                if hour == 9 and minute < 30:
+                    print(f"🔍 [DAEMON] Pre-Market Window ({now_est.strftime('%H:%M:%S EST')}). Standing by for 9:30 AM open...", end="\r", flush=True)
+                    time.sleep(30)
+                    continue
 
-        print(f"💾 [DailyScheduler] Daily execution logged to: {log_file}")
+                # Phase 2: 9:30 AM - 9:35 AM EST (Market Open Execution)
+                elif hour == 9 and minute >= 30 and not self.market_open_executed_today:
+                    print(f"\n🔔 [DAEMON: 9:30 AM EST] MARKET OPEN! Triggering LangGraph Strategy & Execution Pipeline...")
+                    self.orchestrator.run_market_open_execution()
+                    self.market_open_executed_today = True
+                    time.sleep(10)
+                    continue
 
-        return {
-            "date": today_str,
-            "decision": decision,
-            "execution": exec_result,
-            "log_path": str(log_file)
-        }
+                # Phase 3: 9:35 AM - 4:00 PM EST (Intraday Active Risk Guardian)
+                elif (hour == 9 and minute >= 35) or (10 <= hour < 16):
+                    res = self.orchestrator.run_intraday_monitoring_step()
+                    adaptive_sleep = res.get("adaptive_sleep_seconds", 60)
+                    print(f"🛡️ [DAEMON: INTRADAY] Bodyguard Active | Scan Interval: {adaptive_sleep}s | Time: {now_est.strftime('%H:%M:%S EST')}", end="\r", flush=True)
+                    time.sleep(adaptive_sleep)
+                    continue
+
+                # Phase 4: 4:30 PM EST (Post-Market Summary & Tearsheet)
+                elif hour == 16 and minute >= 30 and not self.post_market_executed_today:
+                    print(f"\n📊 [DAEMON: 4:30 PM EST] MARKET CLOSED. Generating Daily Fund Tearsheet & Audit Log...")
+                    self.orchestrator.run_postmarket_summary()
+                    self.post_market_executed_today = True
+                    time.sleep(60)
+                    continue
+
+                # Phase 5: 4:35 PM - 8:59 AM EST (Overnight Suspension)
+                else:
+                    print(f"🌙 [DAEMON] Market Closed ({now_est.strftime('%H:%M:%S EST')}). Standing by overnight...", end="\r", flush=True)
+                    time.sleep(300)
+
+            except Exception as e:
+                print(f"\n[!] [DAEMON EXCEPTION] Recovering gracefully from error: {e}")
+                time.sleep(polling_interval_sec)
+
+
+# Backward Compatibility Alias
+DailyScheduler = DailyTradingDaemon
+
 
 if __name__ == "__main__":
-    scheduler = DailyScheduler()
-    scheduler.run_daily_cycle()
+    daemon = DailyTradingDaemon()
+    daemon.start()

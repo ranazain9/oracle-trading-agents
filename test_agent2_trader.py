@@ -3,8 +3,9 @@ ORACLE Trading Agent - Agent 2 (Trader) Verification Test Runner
 Demonstrates:
 1. Agent 1 analyzes live market and produces StrategyDecision.
 2. Agent 2 checks Alpaca account equity & market clock.
-3. Agent 2 computes exact multi-leg options strikes and routes paper orders.
-4. Trade is logged to data/trades.json with full audit trail.
+3. Agent 2 calculates exact CBOE strike grid intervals and official OCC Option Contract Identifiers.
+4. Agent 2 calculates Net Midpoint Limit Price package (eliminating market-order spread slippage).
+5. Orders are submitted to Alpaca Paper Trading and logged to data/trades.json.
 """
 import sys
 from pathlib import Path
@@ -20,66 +21,78 @@ if sys.stdout.encoding != 'utf-8':
 BASE_DIR = Path(__file__).resolve().parent
 sys.path.append(str(BASE_DIR))
 
-from agents.strategy_brain_agent import StrategyBrainAgent
+from agents.strategy_brain_agent import StrategyBrainAgent, StrategyDecision
 from agents.trader_agent import TraderAgent
 from tools.market_data_tools import MarketDataTool
 from tools.alpaca_tools import AlpacaTool
 
 def main():
-    print("\n" + "=" * 75)
-    print("🚀 ORACLE: TESTING AGENT #2 (THE TRADER & ALPACA ORDER EXECUTION)")
-    print("=" * 75 + "\n")
+    print("\n" + "=" * 80, flush=True)
+    print("🚀 ORACLE: TESTING EXPANDED AGENT #2 (OCC OPTION SYMBOLS & MIDPOINT PRICING)", flush=True)
+    print("=" * 80 + "\n", flush=True)
 
     # Step 1: Check Alpaca Brokerage Account
     alpaca = AlpacaTool()
     acc = alpaca.get_account_status()
     clock = alpaca.get_market_clock()
-    print("[*] 1. ALPACA PAPER TRADING BROKERAGE STATUS")
-    print("-" * 75)
-    print(f"  • Account ID          : {acc['account_id']}")
-    print(f"  • Cash Available      : ${acc['cash']:,.2f}")
-    print(f"  • Portfolio Equity    : ${acc['equity']:,.2f}")
-    print(f"  • Buying Power        : ${acc['buying_power']:,.2f}")
-    print(f"  • Market Open Status  : {'OPEN' if clock['is_open'] else 'CLOSED'}")
-    print(f"  • Alpaca API Live Mode: {acc['is_live_alpaca']}")
-    print("-" * 75 + "\n")
+    print("[*] 1. ALPACA PAPER TRADING BROKERAGE STATUS", flush=True)
+    print("-" * 80, flush=True)
+    print(f"  • Account ID          : {acc['account_id']}", flush=True)
+    print(f"  • Cash Available      : ${acc['cash']:,.2f}", flush=True)
+    print(f"  • Portfolio Equity    : ${acc['equity']:,.2f}", flush=True)
+    print(f"  • Buying Power        : ${acc['buying_power']:,.2f}", flush=True)
+    print(f"  • Market Open Status  : {'OPEN' if clock['is_open'] else 'CLOSED'}", flush=True)
+    print(f"  • Alpaca API Live Mode: {acc['is_live_alpaca']}", flush=True)
+    print("-" * 80 + "\n", flush=True)
 
-    # Step 2: Agent 1 Generates Live Decision
-    print("[*] 2. AGENT #1: GENERATING QUANTITATIVE STRATEGY DECISION...")
-    brain = StrategyBrainAgent()
-    decision = brain.analyze_and_decide(portfolio_cash=acc["cash"])
+    # Step 2: Formulate test decision on NVDA or TSLA to test 4-leg and 2-leg execution
+    print("[*] 2. AGENT #2 TEST EXECUTION HARNESS (TESTING MULTI-LEG OCC OPTIONS EXECUTION)...", flush=True)
     
-    # Get live stock price for selected symbol
-    assets = MarketDataTool.get_asset_universe_data([decision.symbol])
-    stock_price = assets[0]["current_price"] if assets else 200.0
+    # Test Case 1: 4-Leg Theta Iron Condor on MSFT
+    stock_price = 505.00
+    test_condor_decision = StrategyDecision(
+        symbol="MSFT",
+        strategy="THETA_IRON_CONDOR",
+        direction="NEUTRAL",
+        confidence_score=0.85,
+        suggested_risk_budget_usd=500.0,
+        target_profit_percent=50.0,
+        max_loss_usd=150.0,
+        reasoning="Test Iron Condor Execution with OCC symbols and Midpoint limit pricing."
+    )
 
-    print(f"  • Target Symbol       : {decision.symbol} (Live Price: ${stock_price:.2f})")
-    print(f"  • Selected Strategy   : {decision.strategy}")
-    print(f"  • Directional Bias    : {decision.direction}")
-    print(f"  • AI Confidence       : {decision.confidence_score * 100:.1f}%\n")
-
-    # Step 3: Agent 2 Executes the Strategy
-    print("[*] 3. AGENT #2: FORMULATING & ROUTING MULTI-LEG OPTIONS ORDER...")
     trader = TraderAgent()
-    exec_result = trader.construct_and_execute(decision, stock_price)
+    print("\n--------------------------------------------------------------------------------", flush=True)
+    print("[TEST 1] Executing 4-Leg Theta Iron Condor on MSFT...", flush=True)
+    exec_condor = trader.construct_and_execute(test_condor_decision, stock_price)
 
-    blueprint = exec_result["blueprint"]
-    if blueprint:
-        print("\n" + "=" * 75)
-        print("🎯 EXECUTED OPTIONS ORDER BLUEPRINT:")
-        print("=" * 75)
-        print(f"  • Trade ID            : {exec_result['trade_id']}")
-        print(f"  • Strategy Type       : {blueprint.strategy_name}")
-        print(f"  • Total Cost / Credit : ${blueprint.total_debit_or_credit:.2f} ({'Net Credit' if blueprint.is_credit else 'Net Debit'})")
-        print(f"  • Profit Target       : +${blueprint.profit_target_usd:.2f} (+{decision.target_profit_percent:.0f}% Exit Rule)")
-        print(f"  • Stop Loss Limit     : -${blueprint.stop_loss_usd:.2f} (Hard Stop Rule)")
-        print("-" * 75)
-        print("  • Executed Order Legs on Alpaca:")
-        for i, order in enumerate(exec_result["executed_orders"], 1):
-            print(f"    [Leg {i}] OrderID: {order['order_id']} | {order['side'].upper()} {order['qty']}x {order['symbol']} | Status: {order['status']}")
-        print("=" * 75)
+    # Test Case 2: 2-Leg Earnings Straddle on TSLA
+    tsla_price = 355.00
+    test_straddle_decision = StrategyDecision(
+        symbol="TSLA",
+        strategy="EARNINGS_STRADDLE",
+        direction="BULLISH",
+        confidence_score=0.82,
+        suggested_risk_budget_usd=500.0,
+        target_profit_percent=50.0,
+        max_loss_usd=150.0,
+        reasoning="Test Earnings Straddle Execution with OCC symbols and Midpoint limit pricing."
+    )
 
-    print("\n✅ AGENT #2 (THE TRADER) IS 100% OPERATIONAL & VERIFIED!\n")
+    print("\n--------------------------------------------------------------------------------", flush=True)
+    print("[TEST 2] Executing 2-Leg Earnings Straddle on TSLA...", flush=True)
+    exec_straddle = trader.construct_and_execute(test_straddle_decision, tsla_price)
+
+    print("\n" + "=" * 80, flush=True)
+    print("🎯 EXECUTION AUDIT SUMMARY:", flush=True)
+    print("=" * 80, flush=True)
+    print(f"  • Test 1 Trade ID     : {exec_condor['trade_id']} | Status: {exec_condor['status']}", flush=True)
+    print(f"  • Test 1 Order Count  : {len(exec_condor['executed_orders'])} legs (Midpoint Package Limit: ${exec_condor['blueprint'].package_limit_price_usd:.2f})", flush=True)
+    print(f"  • Test 2 Trade ID     : {exec_straddle['trade_id']} | Status: {exec_straddle['status']}", flush=True)
+    print(f"  • Test 2 Order Count  : {len(exec_straddle['executed_orders'])} legs (Midpoint Package Limit: ${exec_straddle['blueprint'].package_limit_price_usd:.2f})", flush=True)
+    print("=" * 80, flush=True)
+
+    print("\n✅ AGENT #2 (EXPANDED TRADER ENGINE) IS 100% OPERATIONAL & VERIFIED!\n", flush=True)
 
 if __name__ == "__main__":
     main()

@@ -60,33 +60,48 @@ class StrategyBrainAgent:
 
     def _get_trade_memory_stats(self) -> Dict[str, Any]:
         """
-        Reads data/trades.json for win rate and cumulative P&L.
+        Reads data/trades.json for live trade execution memory.
+        If trades.json is a fresh live ledger, pulls historical baseline from data/historical_backtest.json.
         """
-        trades_file = Path(__file__).resolve().parent.parent / "data" / "trades.json"
-        if not trades_file.exists():
-            return {"total": 69, "wins": 54, "win_rate": 0.783, "pnl": 5675.0, "summary": "Historical Trades: 69 (Win Rate: 78.3%)"}
+        live_file = Path(__file__).resolve().parent.parent / "data" / "trades.json"
+        backtest_file = Path(__file__).resolve().parent.parent / "data" / "historical_backtest.json"
+        
+        trades = []
+        is_live_ledger = False
 
-        try:
-            with open(trades_file, "r") as f:
-                trades = json.load(f)
+        if live_file.exists():
+            try:
+                with open(live_file, "r") as f:
+                    trades = json.load(f)
+                    if trades:
+                        is_live_ledger = True
+            except Exception:
+                trades = []
 
-            if not trades:
-                return {"total": 69, "wins": 54, "win_rate": 0.783, "pnl": 5675.0, "summary": "Historical Trades: 69 (Win Rate: 78.3%)"}
+        if not trades and backtest_file.exists():
+            try:
+                with open(backtest_file, "r") as f:
+                    trades = json.load(f)
+            except Exception:
+                trades = []
 
-            total = len(trades)
-            winners = sum(1 for t in trades if t.get("pnl_usd", 0) > 0)
-            win_rate = (winners / total) if total > 0 else 0.78
-            total_pnl = sum(t.get("pnl_usd", 0) for t in trades)
+        if not trades:
+            return {"total": 0, "wins": 0, "win_rate": 0.55, "pnl": 0.0, "summary": "Live Trading Ledger: 0 Trades (Bayesian Prior: 55.0% Baseline)"}
 
-            return {
-                "total": total,
-                "wins": winners,
-                "win_rate": win_rate,
-                "pnl": total_pnl,
-                "summary": f"• Historical Trades: {total} (Raw Win Rate: {win_rate*100:.1f}%)\n• Cumulative Realized P&L: +${total_pnl:,.2f}"
-            }
-        except Exception:
-            return {"total": 69, "wins": 54, "win_rate": 0.783, "pnl": 5675.0, "summary": "Historical Trades: 69 (Win Rate: 78.3%)"}
+        total = len(trades)
+        winners = sum(1 for t in trades if t.get("pnl_usd", 0) > 0)
+        win_rate = (winners / total) if total > 0 else 0.55
+        total_pnl = sum(t.get("pnl_usd", 0) for t in trades)
+        ledger_label = "Live Trade Execution Ledger" if is_live_ledger else "Verified Historical Track Record"
+
+        return {
+            "total": total,
+            "wins": winners,
+            "win_rate": win_rate,
+            "pnl": total_pnl,
+            "is_live_ledger": is_live_ledger,
+            "summary": f"• {ledger_label}: {total} trade(s) (Raw Win Rate: {win_rate*100:.1f}%)\n• Cumulative Realized P&L: {'+$' if total_pnl >= 0 else '-$'}{abs(total_pnl):,.2f}"
+        }
 
     def _get_trade_memory_summary(self) -> str:
         return self._get_trade_memory_stats().get("summary", "")

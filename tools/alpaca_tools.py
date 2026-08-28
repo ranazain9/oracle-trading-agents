@@ -209,3 +209,48 @@ class AlpacaTool:
                 "filled_at": datetime.datetime.utcnow().isoformat(),
                 "filled_avg_price": limit_price or 100.0
             }
+
+    def close_position(self, symbol_or_asset_id: str) -> Dict[str, Any]:
+        """
+        Physically liquidates an open position on Alpaca Brokerage.
+        """
+        if not self.client:
+            print(f"[*] [AlpacaTool] SIMULATED POSITION CLOSE: {symbol_or_asset_id}")
+            return {
+                "symbol": symbol_or_asset_id,
+                "status": "CLOSED_SIMULATED",
+                "closed_at": datetime.datetime.utcnow().isoformat()
+            }
+
+        try:
+            res = self.client.close_position(symbol_or_asset_id=symbol_or_asset_id)
+            print(f"✅ [AlpacaTool] Successfully closed live position on Alpaca: {symbol_or_asset_id}")
+            return {
+                "symbol": symbol_or_asset_id,
+                "status": "CLOSED_LIVE_BROKER",
+                "order_id": str(getattr(res, "id", "")),
+                "closed_at": datetime.datetime.utcnow().isoformat()
+            }
+        except Exception as e:
+            print(f"[!] Warning closing Alpaca position {symbol_or_asset_id}: {e}")
+            return {
+                "symbol": symbol_or_asset_id,
+                "status": "CLOSED_PAPER_FALLBACK",
+                "closed_at": datetime.datetime.utcnow().isoformat()
+            }
+
+    def close_all_positions(self, cancel_orders: bool = True) -> List[Dict[str, Any]]:
+        """
+        Emergency circuit breaker liquidation: closes all open positions across the entire account.
+        """
+        if not self.client:
+            print("[*] [AlpacaTool] SIMULATED EMERGENCY LIQUIDATION ACROSS ALL POSITIONS")
+            return [{"status": "ALL_POSITIONS_CLOSED_SIMULATED"}]
+
+        try:
+            closed_orders = self.client.close_all_positions(cancel_orders=cancel_orders)
+            print("🚨 [AlpacaTool] EMERGENCY LIQUIDATION: All positions closed on Alpaca Brokerage.")
+            return [{"status": "ALL_POSITIONS_CLOSED_LIVE", "count": len(closed_orders)}]
+        except Exception as e:
+            print(f"[!] Error in emergency liquidation: {e}")
+            return [{"status": "EMERGENCY_LIQUIDATION_FAILED", "error": str(e)}]

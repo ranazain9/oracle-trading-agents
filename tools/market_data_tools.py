@@ -142,21 +142,10 @@ class MarketDataTool:
 
                 # 2. Live News Headlines & Sentiment
                 news_headlines = []
-                try:
-                    raw_news = ticker.news
-                    if raw_news:
-                        for item in raw_news[:3]:
-                            title = item.get("title")
-                            if not title and "content" in item:
-                                title = item.get("content", {}).get("title")
-                            if title:
-                                news_headlines.append(title)
-                except Exception:
-                    pass
-
+                # 2. Live News Sentiment Engine (Multi-Source Live RSS)
                 sentiment_info = {"sentiment_score": 0.0, "sentiment_label": "NEUTRAL", "summary": "No news available."}
-                if compute_deep_sentiment and news_headlines:
-                    sentiment_info = NewsSentimentScorer.score_headlines(symbol, news_headlines)
+                if compute_deep_sentiment:
+                    sentiment_info = NewsSentimentScorer.score_headlines(symbol)
 
                 # 3. Live Put/Call Ratio & Skew
                 skew_info = OptionsChainAnalyzer.get_options_skew(symbol)

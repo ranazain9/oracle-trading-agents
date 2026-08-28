@@ -197,12 +197,12 @@ class HistoricalBacktestEngine:
     @staticmethod
     def _save_to_trades_json(trades: List[Dict[str, Any]]):
         """
-        Persists the 50+ backtested trade dataset to data/trades.json
+        Persists the 50+ backtested trade dataset to data/historical_backtest.json
         """
-        trades_file = Path(__file__).resolve().parent.parent / "data" / "trades.json"
+        trades_file = Path(__file__).resolve().parent.parent / "data" / "historical_backtest.json"
         try:
             with open(trades_file, "w") as f:
                 json.dump(trades, f, indent=2)
-            print(f"💾 [BacktestEngine] Saved {len(trades)} verified historical trades to data/trades.json")
+            print(f"💾 [BacktestEngine] Saved {len(trades)} verified historical trades to data/historical_backtest.json")
         except Exception as e:
-            print(f"[!] Error saving trades.json: {e}")
+            print(f"[!] Error saving historical_backtest.json: {e}")

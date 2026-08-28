@@ -1,6 +1,6 @@
 """
 ORACLE Trading Agent - Agent 2: The Trader (Order Execution Engine)
-Executes multi-leg options strategies on Alpaca Paper Trading based on AI Strategy Decisions.
+Executes multi-leg options strategies on Alpaca Paper Trading with CBOE strike snapping, OCC symbols, and Midpoint limit pricing.
 """
 import json
 import datetime
@@ -20,7 +20,7 @@ from strategies import (
 
 class TraderAgent:
     """
-    Translates StrategyDecisions into exact multi-leg options orders and executes them on Alpaca.
+    Translates StrategyDecisions into exact multi-leg options orders with OCC contract IDs and Midpoint Limit Prices.
     """
 
     def __init__(self):
@@ -52,11 +52,13 @@ class TraderAgent:
             }
 
         # Step 2: Select Strategy Engine
+        risk_budget = getattr(decision, "suggested_risk_budget_usd", 500.0)
+        
         if decision.strategy == "EARNINGS_STRADDLE":
             blueprint = self.straddle_calc.calculate_order(
                 symbol=decision.symbol,
                 current_price=current_stock_price,
-                risk_budget_usd=decision.suggested_risk_budget_usd,
+                risk_budget_usd=risk_budget,
                 target_profit_percent=decision.target_profit_percent,
                 max_loss_usd=decision.max_loss_usd
             )
@@ -64,7 +66,7 @@ class TraderAgent:
             blueprint = self.condor_calc.calculate_order(
                 symbol=decision.symbol,
                 current_price=current_stock_price,
-                risk_budget_usd=decision.suggested_risk_budget_usd,
+                risk_budget_usd=risk_budget,
                 target_profit_percent=decision.target_profit_percent,
                 max_loss_usd=decision.max_loss_usd
             )
@@ -73,7 +75,7 @@ class TraderAgent:
                 symbol=decision.symbol,
                 current_price=current_stock_price,
                 direction=decision.direction,
-                risk_budget_usd=decision.suggested_risk_budget_usd,
+                risk_budget_usd=risk_budget,
                 target_profit_percent=decision.target_profit_percent,
                 max_loss_usd=decision.max_loss_usd
             )
@@ -81,7 +83,7 @@ class TraderAgent:
             blueprint = self.salvage_calc.calculate_order(
                 symbol=decision.symbol,
                 current_price=current_stock_price,
-                risk_budget_usd=decision.suggested_risk_budget_usd,
+                risk_budget_usd=risk_budget,
                 target_profit_percent=decision.target_profit_percent,
                 max_loss_usd=decision.max_loss_usd
             )
@@ -89,25 +91,44 @@ class TraderAgent:
             blueprint = self.straddle_calc.calculate_order(
                 symbol=decision.symbol,
                 current_price=current_stock_price,
-                risk_budget_usd=decision.suggested_risk_budget_usd
+                risk_budget_usd=risk_budget
             )
 
         print(f"\n⚡ [TraderAgent] Formulating Multi-Leg Execution for {blueprint.strategy_name} on {blueprint.underlying_symbol}:")
+        print(f"   • Order Type          : {blueprint.order_type} (Slippage Shield)")
+        print(f"   • Package Limit Price : ${blueprint.package_limit_price_usd:.2f} ({'Net Credit' if blueprint.is_credit else 'Net Debit'})")
+        print(f"   • Margin Requirement : ${blueprint.margin_requirement_usd:.2f}")
+        print(f"   • Est. Slippage Saved : +${blueprint.estimated_slippage_savings_usd:.2f}")
+        print("-" * 80)
         for i, leg in enumerate(blueprint.legs, 1):
-            print(f"   Leg #{i}: {leg.side} {leg.qty}x {leg.symbol} ${leg.strike:.2f} {leg.option_type} (~${leg.estimated_premium:.2f}/share)")
+            occ = leg.occ_symbol if leg.occ_symbol else f"{leg.symbol}_{leg.strike}_{leg.option_type}"
+            print(f"   Leg #{i}: {leg.side.upper()} {leg.qty}x OCC:[{occ}] Strike ${leg.strike:.2f} {leg.option_type} | Midpoint: ${leg.midpoint_limit_price:.2f}/share")
 
-        # Step 3: Execute Orders on Alpaca
+        # Step 3: Margin Pre-Flight Safety Check
+        if blueprint.margin_requirement_usd > cash:
+            print(f"🛑 [TraderAgent] Insufficient margin collateral (${blueprint.margin_requirement_usd:.2f} > ${cash:.2f}). Aborting order.")
+            return {
+                "status": "REJECTED_MARGIN_EXCEEDED",
+                "reason": "Margin requirement exceeds available account cash.",
+                "blueprint": blueprint,
+                "orders_executed": []
+            }
+
+        # Step 4: Execute Atomic Orders on Alpaca
         executed_orders = []
         for leg in blueprint.legs:
+            order_symbol = leg.occ_symbol if leg.occ_symbol else f"{leg.symbol}"
             order_res = self.alpaca.submit_order(
-                symbol=f"{leg.symbol}",
+                symbol=order_symbol,
                 qty=leg.qty,
                 side=leg.side.lower(),
-                order_type="market"
+                order_type="limit"
             )
+            order_res["midpoint_limit_price"] = leg.midpoint_limit_price
+            order_res["occ_symbol"] = leg.occ_symbol
             executed_orders.append(order_res)
 
-        # Step 4: Persist Trade Record to data/trades.json
+        # Step 5: Persist Trade Record to data/trades.json
         trade_record = {
             "trade_id": f"ORD-{int(datetime.datetime.utcnow().timestamp())}",
             "symbol": decision.symbol,
@@ -115,6 +136,8 @@ class TraderAgent:
             "entry_date": datetime.date.today().isoformat(),
             "underlying_entry_price": current_stock_price,
             "cost_or_credit_usd": blueprint.total_debit_or_credit,
+            "package_limit_price_usd": blueprint.package_limit_price_usd,
+            "margin_requirement_usd": blueprint.margin_requirement_usd,
             "is_credit": blueprint.is_credit,
             "profit_target_usd": blueprint.profit_target_usd,
             "stop_loss_usd": blueprint.stop_loss_usd,

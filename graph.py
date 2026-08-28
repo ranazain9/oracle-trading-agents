@@ -1,6 +1,6 @@
 """
 ORACLE Trading System - Master LangGraph State Machine
-Uses official prebuilt LangGraph StateGraph, Nodes, and Conditional Edges to orchestrate the hedge fund pipeline.
+Uses official prebuilt LangGraph StateGraph, Nodes, and Conditional Edges to orchestrate the entire 3-agent hedge fund pipeline.
 """
 from typing import TypedDict, List, Dict, Any, Optional
 from langgraph.graph import StateGraph, START, END
@@ -9,6 +9,7 @@ from tools.market_data_tools import MarketDataTool
 from tools.macro_calendar_tools import MacroCalendarTool
 from agents.strategy_brain_agent import StrategyBrainAgent, StrategyDecision
 from agents.trader_agent import TraderAgent
+from agents.bodyguard_agent import BodyguardAgent
 from agents.risk_validator import RiskValidator, ValidationResult
 
 
@@ -25,6 +26,7 @@ class OracleState(TypedDict):
     decision: Optional[StrategyDecision]
     validation: Optional[ValidationResult]
     execution_result: Optional[Dict[str, Any]]
+    guardian_result: Optional[Dict[str, Any]]
     is_approved: bool
 
 
@@ -34,9 +36,9 @@ class OracleState(TypedDict):
 
 def market_scout_node(state: OracleState) -> Dict[str, Any]:
     """
-    Node 1: Collects 100% real live market data, Greeks, 25-Delta Skew & ToT Payoffs.
+    Node 1 (Agent 1): Collects live market data, Greeks, 25-Delta Skew & ToT Payoffs.
     """
-    print("\n🌐 [LangGraph: Node 1] Market Scout gathering live feeds & ToT Payoffs...")
+    print("\n🌐 [LangGraph: Node 1] Market Scout gathering live feeds & ToT Payoffs...", flush=True)
     symbols = state.get("symbols", ["NVDA", "AAPL", "MSFT", "TSLA", "AMZN", "SPY"])
     
     macro = MacroCalendarTool.get_macro_environment()
@@ -55,13 +57,14 @@ def market_scout_node(state: OracleState) -> Dict[str, Any]:
 
 def strategy_brain_node(state: OracleState) -> Dict[str, Any]:
     """
-    Node 2: Multi-turn AI Reasoning (Pass 1 Proposer -> Pass 2 Red Team Critic -> Pass 3 Synthesis).
+    Node 2 (Agent 1): Multi-turn AI Reasoning (ToT + Asymmetric Red Team + Bayesian Sizing + Runner-Up Fallback).
     """
-    print("🧠 [LangGraph: Node 2] Strategy Brain executing ToT & Red Team Self-Critique...")
+    print("🧠 [LangGraph: Node 2] Strategy Brain executing ToT & Asymmetric Red Team Stress-Test...", flush=True)
     brain = StrategyBrainAgent()
     decision = brain.analyze_and_decide(
         symbols=state.get("symbols"),
-        portfolio_cash=state.get("portfolio_cash", 100000.0)
+        portfolio_cash=state.get("portfolio_cash", 100000.0),
+        precomputed_assets=state.get("assets_data")
     )
     return {
         "decision": decision,
@@ -71,12 +74,11 @@ def strategy_brain_node(state: OracleState) -> Dict[str, Any]:
 
 def trader_execution_node(state: OracleState) -> Dict[str, Any]:
     """
-    Node 3: Executes approved multi-leg options strategy on Alpaca Paper Trading.
+    Node 3 (Agent 2): Executes approved multi-leg options strategy on Alpaca with OCC symbols & Midpoint limits.
     """
     decision = state.get("decision")
-    print(f"⚡ [LangGraph: Node 3] Trader executing {decision.strategy} on {decision.symbol}...")
+    print(f"⚡ [LangGraph: Node 3] Trader executing {decision.strategy} on {decision.symbol}...", flush=True)
     
-    # Get live stock price for target
     assets = state.get("assets_data", [])
     target_asset = next((a for a in assets if a["symbol"] == decision.symbol), None)
     stock_price = target_asset["current_price"] if target_asset else 200.0
@@ -89,12 +91,24 @@ def trader_execution_node(state: OracleState) -> Dict[str, Any]:
     }
 
 
+def bodyguard_guardian_node(state: OracleState) -> Dict[str, Any]:
+    """
+    Node 4 (Agent 3): Continuous Active Position Risk Guardian (+50% profit lock, -$150 stop loss, wing salvage).
+    """
+    print("🛡️ [LangGraph: Node 4] Bodyguard executing 5-Minute Active Risk Guardian scan...", flush=True)
+    bodyguard = BodyguardAgent()
+    guard_res = bodyguard.monitor_positions()
+    return {
+        "guardian_result": guard_res
+    }
+
+
 def capital_preservation_node(state: OracleState) -> Dict[str, Any]:
     """
-    Node 4: Capital Preservation Mode when a trade is vetoed or strategy is NO_TRADE.
+    Fallback Node: Capital Preservation Mode when a trade is vetoed or strategy is NO_TRADE.
     """
     decision = state.get("decision")
-    print(f"🛑 [LangGraph: Node 4] Capital Preservation Mode: {decision.validator_status if decision else 'NO_TRADE'}")
+    print(f"🛑 [LangGraph: Fallback Node] Capital Preservation Mode: {decision.validator_status if decision else 'NO_TRADE'}", flush=True)
     return {
         "execution_result": {
             "status": "CAPITAL_PRESERVED_NO_ORDERS",
@@ -117,12 +131,12 @@ def check_trade_approval_edge(state: OracleState) -> str:
 
 
 # ==============================================================================
-# BUILD & COMPILE LANGGRAPH STATE GRAPH
+# BUILD & COMPILE LANGGRAPH STATE GRAPH (3-AGENT PIPELINE)
 # ==============================================================================
 
 def build_oracle_graph():
     """
-    Constructs and compiles the master LangGraph state machine.
+    Constructs and compiles the master 3-Agent LangGraph state machine.
     """
     workflow = StateGraph(OracleState)
 
@@ -130,6 +144,7 @@ def build_oracle_graph():
     workflow.add_node("market_scout_node", market_scout_node)
     workflow.add_node("strategy_brain_node", strategy_brain_node)
     workflow.add_node("trader_execution_node", trader_execution_node)
+    workflow.add_node("bodyguard_guardian_node", bodyguard_guardian_node)
     workflow.add_node("capital_preservation_node", capital_preservation_node)
 
     # 2. Add Fixed Edges
@@ -146,8 +161,10 @@ def build_oracle_graph():
         }
     )
 
-    workflow.add_edge("trader_execution_node", END)
-    workflow.add_edge("capital_preservation_node", END)
+    # 4. Route from Trader & Capital Preservation to Agent 3 Bodyguard
+    workflow.add_edge("trader_execution_node", "bodyguard_guardian_node")
+    workflow.add_edge("capital_preservation_node", "bodyguard_guardian_node")
+    workflow.add_edge("bodyguard_guardian_node", END)
 
     # Compile Graph
     app = workflow.compile()
