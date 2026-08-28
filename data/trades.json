@@ -1,1 +1,106 @@
-[]
+[
+  {
+    "trade_id": "ORD-1787892988",
+    "symbol": "MSFT",
+    "strategy": "THETA_IRON_CONDOR",
+    "entry_date": "2026-08-28",
+    "underlying_entry_price": 505.0,
+    "cost_or_credit_usd": 250.0,
+    "package_limit_price_usd": 250.0,
+    "margin_requirement_usd": 2500.0,
+    "is_credit": true,
+    "profit_target_usd": 125.0,
+    "stop_loss_usd": 150.0,
+    "status": "OPEN_ACTIVE",
+    "orders": [
+      {
+        "order_id": "ORACLE-1787892987",
+        "symbol": "MSFT260904C00530000",
+        "qty": 1,
+        "side": "sell",
+        "type": "limit",
+        "status": "FILLED_PAPER_FALLBACK",
+        "filled_at": "2026-08-28T09:56:28.225015",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 2.1,
+        "occ_symbol": "MSFT260904C00530000"
+      },
+      {
+        "order_id": "ORACLE-1787892988",
+        "symbol": "MSFT260904C00555000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_FALLBACK",
+        "filled_at": "2026-08-28T09:56:28.455689",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 0.9,
+        "occ_symbol": "MSFT260904C00555000"
+      },
+      {
+        "order_id": "ORACLE-1787892988",
+        "symbol": "MSFT260904P00480000",
+        "qty": 1,
+        "side": "sell",
+        "type": "limit",
+        "status": "FILLED_PAPER_FALLBACK",
+        "filled_at": "2026-08-28T09:56:28.686953",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 2.2,
+        "occ_symbol": "MSFT260904P00480000"
+      },
+      {
+        "order_id": "ORACLE-1787892988",
+        "symbol": "MSFT260904P00455000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_FALLBACK",
+        "filled_at": "2026-08-28T09:56:28.917166",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 0.9,
+        "occ_symbol": "MSFT260904P00455000"
+      }
+    ]
+  },
+  {
+    "trade_id": "ORD-1787892989",
+    "symbol": "TSLA",
+    "strategy": "EARNINGS_STRADDLE",
+    "entry_date": "2026-08-28",
+    "underlying_entry_price": 355.0,
+    "cost_or_credit_usd": 2486.0,
+    "package_limit_price_usd": 2486.0,
+    "margin_requirement_usd": 0.0,
+    "is_credit": false,
+    "profit_target_usd": 1243.0,
+    "stop_loss_usd": 150.0,
+    "status": "OPEN_ACTIVE",
+    "orders": [
+      {
+        "order_id": "ORACLE-1787892989",
+        "symbol": "TSLA260904C00355000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_FALLBACK",
+        "filled_at": "2026-08-28T09:56:29.408415",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 12.43,
+        "occ_symbol": "TSLA260904C00355000"
+      },
+      {
+        "order_id": "ORACLE-1787892989",
+        "symbol": "TSLA260904P00355000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_FALLBACK",
+        "filled_at": "2026-08-28T09:56:29.642887",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 12.43,
+        "occ_symbol": "TSLA260904P00355000"
+      }
+    ]
+  }
+]
