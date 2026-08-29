@@ -33,7 +33,20 @@ class BodyguardAgent:
     def monitor_positions(self) -> Dict[str, Any]:
         """
         Scans all active open positions, synchronizes with live broker P&L, and enforces exit/salvage rules.
+        Suspends active exits and returns standby during off-market hours.
         """
+        # Step 0: Check Market Clock Gate
+        if not self.alpaca.is_market_open():
+            clock = self.alpaca.get_market_clock()
+            print(f"🛡️ [BodyguardAgent] Market is CLOSED (Next Open: {clock.get('next_open', '09:30 EST')}). Off-hours monitoring safely suspended.", flush=True)
+            return {
+                "scanned_count": 0,
+                "actions_taken": [],
+                "adaptive_sleep_seconds": 300,
+                "status": "MARKET_CLOSED_STANDBY",
+                "message": "Market is closed. Active monitoring and exits suspended."
+            }
+
         print("\n🛡️ [BodyguardAgent] Initiating 60-Second Active Position Risk Scan...", flush=True)
 
         # 1. Check Black Swan Macro Circuit Breaker
@@ -96,12 +109,13 @@ class BodyguardAgent:
             stop_loss_usd = float(trade.get("stop_loss_usd", 150.0))
             trade_id = trade.get("trade_id", "UNKNOWN")
 
-            # Check if this position has live broker P&L
-            broker_pos = next((p for p in live_broker_positions if symbol in p["symbol"]), None)
-            if broker_pos:
-                current_pnl = broker_pos["unrealized_pl"]
-                pnl_pct = broker_pos["unrealized_plpc"]
-                pnl_source = "LIVE_ALPACA_BROKER"
+            # Check if this position has live broker P&L across all package legs
+            symbol_positions = [p for p in live_broker_positions if symbol in p.get("symbol", "")]
+            if symbol_positions:
+                current_pnl = sum(float(p.get("unrealized_pl", 0.0)) for p in symbol_positions)
+                total_cost = sum(abs(float(p.get("cost_basis", p.get("market_value", 0.0)))) for p in symbol_positions)
+                pnl_pct = (current_pnl / max(total_cost, 1.0)) * 100.0
+                pnl_source = f"LIVE_ALPACA_BROKER ({len(symbol_positions)} legs combined)"
             else:
                 pnl_info = self._calculate_pnl(trade, current_price)
                 current_pnl = pnl_info["estimated_pnl_usd"]

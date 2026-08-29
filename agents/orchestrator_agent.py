@@ -15,12 +15,17 @@ import datetime
 from pathlib import Path
 from typing import Dict, Any, Optional
 
+try:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
+except Exception:
+    pass
+
 from tools.alpaca_tools import AlpacaTool
 from tools.market_data_tools import MarketDataTool
 from tools.macro_calendar_tools import MacroCalendarTool
 from tools.circuit_breaker_tools import CircuitBreakerGuard
 from agents.bodyguard_agent import BodyguardAgent
-from graph import oracle_app
 
 # Configure Fund Logger
 LOGS_DIR = Path(__file__).resolve().parent.parent / "logs"
@@ -51,6 +56,7 @@ class MasterOrchestratorAgent:
         positions = self.alpaca.get_open_positions()
         circuit = CircuitBreakerGuard.check_black_swan_circuit_breaker()
         overview = MarketDataTool.get_market_overview()
+        clock = self.alpaca.get_market_clock()
 
         return {
             "account_id": account.get("account_id", "UNKNOWN"),
@@ -58,6 +64,8 @@ class MasterOrchestratorAgent:
             "portfolio_equity": account.get("equity", 100000.0),
             "buying_power": account.get("buying_power", 400000.0),
             "is_live_broker": account.get("is_live_alpaca", False),
+            "is_market_open": clock.get("is_open", False),
+            "market_clock": clock,
             "open_positions_count": len(positions),
             "open_positions": positions,
             "vix_level": overview.get("vix", 14.5),
@@ -74,10 +82,14 @@ class MasterOrchestratorAgent:
         print("=" * 80, flush=True)
 
         status = self.get_fund_status()
+        clock = status.get("market_clock", {})
+        market_str = "🟢 OPEN FOR TRADING" if status.get("is_market_open") else f"🔴 CLOSED (Next Open: {clock.get('next_open', '09:30 EST')})"
+
         print(f"  • Broker Account ID      : {status['account_id']}", flush=True)
         print(f"  • Available Cash         : ${status['cash_balance']:,.2f}", flush=True)
         print(f"  • Portfolio Equity       : ${status['portfolio_equity']:,.2f}", flush=True)
         print(f"  • Alpaca API Live Mode   : {status['is_live_broker']}", flush=True)
+        print(f"  • US Market State        : {market_str}", flush=True)
         print(f"  • CBOE VIX Index         : {status['vix_level']:.1f}", flush=True)
         print(f"  • Active Open Positions  : {status['open_positions_count']}", flush=True)
 
@@ -85,7 +97,7 @@ class MasterOrchestratorAgent:
         print(f"  • Fund Pre-Flight Status : {'🟢 ALL SYSTEMS GO (READY FOR 9:30 AM)' if is_ready else '🔴 PRE-FLIGHT HOLD'}", flush=True)
         print("=" * 80, flush=True)
 
-        logging.info(f"Pre-Market Diagnostics: Ready={is_ready}, Equity=${status['portfolio_equity']:,.2f}")
+        logging.info(f"Pre-Market Diagnostics: Ready={is_ready}, MarketOpen={status.get('is_market_open')}, Equity=${status['portfolio_equity']:,.2f}")
         return {"status": "READY" if is_ready else "HOLD", "details": status}
 
     def run_market_open_execution(self) -> Dict[str, Any]:
@@ -114,6 +126,7 @@ class MasterOrchestratorAgent:
             "error_logs": []
         }
 
+        from graph import oracle_app
         final_state = oracle_app.invoke(initial_state)
         logging.info(f"Market Open Execution Completed: Symbol={final_state.get('selected_symbol')}, Strategy={final_state.get('recommended_strategy')}")
         return final_state

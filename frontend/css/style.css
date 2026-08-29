@@ -1,0 +1,947 @@
+/* ==========================================================================
+   ORACLE | OPENBB TERMINAL PRO - DESIGN SYSTEM 5.0
+   Pixel-Perfect Responsive Institutional Options Trading Terminal
+   ========================================================================== */
+
+:root {
+    /* OpenBB Terminal Pro Obsidian Dark Palette */
+    --openbb-bg-canvas: #090D14;
+    --openbb-bg-surface: #0E1420;
+    --openbb-bg-widget: #121927;
+    --openbb-bg-widget-hover: #172134;
+    --openbb-bg-elevated: #1B283E;
+    --openbb-bg-input: #080C13;
+    
+    /* OpenBB Signature Accents */
+    --openbb-cyan: #00E5FF;
+    --openbb-cyan-subtle: rgba(0, 229, 255, 0.12);
+    --openbb-emerald: #00E676;
+    --openbb-emerald-subtle: rgba(0, 230, 118, 0.12);
+    --openbb-crimson: #FF3D71;
+    --openbb-crimson-subtle: rgba(255, 61, 113, 0.12);
+    --openbb-amber: #FFB703;
+    --openbb-amber-subtle: rgba(255, 183, 3, 0.12);
+    --openbb-purple: #A855F7;
+    --openbb-purple-subtle: rgba(168, 85, 247, 0.12);
+    --openbb-blue: #3B82F6;
+
+    /* High-Precision Borders */
+    --openbb-border: rgba(255, 255, 255, 0.08);
+    --openbb-border-medium: rgba(255, 255, 255, 0.14);
+    --openbb-border-focus: rgba(0, 229, 255, 0.5);
+
+    /* Typography */
+    --font-heading: 'Outfit', 'Inter', -apple-system, sans-serif;
+    --font-body: 'Inter', -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Roboto Mono', monospace;
+
+    /* Text Hierarchy */
+    --text-pure: #FFFFFF;
+    --text-primary: #F1F5F9;
+    --text-body: #CBD5E1;
+    --text-muted: #94A3B8;
+    --text-dim: #64748B;
+
+    /* Spacing & Radius */
+    --radius-xs: 4px;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-full: 9999px;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+    max-width: 100vw;
+    background-color: var(--openbb-bg-canvas);
+    color: var(--text-body);
+    font-family: var(--font-body);
+    display: flex;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    -webkit-font-smoothing: antialiased;
+    font-size: 13px;
+}
+
+/* OpenBB Precision Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--openbb-bg-canvas); }
+::-webkit-scrollbar-thumb { background: var(--openbb-bg-elevated); border-radius: var(--radius-full); }
+::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+
+/* ==========================================================================
+   1. Left Navigation Sidebar
+   ========================================================================== */
+.openbb-sidebar {
+    width: 200px;
+    min-width: 200px;
+    max-width: 200px;
+    background: var(--openbb-bg-surface);
+    border-right: 1px solid var(--openbb-border);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 14px 12px;
+    height: 100vh;
+    flex-shrink: 0;
+    z-index: 100;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.openbb-brand-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--openbb-border);
+}
+
+.openbb-logo-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    background: linear-gradient(135deg, var(--openbb-cyan), #0284C7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    color: #000000;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+    flex-shrink: 0;
+}
+
+.openbb-brand-text {
+    font-family: var(--font-heading);
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--text-pure);
+    letter-spacing: 0.5px;
+}
+
+.openbb-brand-badge {
+    font-size: 0.62rem;
+    background: var(--openbb-cyan-subtle);
+    color: var(--openbb-cyan);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-weight: 700;
+    margin-left: 4px;
+}
+
+.openbb-nav-group {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-top: 12px;
+    list-style: none;
+}
+
+.openbb-nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 10px;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-muted);
+    font-family: var(--font-heading);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.12s ease;
+    width: 100%;
+    text-align: left;
+}
+
+.openbb-nav-btn:hover {
+    color: var(--text-pure);
+    background: var(--openbb-bg-widget);
+}
+
+.openbb-nav-btn.active {
+    color: var(--openbb-cyan);
+    background: var(--openbb-cyan-subtle);
+    border: 1px solid rgba(0, 229, 255, 0.35);
+}
+
+/* Sidebar Footer & AI Copilot */
+.openbb-sidebar-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-top: 1px solid var(--openbb-border);
+    padding-top: 10px;
+}
+
+.btn-openbb-copilot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #00E5FF, #2563EB);
+    color: #000000;
+    font-family: var(--font-heading);
+    font-size: 0.80rem;
+    font-weight: 800;
+    padding: 7px 10px;
+    border-radius: var(--radius-sm);
+    border: none;
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+    box-shadow: 0 4px 12px rgba(0, 229, 255, 0.3);
+    width: 100%;
+}
+.btn-openbb-copilot:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0, 229, 255, 0.45);
+}
+
+/* ==========================================================================
+   2. Main Workspace Layout
+   ========================================================================== */
+.openbb-main-workspace {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: calc(100vw - 200px);
+    max-width: calc(100vw - 200px);
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: var(--openbb-bg-canvas);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Top Header Ribbon */
+.openbb-top-header {
+    background: var(--openbb-bg-surface);
+    border-bottom: 1px solid var(--openbb-border);
+    padding: 6px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-shrink: 0;
+    min-height: 44px;
+    width: 100%;
+    max-width: 100%;
+    flex-wrap: wrap;
+}
+
+.openbb-header-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    flex-wrap: wrap;
+    min-width: 0;
+}
+
+.openbb-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 8px;
+    border-radius: var(--radius-full);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    background: var(--openbb-amber-subtle);
+    border: 1px solid rgba(255, 183, 3, 0.35);
+    color: var(--openbb-amber);
+    white-space: nowrap;
+}
+.openbb-status-pill.open {
+    background: var(--openbb-emerald-subtle);
+    border-color: rgba(0, 230, 118, 0.35);
+    color: var(--openbb-emerald);
+}
+
+.openbb-beacon-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 6px currentColor;
+}
+
+.openbb-countdown-text {
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    white-space: nowrap;
+}
+.openbb-countdown-text strong { color: var(--openbb-cyan); }
+
+.openbb-clock {
+    font-family: var(--font-mono);
+    color: var(--text-dim);
+    font-size: 0.70rem;
+    white-space: nowrap;
+}
+
+/* Action Buttons */
+.openbb-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.btn-openbb-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    background: var(--openbb-bg-widget);
+    border: 1px solid var(--openbb-border);
+    color: var(--text-pure);
+    font-family: var(--font-heading);
+    font-size: 0.72rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.12s ease;
+    white-space: nowrap;
+}
+.btn-openbb-action:hover {
+    background: var(--openbb-bg-elevated);
+    border-color: var(--openbb-border-medium);
+}
+.btn-openbb-action.primary {
+    background: var(--openbb-cyan-subtle);
+    border-color: rgba(0, 229, 255, 0.4);
+    color: var(--openbb-cyan);
+}
+.btn-openbb-action.primary:hover { background: rgba(0, 229, 255, 0.25); }
+.btn-openbb-action.danger {
+    background: var(--openbb-crimson-subtle);
+    border-color: rgba(255, 61, 113, 0.4);
+    color: var(--openbb-crimson);
+}
+.btn-openbb-action.danger:hover { background: rgba(255, 61, 113, 0.25); }
+
+/* Market Overview Ticker Ribbon */
+.openbb-ticker-ribbon {
+    background: var(--openbb-bg-surface);
+    border-bottom: 1px solid var(--openbb-border);
+    padding: 4px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    overflow-x: auto;
+    flex-shrink: 0;
+    width: 100%;
+    scrollbar-width: none;
+}
+.openbb-ticker-ribbon::-webkit-scrollbar { display: none; }
+
+.openbb-ticker-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 8px;
+    border-radius: var(--radius-sm);
+    background: var(--openbb-bg-widget);
+    border: 1px solid var(--openbb-border);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: border-color 0.12s ease;
+    flex-shrink: 0;
+}
+.openbb-ticker-chip:hover { border-color: var(--openbb-border-medium); }
+
+.openbb-ticker-chip .sym { font-family: var(--font-heading); font-weight: 700; color: var(--text-pure); font-size: 0.75rem; }
+.openbb-ticker-chip .val { font-family: var(--font-mono); color: var(--text-body); font-size: 0.72rem; }
+.openbb-ticker-chip .chg { font-family: var(--font-mono); font-weight: 700; font-size: 0.7rem; }
+.openbb-ticker-chip .chg.pos { color: var(--openbb-emerald); }
+.openbb-ticker-chip .chg.neg { color: var(--openbb-crimson); }
+.openbb-ticker-chip .chg.vix { color: var(--openbb-purple); }
+
+/* ==========================================================================
+   3. Pages & Grid Architecture
+   ========================================================================== */
+.app-page {
+    display: none;
+    padding: 12px 16px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    animation: fadeIn 0.12s ease;
+}
+.app-page.active { display: block; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(2px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Modular 2-Column Responsive Layout */
+.openbb-grid-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.30fr) minmax(0, 1fr);
+    gap: 12px;
+    align-items: start;
+    width: 100%;
+    max-width: 100%;
+}
+
+.openbb-column {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+    max-width: 100%;
+}
+
+/* Widget Card Container */
+.openbb-widget {
+    background: var(--openbb-bg-widget);
+    border: 1px solid var(--openbb-border);
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.openbb-widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--openbb-border);
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.openbb-widget-title {
+    font-family: var(--font-heading);
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text-pure);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.openbb-widget-subtitle {
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+}
+
+/* ==========================================================================
+   4. KPI Hero Deck (Responsive 6 Cards)
+   ========================================================================== */
+.openbb-kpi-deck {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 12px;
+    width: 100%;
+}
+
+.openbb-kpi-box {
+    background: var(--openbb-bg-widget);
+    border: 1px solid var(--openbb-border);
+    border-radius: var(--radius-sm);
+    padding: 9px 11px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+.openbb-kpi-box.highlight {
+    background: linear-gradient(135deg, rgba(0, 229, 255, 0.08), rgba(59, 130, 246, 0.04));
+    border-color: rgba(0, 229, 255, 0.3);
+}
+
+.openbb-kpi-box .lbl { font-size: 0.63rem; color: var(--text-dim); text-transform: uppercase; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.openbb-kpi-box .val { font-family: var(--font-mono); font-size: 1.10rem; font-weight: 800; color: var(--text-pure); white-space: nowrap; }
+.openbb-kpi-box .val.pos { color: var(--openbb-emerald); }
+.openbb-kpi-box .val.neg { color: var(--openbb-crimson); }
+.openbb-kpi-box .sub { font-size: 0.63rem; color: var(--text-muted); font-family: var(--font-mono); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Strategy Modeler Summary Chips */
+.openbb-strat-summary {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+    margin-bottom: 8px;
+    background: var(--openbb-bg-surface);
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--openbb-border);
+    width: 100%;
+}
+
+.openbb-strat-summary .chip { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.openbb-strat-summary .chip .label { font-size: 0.62rem; color: var(--text-dim); text-transform: uppercase; font-weight: 600; }
+.openbb-strat-summary .chip .val { font-family: var(--font-mono); font-size: 0.92rem; font-weight: 800; }
+.openbb-strat-summary .chip .val.profit { color: var(--openbb-emerald); }
+.openbb-strat-summary .chip .val.loss { color: var(--openbb-crimson); }
+.openbb-strat-summary .chip .val.prob { color: var(--openbb-cyan); }
+
+/* Scenario Bar */
+.openbb-scenario-bar {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+
+.btn-openbb-scenario {
+    background: var(--openbb-bg-surface);
+    border: 1px solid var(--openbb-border);
+    color: var(--text-muted);
+    font-family: var(--font-heading);
+    font-size: 0.70rem;
+    font-weight: 600;
+    padding: 3px 7px;
+    border-radius: var(--radius-xs);
+    cursor: pointer;
+    transition: all 0.12s ease;
+    white-space: nowrap;
+}
+.btn-openbb-scenario:hover { color: var(--text-pure); border-color: var(--openbb-border-medium); }
+.btn-openbb-scenario.active {
+    background: var(--openbb-bg-elevated);
+    color: var(--openbb-cyan);
+    border-color: var(--openbb-cyan);
+    font-weight: 700;
+}
+
+/* AI Pipeline Step Nodes (8-Node Grid) */
+.openbb-pipeline-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+    margin-top: 4px;
+    width: 100%;
+}
+
+.openbb-node-card {
+    background: var(--openbb-bg-surface);
+    border: 1px solid var(--openbb-border);
+    border-radius: var(--radius-xs);
+    padding: 6px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    cursor: pointer;
+    transition: all 0.12s ease;
+    min-width: 0;
+}
+.openbb-node-card:hover { border-color: var(--openbb-cyan); background: var(--openbb-bg-widget-hover); }
+.openbb-node-card.active { border-color: rgba(0, 230, 118, 0.4); background: var(--openbb-emerald-subtle); }
+
+.openbb-node-card .title { font-size: 0.72rem; font-weight: 700; color: var(--text-pure); display: flex; justify-content: space-between; gap: 4px; }
+.openbb-node-card .desc { font-size: 0.65rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.openbb-node-card .tag { font-size: 0.62rem; font-family: var(--font-mono); color: var(--openbb-emerald); font-weight: 700; }
+
+/* ==========================================================================
+   5. Tables (Blotter, Watchlist, Trades Ledger)
+   ========================================================================== */
+.openbb-table-wrapper {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    border-radius: var(--radius-xs);
+}
+
+.openbb-table {
+    width: 100%;
+    min-width: 100%;
+    border-collapse: collapse;
+    font-size: 0.72rem;
+    text-align: left;
+}
+
+.openbb-table th {
+    padding: 6px 8px;
+    color: var(--text-dim);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    border-bottom: 1px solid var(--openbb-border);
+    letter-spacing: 0.5px;
+    background: var(--openbb-bg-surface);
+    font-family: var(--font-heading);
+    white-space: nowrap;
+}
+
+.openbb-table td {
+    padding: 6px 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    font-family: var(--font-mono);
+    color: var(--text-body);
+    white-space: nowrap;
+}
+
+/* Wrapping Cell for Long Exit Reasons & Descriptions */
+.openbb-table td.cell-wrap {
+    white-space: normal !important;
+    word-break: break-word;
+    min-width: 140px;
+    max-width: 260px;
+    line-height: 1.35;
+}
+
+.openbb-table tbody tr {
+    cursor: pointer;
+    transition: background 0.12s ease;
+}
+.openbb-table tbody tr:hover { background: rgba(0, 229, 255, 0.06); }
+
+/* Badges */
+.badge-openbb {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    font-weight: 700;
+    padding: 2px 5px;
+    border-radius: 3px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    white-space: nowrap;
+}
+.badge-openbb.profit { background: var(--openbb-emerald-subtle); color: var(--openbb-emerald); border: 1px solid rgba(0, 230, 118, 0.3); }
+.badge-openbb.loss { background: var(--openbb-crimson-subtle); color: var(--openbb-crimson); border: 1px solid rgba(255, 61, 113, 0.3); }
+.badge-openbb.neutral { background: var(--openbb-cyan-subtle); color: var(--openbb-cyan); border: 1px solid rgba(0, 229, 255, 0.3); }
+.badge-openbb.warn { background: var(--openbb-amber-subtle); color: var(--openbb-amber); border: 1px solid rgba(255, 183, 3, 0.3); }
+
+/* ==========================================================================
+   6. Modals, Drawers, Copilot, & Palettes
+   ========================================================================== */
+.slide-drawer {
+    position: fixed;
+    top: 0; right: -440px;
+    width: 380px;
+    max-width: 90vw;
+    height: 100vh;
+    background: var(--openbb-bg-surface);
+    border-left: 1px solid var(--openbb-border-medium);
+    box-shadow: -10px 0 40px rgba(0, 0, 0, 0.85);
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    transition: right 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.slide-drawer.open { right: 0 !important; }
+
+.drawer-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--openbb-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--openbb-bg-widget);
+}
+.drawer-title { font-family: var(--font-heading); font-size: 0.95rem; font-weight: 700; color: var(--text-pure); }
+.btn-drawer-close { background: transparent; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; }
+.btn-drawer-close:hover { color: var(--openbb-crimson); }
+
+.drawer-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.copilot-chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.copilot-msg {
+    padding: 9px 11px;
+    border-radius: var(--radius-sm);
+    font-size: 0.78rem;
+    line-height: 1.45;
+}
+.copilot-msg.user {
+    background: var(--openbb-bg-elevated);
+    color: var(--text-pure);
+    align-self: flex-end;
+    max-width: 85%;
+}
+.copilot-msg.assistant {
+    background: var(--openbb-bg-widget);
+    border: 1px solid var(--openbb-border);
+    color: var(--text-body);
+    align-self: flex-start;
+    max-width: 95%;
+}
+.copilot-msg.assistant strong { color: var(--openbb-cyan); }
+
+.copilot-prompt-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 6px;
+}
+.prompt-pill {
+    background: var(--openbb-bg-widget);
+    border: 1px solid var(--openbb-border);
+    border-radius: var(--radius-full);
+    padding: 3px 8px;
+    color: var(--text-muted);
+    font-size: 0.68rem;
+    cursor: pointer;
+    transition: all 0.12s ease;
+}
+.prompt-pill:hover {
+    color: var(--openbb-cyan);
+    border-color: var(--openbb-cyan);
+    background: var(--openbb-cyan-subtle);
+}
+
+.copilot-input-bar {
+    display: flex;
+    gap: 6px;
+    padding: 10px 14px;
+    border-top: 1px solid var(--openbb-border);
+    background: var(--openbb-bg-surface);
+}
+.copilot-input {
+    flex: 1;
+    background: var(--openbb-bg-input);
+    border: 1px solid var(--openbb-border);
+    border-radius: var(--radius-xs);
+    padding: 6px 10px;
+    color: var(--text-pure);
+    font-size: 0.78rem;
+    outline: none;
+}
+.copilot-input:focus { border-color: var(--openbb-cyan); }
+
+/* Modal Overlay (State Inspector) */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(3, 6, 12, 0.85);
+    backdrop-filter: blur(10px);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+.modal-overlay.active { display: flex !important; }
+
+.modal-card {
+    background: var(--openbb-bg-surface);
+    border: 1px solid var(--openbb-border-medium);
+    border-radius: var(--radius-md);
+    width: 100%;
+    max-width: 650px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.95);
+    overflow: hidden;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--openbb-border);
+    background: var(--openbb-bg-widget);
+}
+
+.modal-body {
+    padding: 14px;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+/* Command Palette Overlay (Ctrl+K) */
+.command-palette-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(3, 6, 12, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 9999;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 12vh;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+.command-palette-overlay.active, .command-palette-overlay.open { display: flex !important; }
+
+.command-palette-card {
+    background: var(--openbb-bg-surface);
+    border: 1px solid var(--openbb-border-medium);
+    border-radius: var(--radius-md);
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
+    overflow: hidden;
+}
+
+.palette-input-box {
+    display: flex;
+    align-items: center;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--openbb-border);
+    gap: 8px;
+}
+.palette-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-pure);
+    font-family: var(--font-heading);
+    font-size: 0.92rem;
+    outline: none;
+}
+
+.palette-results { max-height: 240px; overflow-y: auto; padding: 4px 0; }
+.palette-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 14px;
+    cursor: pointer;
+    font-size: 0.75rem;
+}
+.palette-item:hover { background: var(--openbb-cyan-subtle); }
+.palette-item-left { display: flex; align-items: center; gap: 6px; color: var(--text-pure); font-weight: 600; }
+.palette-item-right { font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-dim); }
+
+/* Toasts */
+.toast-container {
+    position: fixed;
+    bottom: 16px; right: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    z-index: 10000;
+    max-width: 360px;
+}
+.toast-message {
+    background: var(--openbb-bg-widget);
+    border: 1px solid var(--openbb-border-medium);
+    border-left: 3px solid var(--openbb-cyan);
+    border-radius: var(--radius-xs);
+    padding: 8px 14px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+    color: var(--text-pure);
+    font-size: 0.78rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: opacity 0.3s ease;
+}
+.toast-message.success { border-left-color: var(--openbb-emerald); }
+.toast-message.error { border-left-color: var(--openbb-crimson); }
+.toast-message.warning { border-left-color: var(--openbb-amber); }
+.toast-message.info { border-left-color: var(--openbb-cyan); }
+
+/* ==========================================================================
+   7. Responsive Breakpoints (Desktop, Laptop, Tablet, Mobile)
+   ========================================================================== */
+
+/* Large Laptops / Desktops (<= 1440px) */
+@media (max-width: 1440px) {
+    .openbb-kpi-deck {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+/* Standard Laptops (<= 1200px) */
+@media (max-width: 1200px) {
+    .openbb-grid-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .openbb-kpi-deck {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .openbb-pipeline-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+/* Tablet Landscape (<= 992px) */
+@media (max-width: 992px) {
+    .openbb-sidebar {
+        width: 58px;
+        min-width: 58px;
+        max-width: 58px;
+        padding: 10px 4px;
+    }
+    .openbb-brand-text, .openbb-brand-badge, .openbb-nav-btn span:last-child, .btn-openbb-copilot span:last-child {
+        display: none;
+    }
+    .openbb-nav-btn {
+        justify-content: center;
+        padding: 8px;
+    }
+    .btn-openbb-copilot {
+        justify-content: center;
+        padding: 8px;
+    }
+    .openbb-main-workspace {
+        width: calc(100vw - 58px);
+        max-width: calc(100vw - 58px);
+    }
+    .openbb-pipeline-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .openbb-kpi-deck {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* Tablet Portrait / Small Tablet (<= 768px) */
+@media (max-width: 768px) {
+    .openbb-top-header {
+        padding: 6px 10px;
+    }
+    .openbb-header-meta {
+        font-size: 0.70rem;
+    }
+    .openbb-strat-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .openbb-pipeline-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .openbb-kpi-deck {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* Mobile (<= 520px) */
+@media (max-width: 520px) {
+    .openbb-kpi-deck {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .openbb-pipeline-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .openbb-strat-summary {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}

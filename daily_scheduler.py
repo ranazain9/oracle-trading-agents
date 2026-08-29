@@ -71,9 +71,17 @@ class DailyTradingDaemon:
 
         while self.is_running:
             try:
-                now_utc = datetime.datetime.utcnow()
-                # US Eastern Time is UTC-4 (EDT) or UTC-5 (EST)
-                now_est = now_utc - datetime.timedelta(hours=4)
+                # 1. Fetch Authoritative Market Clock
+                market_clock = self.orchestrator.alpaca.get_market_clock()
+                is_market_open_broker = market_clock.get("is_open", False)
+
+                try:
+                    from zoneinfo import ZoneInfo
+                    now_est = datetime.datetime.now(ZoneInfo("America/New_York"))
+                except Exception:
+                    now_utc = datetime.datetime.utcnow()
+                    now_est = now_utc - datetime.timedelta(hours=4)
+
                 today_str = now_est.date().isoformat()
                 weekday = now_est.weekday()  # 0=Mon, 4=Fri, 5=Sat, 6=Sun
                 hour = now_est.hour
@@ -92,6 +100,12 @@ class DailyTradingDaemon:
                     time.sleep(1800)
                     continue
 
+                # Exchange Holiday Check (Weekday but broker clock reports closed during normal hours)
+                if not is_market_open_broker and hour >= 10 and hour < 16:
+                    print(f"🏖️ [DAEMON] Exchange Holiday / Market Closed ({now_est.strftime('%A %Y-%m-%d')}). Standing by...", end="\r", flush=True)
+                    time.sleep(1800)
+                    continue
+
                 # Phase 1: 9:00 AM - 9:29 AM EST (Pre-Market Readiness)
                 if hour == 9 and minute < 30:
                     print(f"🔍 [DAEMON] Pre-Market Window ({now_est.strftime('%H:%M:%S EST')}). Standing by for 9:30 AM open...", end="\r", flush=True)
@@ -99,7 +113,7 @@ class DailyTradingDaemon:
                     continue
 
                 # Phase 2: 9:30 AM - 9:35 AM EST (Market Open Execution)
-                elif hour == 9 and minute >= 30 and not self.market_open_executed_today:
+                elif hour == 9 and minute >= 30 and not self.market_open_executed_today and is_market_open_broker:
                     print(f"\n🔔 [DAEMON: 9:30 AM EST] MARKET OPEN! Triggering LangGraph Strategy & Execution Pipeline...")
                     self.orchestrator.run_market_open_execution()
                     self.market_open_executed_today = True
@@ -107,7 +121,7 @@ class DailyTradingDaemon:
                     continue
 
                 # Phase 3: 9:35 AM - 4:00 PM EST (Intraday Active Risk Guardian)
-                elif (hour == 9 and minute >= 35) or (10 <= hour < 16):
+                elif is_market_open_broker and ((hour == 9 and minute >= 35) or (10 <= hour < 16)):
                     res = self.orchestrator.run_intraday_monitoring_step()
                     adaptive_sleep = res.get("adaptive_sleep_seconds", 60)
                     print(f"🛡️ [DAEMON: INTRADAY] Bodyguard Active | Scan Interval: {adaptive_sleep}s | Time: {now_est.strftime('%H:%M:%S EST')}", end="\r", flush=True)
@@ -124,7 +138,8 @@ class DailyTradingDaemon:
 
                 # Phase 5: 4:35 PM - 8:59 AM EST (Overnight Suspension)
                 else:
-                    print(f"🌙 [DAEMON] Market Closed ({now_est.strftime('%H:%M:%S EST')}). Standing by overnight...", end="\r", flush=True)
+                    next_open = market_clock.get("next_open", "09:30 EST")
+                    print(f"🌙 [DAEMON] Market Closed ({now_est.strftime('%H:%M:%S EST')}). Standing by overnight until {next_open}...", end="\r", flush=True)
                     time.sleep(300)
 
             except Exception as e:

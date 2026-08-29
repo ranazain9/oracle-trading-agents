@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORACLE | Quantitative Multi-Agent Options Terminal Pro</title>
+    <meta name="description" content="Institutional Quantitative AI Multi-Agent Options Trading Command Center">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    
+    <!-- Master Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- =========================================================================
+         1. Left Navigation Sidebar (OpenBB Pro Style)
+         ========================================================================= -->
+    <aside class="openbb-sidebar">
+        <div>
+            <div class="openbb-brand-box">
+                <div class="openbb-logo-icon">O</div>
+                <div>
+                    <span class="openbb-brand-text">ORACLE</span>
+                    <span class="openbb-brand-badge">PRO 5.0</span>
+                </div>
+            </div>
+
+            <ul class="openbb-nav-group">
+                <li>
+                    <button class="openbb-nav-btn active" id="btn-nav-dashboard" onclick="appController.navigateToPage('dashboard')">
+                        <span>📊</span>
+                        <span>Workspace</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="openbb-nav-btn" id="btn-nav-signals" onclick="appController.navigateToPage('signals')">
+                        <span>📈</span>
+                        <span>Signals & Radar</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="openbb-nav-btn" id="btn-nav-agents" onclick="appController.navigateToPage('agents')">
+                        <span>🤖</span>
+                        <span>Agents & HITL</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="openbb-nav-btn" id="btn-nav-strategies" onclick="appController.navigateToPage('strategies')">
+                        <span>⚡</span>
+                        <span>Strategy Studio</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="openbb-nav-btn" id="btn-nav-monitor" onclick="appController.navigateToPage('monitor')">
+                        <span>📜</span>
+                        <span>Ledger & Stream</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="openbb-nav-btn" id="btn-nav-settings" onclick="appController.navigateToPage('settings')">
+                        <span>⚙️</span>
+                        <span>Config & Risk</span>
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <div class="openbb-sidebar-footer">
+            <button class="btn-openbb-copilot" onclick="AICopilot.toggleDrawer()">
+                <span>💬</span>
+                <span>OpenBB Copilot</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- =========================================================================
+         2. Main Workspace Container
+         ========================================================================= -->
+    <main class="openbb-main-workspace">
+        
+        <!-- Top Header Ribbon -->
+        <header class="openbb-top-header">
+            <div class="openbb-header-meta">
+                <div class="openbb-status-pill" id="market-status-pill">
+                    <span class="openbb-beacon-dot"></span>
+                    <span id="market-status-text">MARKET CLOSED</span>
+                </div>
+                <div class="openbb-countdown-text" id="market-countdown-clock">
+                    <span>Next Open: </span><strong>Mon 09:30 AM EST</strong>
+                </div>
+                <div class="openbb-clock" id="live-utc-clock">New York Time: 09:30:00 EST • Alpaca Paper Feed</div>
+                <div class="badge-openbb profit" id="system-health-pill" style="font-size: 0.65rem;">SYSTEM HEALTHY (200 OK)</div>
+            </div>
+
+            <div class="openbb-header-actions">
+                <button class="btn-openbb-action primary" onclick="appController.runAutonomousPipeline()">
+                    <span>⚡</span> <span>Run Pipeline</span>
+                </button>
+                <button class="btn-openbb-action" onclick="appController.triggerBodyguardScan()">
+                    <span>🛡️</span> <span>Bodyguard Scan</span>
+                </button>
+                <button class="btn-openbb-action" onclick="appController.openLatestStateInspector()">
+                    <span>📋</span> <span>State Inspector</span>
+                </button>
+                <button class="btn-openbb-action danger" onclick="appController.executeKillSwitch()">
+                    <span>🛑</span> <span>Kill Switch</span>
+                </button>
+                <button class="btn-openbb-action" onclick="appController.togglePalette()" title="Command Palette (Ctrl+K)">
+                    <span>🔍</span> <span>Ctrl+K</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Market Overview Ticker Ribbon -->
+        <section class="openbb-ticker-ribbon">
+            <div class="openbb-ticker-chip" onclick="appController.selectTicker('SPX', 5183.45)">
+                <span class="sym">SPX</span>
+                <span class="val">5,183.45</span>
+                <svg width="36" height="12"><polyline fill="none" stroke="#00E676" stroke-width="1.5" points="0,10 8,8 16,9 24,4 32,5 36,2"/></svg>
+                <span class="chg pos">+1.12% ▲</span>
+            </div>
+            <div class="openbb-ticker-chip" onclick="appController.selectTicker('NDX', 18230.15)">
+                <span class="sym">NDX</span>
+                <span class="val">18,230.15</span>
+                <svg width="36" height="12"><polyline fill="none" stroke="#00E676" stroke-width="1.5" points="0,9 8,7 16,10 24,3 32,4 36,1"/></svg>
+                <span class="chg pos">+0.95% ▲</span>
+            </div>
+            <div class="openbb-ticker-chip" onclick="appController.selectTicker('NVDA', 183.45)">
+                <span class="sym">NVDA</span>
+                <span class="val">183.45</span>
+                <svg width="36" height="12"><polyline fill="none" stroke="#00E676" stroke-width="1.5" points="0,8 8,10 16,6 24,7 32,3 36,2"/></svg>
+                <span class="chg pos">+0.23% ▲</span>
+            </div>
+            <div class="openbb-ticker-chip" onclick="appController.selectTicker('AAPL', 225.50)">
+                <span class="sym">AAPL</span>
+                <span class="val">225.50</span>
+                <svg width="36" height="12"><polyline fill="none" stroke="#FF3D71" stroke-width="1.5" points="0,3 8,6 16,4 24,10 32,8 36,11"/></svg>
+                <span class="chg neg">-0.72% ▼</span>
+            </div>
+            <div class="openbb-ticker-chip" onclick="appController.selectTicker('MSFT', 415.20)">
+                <span class="sym">MSFT</span>
+                <span class="val">415.20</span>
+                <svg width="36" height="12"><polyline fill="none" stroke="#00E676" stroke-width="1.5" points="0,9 8,8 16,5 24,6 32,3 36,2"/></svg>
+                <span class="chg pos">+0.48% ▲</span>
+            </div>
+            <div class="openbb-ticker-chip" style="margin-left: auto; border: none; background: transparent;">
+                <span style="font-size: 0.65rem; color: var(--text-dim); font-family: var(--font-mono);">35 REST Endpoints Active • Fast Response</span>
+            </div>
+        </section>
+
+        <!-- =========================================================================
+             PAGE 1: MAIN WORKSPACE (DASHBOARD)
+             ========================================================================= -->
+        <section class="app-page active" id="page-dashboard">
+            
+            <!-- KPI Hero Deck -->
+            <div class="openbb-kpi-deck">
+                <div class="openbb-kpi-box highlight">
+                    <span class="lbl">Portfolio Equity Base</span>
+                    <div class="val" id="card-kpi-equity">$99,581.43</div>
+                    <div class="sub" style="color: var(--openbb-emerald);">▲ +$1,245.00 (+1.27%) total</div>
+                </div>
+                <div class="openbb-kpi-box">
+                    <span class="lbl">Available Cash Balance</span>
+                    <div class="val" id="card-kpi-cash">$98,836.43</div>
+                    <div class="sub">100% Margin Protected</div>
+                </div>
+                <div class="openbb-kpi-box">
+                    <span class="lbl">Net Theta (Θ / Day)</span>
+                    <div class="val pos" id="card-kpi-theta">+342.1</div>
+                    <div class="sub">+$342.10/day time decay harvest</div>
+                </div>
+                <div class="openbb-kpi-box">
+                    <span class="lbl">Net Delta (Δ Neutral)</span>
+                    <div class="val pos" id="card-kpi-delta">-12.4</div>
+                    <div class="sub">Within ±25 safety envelope</div>
+                </div>
+                <div class="openbb-kpi-box">
+                    <span class="lbl">Fund Win Rate</span>
+                    <div class="val" style="color: var(--openbb-emerald);" id="card-kpi-winrate">88.5%</div>
+                    <div class="sub">Kelly Corridor Budgeting</div>
+                </div>
+                <div class="openbb-kpi-box">
+                    <span class="lbl">Sharpe Ratio</span>
+                    <div class="val" style="color: var(--openbb-cyan);" id="card-kpi-sharpe">2.45</div>
+                    <div class="sub">Risk-Adjusted Alpha</div>
+                </div>
+            </div>
+
+            <!-- 2-Column Grid Layout -->
+            <div class="openbb-grid-layout">
+                
+                <!-- Left Column -->
+                <div class="openbb-column">
+                    
+                    <!-- Strategy Payoff Modeler -->
+                    <div class="openbb-widget">
+                        <div class="openbb-widget-header">
+                            <div>
+                                <h2 class="openbb-widget-title">
+                                    <span id="payoff-strategy-heading">SPX Theta Iron Condor</span>
+                                </h2>
+                                <span class="openbb-widget-subtitle">
+                                    Spot: <strong style="color: var(--text-pure);" id="payoff-spot-price">5,183.45</strong> • Delta Neutral
+                                </span>
+                            </div>
+                            <div style="display: flex; gap: 4px;">
+                                <span class="badge-openbb profit">88.5% WIN PROB</span>
+                            </div>
+                        </div>
+
+                        <!-- Summary Chips -->
+                        <div class="openbb-strat-summary">
+                            <div class="chip"><span class="label">Target Profit</span><span class="val profit" id="legend-profit">+$250.00</span></div>
+                            <div class="chip"><span class="label">Max Risk Floor</span><span class="val loss" id="legend-loss">-$150.00</span></div>
+                            <div class="chip"><span class="label">Probability</span><span class="val prob">88.5%</span></div>
+                            <div class="chip"><span class="label">Strategy</span><span class="val" style="color: var(--openbb-cyan);">IRON CONDOR</span></div>
+                        </div>
+
+                        <!-- Scenario Selector -->
+                        <div class="openbb-scenario-bar">
+                            <button class="btn-openbb-scenario active" onclick="PayoffChart.setScenario('base')">Base Case</button>
+                            <button class="btn-openbb-scenario" onclick="PayoffChart.setScenario('bull')">Bull (+1.5%)</button>
+                            <button class="btn-openbb-scenario" onclick="PayoffChart.setScenario('bear')">Bear (-1.5%)</button>
+                            <button class="btn-openbb-scenario" onclick="PayoffChart.setScenario('high_iv')">High IV (75%)</button>
+                            <button class="btn-openbb-scenario" onclick="PayoffChart.setScenario('low_iv')">Low IV (25%)</button>
+                        </div>
+
+                        <!-- Chart Canvas -->
+                        <div style="position: relative; height: 185px; width: 100%;">
+                            <canvas id="payoffCanvas"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- 8-Node LangGraph Cognitive Architecture Grid -->
+                    <div class="openbb-widget">
+                        <div class="openbb-widget-header">
+                            <div>
+                                <h3 class="openbb-widget-title">
+                                    <span>🤖</span> <span>LangGraph 8-Node Multi-Agent Decision Bus</span>
+                                </h3>
+                                <span class="openbb-widget-subtitle">Autonomous real-time cognitive state</span>
+                            </div>
+                            <button class="btn-openbb-action primary" onclick="appController.openLatestStateInspector()">
+                                <span>📋</span> <span>State Tree</span>
+                            </button>
+                        </div>
+
+                        <div class="openbb-pipeline-grid">
+                            <div class="openbb-node-card active" onclick="appController.navigateToPage('agents')">
+                                <div class="title"><span>1. Macro Sentinel</span> <span>✓</span></div>
+                                <div class="desc">Yield curve +15 bps normal.</div>
+                                <div class="tag">MSI: 0.50 Risk-On</div>
+                            </div>
+                            <div class="openbb-node-card active" onclick="appController.navigateToPage('signals')">
+                                <div class="title"><span>2. Market Scout</span> <span>✓</span></div>
+                                <div class="desc">Volume POC & 25-Delta Skew.</div>
+                                <div class="tag">8 Assets Scanned</div>
+                            </div>
+                            <div class="openbb-node-card active" onclick="appController.navigateToPage('strategies')">
+                                <div class="title"><span>3. Strategy Brain</span> <span>✓</span></div>
+                                <div class="desc">3 Monte Carlo ToT branches.</div>
+                                <div class="tag">88.5% Win Edge</div>
+                            </div>
+                            <div class="openbb-node-card active" onclick="appController.navigateToPage('agents')">
+                                <div class="title"><span>4. HITL Supervisor</span> <span>✓</span></div>
+                                <div class="desc">Risk budget gate compliance.</div>
+                                <div class="tag">Gov PASS</div>
+                            </div>
+                            <div class="openbb-node-card active" onclick="appController.navigateToPage('dashboard')">
+                                <div class="title"><span>5. Order Router</span> <span>✓</span></div>
+                                <div class="desc">Midpoint limit routed.</div>
+                                <div class="tag">+$44 Saved</div>
+                            </div>
+                            <div class="openbb-node-card active" onclick="appController.navigateToPage('agents')">
+                                <div class="title"><span>6. Portfolio Hedge</span> <span>✓</span></div>
+                                <div class="desc">Net Delta balanced.</div>
+                                <div class="tag">Neutral Enforced</div>
+                            </div>
+                            <div class="openbb-node-card active" onclick="appController.navigateToPage('dashboard')">
+                                <div class="title"><span>7. Bodyguard</span> <span>✓</span></div>
+                                <div class="desc">60s/15s Profit Ratchet.</div>
+                                <div class="tag">Locked Floor</div>
+                            </div>
+                            <div class="openbb-node-card active" onclick="appController.navigateToPage('monitor')">
+                                <div class="title"><span>8. AI Memory</span> <span>✓</span></div>
+                                <div class="desc">Episodic synthesis log.</div>
+                                <div class="tag">Ledger Verified</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Active Positions Blotter Table -->
+                    <div class="openbb-widget">
+                        <div class="openbb-widget-header">
+                            <div>
+                                <h3 class="openbb-widget-title">
+                                    <span>💼</span> <span>Execution Blotter (Live Positions)</span>
+                                </h3>
+                                <span class="openbb-widget-subtitle">Alpaca Paper Desk • Real-Time CBOE Quotes</span>
+                            </div>
+                            <span class="badge-openbb neutral">SANDBOX LIVE</span>
+                        </div>
+
+                        <div class="openbb-table-wrapper">
+                            <table class="openbb-table">
+                                <thead>
+                                    <tr>
+                                        <th>Ticker</th>
+                                        <th>Structure</th>
+                                        <th>Qty</th>
+                                        <th>Entry</th>
+                                        <th>Mark</th>
+                                        <th>P/L ($)</th>
+                                        <th>Delta</th>
+                                        <th>Theta</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="blotter-positions-tbody">
+                                    <tr><td colspan="10" style="text-align: center; color: var(--text-muted); padding: 10px;">Loading positions...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right Column -->
+                <div class="openbb-column">
+                    
+                    <!-- Quantitative Watchlist -->
+                    <div class="openbb-widget">
+                        <div class="openbb-widget-header">
+                            <div>
+                                <h3 class="openbb-widget-title">
+                                    <span>🎯</span> <span>Quantitative Watchlist</span>
+                                </h3>
+                                <span class="openbb-widget-subtitle">Volume POC & Spread Scanner</span>
+                            </div>
+                        </div>
+
+                        <div class="openbb-table-wrapper">
+                            <table class="openbb-table">
+                                <thead>
+                                    <tr>
+                                        <th>Symbol</th>
+                                        <th>Price</th>
+                                        <th>Chg %</th>
+                                        <th>Trend</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="watchlist-tbody">
+                                    <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Loading watchlist...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Closed Trades Ledger & Loss Toll -->
+                    <div class="openbb-widget">
+                        <div class="openbb-widget-header">
+                            <div>
+                                <h3 class="openbb-widget-title">
+                                    <span>📜</span> <span>Closed Trades & Loss Toll Audit</span>
+                                </h3>
+                                <span class="openbb-widget-subtitle">Historical trade memory & risk attribution</span>
+                            </div>
+                            <div id="trade-stats-summary" style="display: flex; gap: 4px;"></div>
+                        </div>
+
+                        <div class="openbb-table-wrapper">
+                            <table class="openbb-table">
+                                <thead>
+                                    <tr>
+                                        <th>Symbol</th>
+                                        <th>Strategy</th>
+                                        <th>Status</th>
+                                        <th>P&L ($)</th>
+                                        <th>Exit Reason</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="trades-history-tbody">
+                                    <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Loading ledger...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- =========================================================================
+             PAGE 2: SIGNALS & ALPHA RADAR
+             ========================================================================= -->
+        <section class="app-page" id="page-signals">
+            <div class="openbb-widget">
+                <div class="openbb-widget-header">
+                    <div>
+                        <h3 class="openbb-widget-title"><span>📈</span> <span>Signals & Quantitative Radar</span></h3>
+                        <span class="openbb-widget-subtitle">Point of Control, Anchored VWAP, Unusual Options Flow, and Tree-of-Thoughts</span>
+                    </div>
+                    <div style="display: flex; gap: 6px;">
+                        <button class="btn-openbb-action" onclick="appController.selectTicker('NVDA')">NVDA</button>
+                        <button class="btn-openbb-action" onclick="appController.selectTicker('SPY')">SPY</button>
+                        <button class="btn-openbb-action" onclick="appController.selectTicker('AAPL')">AAPL</button>
+                        <button class="btn-openbb-action" onclick="appController.selectTicker('MSFT')">MSFT</button>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 10px; margin-top: 10px; width: 100%;">
+                    <!-- Volume Profile Card -->
+                    <div class="openbb-widget" style="margin: 0;">
+                        <strong style="color: var(--text-pure); font-size: 0.85rem;">Volume Profile (14-Day Distribution)</strong>
+                        <div id="signal-vp-container" style="margin-top: 6px;">Loading Volume Profile...</div>
+                    </div>
+
+                    <!-- Anchored VWAP Card -->
+                    <div class="openbb-widget" style="margin: 0;">
+                        <strong style="color: var(--text-pure); font-size: 0.85rem;">Anchored VWAP & Trend Distance</strong>
+                        <div id="signal-vwap-container" style="margin-top: 6px;">Loading Anchored VWAP...</div>
+                    </div>
+
+                    <!-- Unusual Options Flow Card -->
+                    <div class="openbb-widget" style="margin: 0;">
+                        <strong style="color: var(--text-pure); font-size: 0.85rem;">Unusual Institutional Block & Sweep Flow</strong>
+                        <div id="signal-flow-container" style="margin-top: 6px;">Loading Unusual Flow...</div>
+                    </div>
+
+                    <!-- Tree-of-Thoughts Matrix Card -->
+                    <div class="openbb-widget" style="margin: 0;">
+                        <strong style="color: var(--text-pure); font-size: 0.85rem;">Tree-of-Thoughts (ToT) 3-Branch Scenario Payoffs</strong>
+                        <div id="signal-tot-container" style="margin-top: 6px;">Loading ToT Matrix...</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================================
+             PAGE 3: AI AGENTS & HITL GOVERNANCE
+             ========================================================================= -->
+        <section class="app-page" id="page-agents">
+            <!-- 8 Agents Overview Grid -->
+            <div class="openbb-widget">
+                <div class="openbb-widget-header">
+                    <div>
+                        <h3 class="openbb-widget-title">8-Node Autonomous Multi-Agent Cognitive Architecture</h3>
+                        <span class="openbb-widget-subtitle">Deep inspection of all 8 AI trading agents</span>
+                    </div>
+                </div>
+                <div id="agents-streaming-deck" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 8px; width: 100%;">
+                    <!-- Rendered dynamically -->
+                </div>
+            </div>
+
+            <!-- Diagnostics & Governance Split Grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 10px; width: 100%; margin-top: 10px;">
+                <!-- Macro Sentinel & Hedge -->
+                <div>
+                    <div class="openbb-widget">
+                        <h3 class="openbb-widget-title"><span>🌐</span> <span>Macro Intelligence Sentinel</span></h3>
+                        <div id="macro-sentinel-container" style="margin-top: 8px;">Loading Macro Environment...</div>
+                    </div>
+                    <div class="openbb-widget" style="margin-top: 10px;">
+                        <h3 class="openbb-widget-title"><span>🛡️</span> <span>Portfolio Greek Risk Balancer</span></h3>
+                        <div id="portfolio-hedge-container" style="margin-top: 8px;">Loading Greek Balance...</div>
+                    </div>
+                </div>
+
+                <!-- HITL Governance Desk -->
+                <div class="openbb-widget">
+                    <div class="openbb-widget-header">
+                        <div>
+                            <h3 class="openbb-widget-title"><span>🏛️</span> <span>HITL Governance & Approval Desk</span></h3>
+                            <span class="openbb-widget-subtitle">Pending Capital Proposals & Audit History</span>
+                        </div>
+                    </div>
+
+                    <strong style="font-size: 0.75rem; color: var(--openbb-cyan); text-transform: uppercase;">Pending Sign-Off Queue:</strong>
+                    <div id="hitl-pending-container" style="margin-top: 6px; margin-bottom: 12px;">
+                        <!-- Pending proposals -->
+                    </div>
+
+                    <strong style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Recent Governance Audit Log:</strong>
+                    <div class="openbb-table-wrapper" style="margin-top: 6px;">
+                        <table class="openbb-table">
+                            <thead>
+                                <tr>
+                                    <th>Proposal ID</th>
+                                    <th>Status</th>
+                                    <th>Operator</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody id="hitl-history-tbody">
+                                <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Loading audit history...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================================
+             PAGE 4: STRATEGY STUDIO
+             ========================================================================= -->
+        <section class="app-page" id="page-strategies">
+            <div class="openbb-widget">
+                <div class="openbb-widget-header">
+                    <div>
+                        <h3 class="openbb-widget-title"><span>⚡</span> <span>Alpha Strategy Studio (7 Quantitative Engines)</span></h3>
+                        <span class="openbb-widget-subtitle">Mathematical options structures with CBOE strike snapping & slippage defense</span>
+                    </div>
+                </div>
+                <div id="strategies-catalog-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px; margin-top: 10px;">
+                    <!-- Strategies rendered dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================================
+             PAGE 5: TRADE LEDGER & WEBSOCKET TELEMETRY
+             ========================================================================= -->
+        <section class="app-page" id="page-monitor">
+            <div class="openbb-widget">
+                <div class="openbb-widget-header">
+                    <div>
+                        <h3 class="openbb-widget-title"><span>📡</span> <span>Real-Time Agent Telemetry & Log Stream</span></h3>
+                        <span class="openbb-widget-subtitle">WebSocket /ws/telemetry live cognitive bus</span>
+                    </div>
+                    <div style="display: flex; gap: 4px;">
+                        <button class="btn-openbb-action" onclick="appController.exportLedger('json')">Export JSON</button>
+                        <button class="btn-openbb-action" onclick="appController.exportLedger('csv')">Export CSV</button>
+                        <button class="btn-openbb-action" onclick="document.getElementById('monitor-log-stream').innerHTML=''">Clear Stream</button>
+                    </div>
+                </div>
+                <div id="monitor-log-stream" style="background: #05080E; padding: 10px; border-radius: 4px; height: 320px; overflow-y: auto; font-family: var(--font-mono); font-size: 0.75rem; border: 1px solid var(--openbb-border);">
+                    <div style="color: var(--text-dim);">[00:00:00] Connected to ORACLE Real-Time Telemetry Stream.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================================
+             PAGE 6: SETTINGS & RISK CONFIG
+             ========================================================================= -->
+        <section class="app-page" id="page-settings">
+            <div class="openbb-widget" style="max-width: 600px;">
+                <div class="openbb-widget-header">
+                    <h3 class="openbb-widget-title">Broker & Safety Risk Thresholds</h3>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.75rem;">
+                    <div>
+                        <label style="color: var(--text-muted); display: block; margin-bottom: 2px;">Broker Environment:</label>
+                        <input type="text" value="Alpaca Paper Trading (Live Account Mode)" readonly style="width: 100%; background: var(--openbb-bg-input); border: 1px solid var(--openbb-border); color: var(--text-pure); padding: 6px 8px; border-radius: 4px;">
+                    </div>
+                    <div>
+                        <label style="color: var(--text-muted); display: block; margin-bottom: 2px;">Hard Stop Loss Limit Per Trade:</label>
+                        <input type="text" value="-$150.00" style="width: 100%; background: var(--openbb-bg-input); border: 1px solid var(--openbb-border); color: var(--text-pure); padding: 6px 8px; border-radius: 4px;">
+                    </div>
+                    <div>
+                        <label style="color: var(--text-muted); display: block; margin-bottom: 2px;">Target Profit Ratchet Exit:</label>
+                        <input type="text" value="+50.0% Gain (+$125.00 - $250.00)" style="width: 100%; background: var(--openbb-bg-input); border: 1px solid var(--openbb-border); color: var(--text-pure); padding: 6px 8px; border-radius: 4px;">
+                    </div>
+                    <div>
+                        <button class="btn-openbb-action primary" onclick="appController.showToast('Risk settings saved successfully.', 'success')">Save Settings</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Slide-Over Drawer: OpenBB Copilot -->
+    <div class="slide-drawer" id="copilot-drawer">
+        <div class="drawer-header">
+            <span class="drawer-title">💬 OpenBB AI Copilot</span>
+            <button class="btn-drawer-close" onclick="AICopilot.closeDrawer()">✕</button>
+        </div>
+        <div class="drawer-body">
+            <div class="copilot-chat-messages" id="copilot-messages-list">
+                <div class="copilot-msg assistant">
+                    Hello Operator. I am your <strong>OpenBB AI Copilot</strong>. I analyze live portfolio Greeks, multi-leg options risk envelopes, and Tree-of-Thoughts strategy theses in real time. How may I assist you?
+                </div>
+            </div>
+            <div>
+                <span style="font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase; font-weight: 700;">Prompt Suggestions:</span>
+                <div class="copilot-prompt-pills">
+                    <span class="prompt-pill" onclick="AICopilot.sendPrompt('How is my account doing?')">Account Status</span>
+                    <span class="prompt-pill" onclick="AICopilot.sendPrompt('Is my money safe?')">Capital Safety</span>
+                    <span class="prompt-pill" onclick="AICopilot.sendPrompt('Why did the AI open this trade?')">Trade Rationale</span>
+                    <span class="prompt-pill" onclick="AICopilot.sendPrompt('What does Delta and Theta mean?')">Delta & Theta</span>
+                    <span class="prompt-pill" onclick="AICopilot.sendPrompt('What is my maximum risk?')">Max Risk</span>
+                    <span class="prompt-pill" onclick="AICopilot.sendPrompt('Explain this in simple words')">Explain Simply</span>
+                </div>
+            </div>
+        </div>
+        <div class="copilot-input-bar">
+            <input type="text" class="copilot-input" id="copilot-user-input" placeholder="Ask OpenBB Copilot about risk, positions, hedging...">
+            <button class="btn-openbb-action primary" onclick="AICopilot.handleUserSubmit()">Send</button>
+        </div>
+    </div>
+
+    <!-- Modal: Latest State Inspector -->
+    <div class="modal-overlay" id="state-inspector-modal">
+        <div class="modal-card" style="max-width: 750px;">
+            <div class="modal-header">
+                <strong style="color: var(--text-pure); font-family: var(--font-heading); font-size: 0.98rem;">📋 LangGraph Cognitive State Inspector</strong>
+                <button class="btn-drawer-close" onclick="appController.closeStateInspector()">✕</button>
+            </div>
+            <div class="modal-body" id="state-inspector-body">
+                Loading cognitive state...
+            </div>
+        </div>
+    </div>
+
+    <!-- Command Palette Overlay (Ctrl+K) -->
+    <div class="command-palette-overlay" id="command-palette-overlay">
+        <div class="command-palette-card">
+            <div class="palette-input-box">
+                <span>🔍</span>
+                <input type="text" class="palette-input" id="palette-search-input" placeholder="Search /cmd (e.g. SPX, NVDA, Run Pipeline)...">
+                <span class="badge-openbb neutral">ESC</span>
+            </div>
+            <div class="palette-results" id="palette-results-list">
+                <div class="palette-item" onclick="appController.runAutonomousPipeline(); appController.togglePalette();">
+                    <div class="palette-item-left"><span>⚡</span><span>Run AI Pipeline</span></div>
+                    <div class="palette-item-right">Execute</div>
+                </div>
+                <div class="palette-item" onclick="appController.triggerBodyguardScan(); appController.togglePalette();">
+                    <div class="palette-item-left"><span>🛡️</span><span>Bodyguard Risk Scan</span></div>
+                    <div class="palette-item-right">Scan</div>
+                </div>
+                <div class="palette-item" onclick="appController.openLatestStateInspector(); appController.togglePalette();">
+                    <div class="palette-item-left"><span>📋</span><span>Inspect Cognitive State</span></div>
+                    <div class="palette-item-right">Inspect</div>
+                </div>
+                <div class="palette-item" onclick="AICopilot.toggleDrawer(); appController.togglePalette();">
+                    <div class="palette-item-left"><span>💬</span><span>Open OpenBB Copilot</span></div>
+                    <div class="palette-item-right">Chat</div>
+                </div>
+                <div class="palette-item" onclick="appController.executeKillSwitch(); appController.togglePalette();">
+                    <div class="palette-item-left" style="color: var(--openbb-crimson);"><span>🛑</span><span>Emergency Kill Switch</span></div>
+                    <div class="palette-item-right">Liquidate</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/ws.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/copilot.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

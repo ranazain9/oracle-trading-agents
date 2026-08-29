@@ -291,5 +291,935 @@
       "status": "CLOSED_PAPER_FALLBACK",
       "closed_at": "2026-08-28T12:39:05.464566"
     }
+  },
+  {
+    "trade_id": "ORD-1787903424",
+    "symbol": "NVDA",
+    "strategy": "EARNINGS_STRADDLE",
+    "entry_date": "2026-08-28",
+    "underlying_entry_price": 227.98,
+    "cost_or_credit_usd": 1596.0,
+    "package_limit_price_usd": 1596.0,
+    "margin_requirement_usd": 0.0,
+    "is_credit": false,
+    "profit_target_usd": 798.0,
+    "stop_loss_usd": 150.0,
+    "status": "CLOSED_STOPPED",
+    "orders": [
+      {
+        "order_id": "ORACLE-1787903423",
+        "symbol": "NVDA260904C00230000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_FALLBACK",
+        "filled_at": "2026-08-28T12:50:23.997922",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 7.98,
+        "occ_symbol": "NVDA260904C00230000"
+      },
+      {
+        "order_id": "ORACLE-1787903423",
+        "symbol": "NVDA260904P00230000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_FALLBACK",
+        "filled_at": "2026-08-28T12:50:24.228951",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 7.98,
+        "occ_symbol": "NVDA260904P00230000"
+      }
+    ],
+    "exit_date": "2026-08-28",
+    "exit_price": 227.98,
+    "pnl_usd": -150.0,
+    "exit_reason": "Hard stop-loss triggered (-$319.20 <= -$150.00).",
+    "broker_exit_result": {
+      "symbol": "NVDA",
+      "status": "CLOSED_PAPER_FALLBACK",
+      "closed_at": "2026-08-28T12:50:34.122220"
+    }
+  },
+  {
+    "trade_id": "ORD-1787903437",
+    "symbol": "NVDA",
+    "strategy": "EARNINGS_STRADDLE",
+    "entry_date": "2026-08-28",
+    "underlying_entry_price": 227.98,
+    "cost_or_credit_usd": 1596.0,
+    "package_limit_price_usd": 1596.0,
+    "margin_requirement_usd": 0.0,
+    "is_credit": false,
+    "profit_target_usd": 798.0,
+    "stop_loss_usd": 150.0,
+    "status": "CLOSED_STOPPED",
+    "orders": [
+      {
+        "order_id": "ORACLE-1787903437",
+        "symbol": "NVDA260904C00230000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_FALLBACK",
+        "filled_at": "2026-08-28T12:50:37.479726",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 7.98,
+        "occ_symbol": "NVDA260904C00230000"
+      },
+      {
+        "order_id": "ORACLE-1787903437",
+        "symbol": "NVDA260904P00230000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_FALLBACK",
+        "filled_at": "2026-08-28T12:50:37.697263",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 7.98,
+        "occ_symbol": "NVDA260904P00230000"
+      }
+    ],
+    "exit_date": "2026-08-28",
+    "exit_price": 227.98,
+    "pnl_usd": -150.0,
+    "exit_reason": "Hard stop-loss triggered (-$319.20 <= -$150.00).",
+    "broker_exit_result": {
+      "symbol": "NVDA",
+      "status": "CLOSED_PAPER_FALLBACK",
+      "closed_at": "2026-08-28T12:50:46.425127"
+    }
+  },
+  {
+    "trade_id": "ORD-1787903556",
+    "symbol": "AAPL",
+    "strategy": "EARNINGS_STRADDLE",
+    "entry_date": "2026-08-28",
+    "underlying_entry_price": 314.58,
+    "cost_or_credit_usd": 2202.0,
+    "package_limit_price_usd": 2202.0,
+    "margin_requirement_usd": 0.0,
+    "is_credit": false,
+    "profit_target_usd": 1101.0,
+    "stop_loss_usd": 150.0,
+    "status": "CLOSED_STOPPED",
+    "orders": [
+      {
+        "order_id": "ORACLE-1787903556",
+        "symbol": "AAPL260904C00315000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_FALLBACK",
+        "filled_at": "2026-08-28T12:52:36.439342",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 11.01,
+        "occ_symbol": "AAPL260904C00315000"
+      },
+      {
+        "order_id": "ORACLE-1787903556",
+        "symbol": "AAPL260904P00315000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_FALLBACK",
+        "filled_at": "2026-08-28T12:52:36.659049",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 11.01,
+        "occ_symbol": "AAPL260904P00315000"
+      }
+    ],
+    "exit_date": "2026-08-28",
+    "exit_price": 314.58,
+    "pnl_usd": -150.0,
+    "exit_reason": "Hard stop-loss triggered (-$440.40 <= -$150.00).",
+    "broker_exit_result": {
+      "symbol": "AAPL",
+      "status": "CLOSED_PAPER_FALLBACK",
+      "closed_at": "2026-08-28T12:52:45.527470"
+    }
+  },
+  {
+    "trade_id": "ORD-1787904040",
+    "symbol": "AAPL",
+    "strategy": "EARNINGS_STRADDLE",
+    "entry_date": "2026-08-28",
+    "underlying_entry_price": 314.58,
+    "cost_or_credit_usd": 2202.0,
+    "package_limit_price_usd": 2202.0,
+    "margin_requirement_usd": 0.0,
+    "is_credit": false,
+    "profit_target_usd": 1101.0,
+    "stop_loss_usd": 150.0,
+    "status": "CLOSED_STOPPED",
+    "orders": [
+      {
+        "order_id": "ORACLE-1787904040",
+        "symbol": "AAPL260904C00315000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_FALLBACK",
+        "filled_at": "2026-08-28T13:00:40.594200",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 11.01,
+        "occ_symbol": "AAPL260904C00315000"
+      },
+      {
+        "order_id": "ORACLE-1787904040",
+        "symbol": "AAPL260904P00315000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_FALLBACK",
+        "filled_at": "2026-08-28T13:00:40.857706",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 11.01,
+        "occ_symbol": "AAPL260904P00315000"
+      }
+    ],
+    "exit_date": "2026-08-28",
+    "exit_price": 314.58,
+    "pnl_usd": -150.0,
+    "exit_reason": "Hard stop-loss triggered (-$440.40 <= -$150.00).",
+    "broker_exit_result": {
+      "symbol": "AAPL",
+      "status": "CLOSED_PAPER_FALLBACK",
+      "closed_at": "2026-08-28T13:01:05.225319"
+    }
+  },
+  {
+    "trade_id": "ORD-1787904442",
+    "symbol": "AAPL",
+    "strategy": "EARNINGS_STRADDLE",
+    "entry_date": "2026-08-28",
+    "underlying_entry_price": 314.58,
+    "cost_or_credit_usd": 2202.0,
+    "package_limit_price_usd": 2202.0,
+    "margin_requirement_usd": 0.0,
+    "is_credit": false,
+    "profit_target_usd": 1101.0,
+    "stop_loss_usd": 150.0,
+    "status": "CLOSED_STOPPED",
+    "orders": [
+      {
+        "order_id": "ORACLE-1787904441",
+        "symbol": "AAPL260904C00315000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_FALLBACK",
+        "filled_at": "2026-08-28T13:07:22.297658",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 11.01,
+        "occ_symbol": "AAPL260904C00315000"
+      },
+      {
+        "order_id": "ORACLE-1787904442",
+        "symbol": "AAPL260904P00315000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_FALLBACK",
+        "filled_at": "2026-08-28T13:07:22.566084",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 11.01,
+        "occ_symbol": "AAPL260904P00315000"
+      }
+    ],
+    "exit_date": "2026-08-28",
+    "exit_price": 314.58,
+    "pnl_usd": -150.0,
+    "exit_reason": "Hard stop-loss triggered (-$440.40 <= -$150.00).",
+    "broker_exit_result": {
+      "symbol": "AAPL",
+      "status": "CLOSED_PAPER_FALLBACK",
+      "closed_at": "2026-08-28T13:07:36.221553"
+    }
+  },
+  {
+    "trade_id": "ORD-1787904660",
+    "symbol": "NVDA",
+    "strategy": "EARNINGS_STRADDLE",
+    "entry_date": "2026-08-28",
+    "underlying_entry_price": 227.98,
+    "cost_or_credit_usd": 1596.0,
+    "package_limit_price_usd": 1596.0,
+    "margin_requirement_usd": 0.0,
+    "is_credit": false,
+    "profit_target_usd": 798.0,
+    "stop_loss_usd": 150.0,
+    "status": "CLOSED_STOPPED",
+    "orders": [
+      {
+        "order_id": "ORACLE-1787904660",
+        "symbol": "NVDA260904C00230000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_MARKET_CLOSED",
+        "filled_at": "2026-08-28T13:11:00.290166",
+        "filled_avg_price": 100.0,
+        "notes": "Market is closed. Paper simulated fill executed at midpoint limit price.",
+        "midpoint_limit_price": 7.98,
+        "occ_symbol": "NVDA260904C00230000"
+      },
+      {
+        "order_id": "ORACLE-1787904660",
+        "symbol": "NVDA260904P00230000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_MARKET_CLOSED",
+        "filled_at": "2026-08-28T13:11:00.512007",
+        "filled_avg_price": 100.0,
+        "notes": "Market is closed. Paper simulated fill executed at midpoint limit price.",
+        "midpoint_limit_price": 7.98,
+        "occ_symbol": "NVDA260904P00230000"
+      }
+    ],
+    "exit_date": "2026-08-28",
+    "exit_price": 227.98,
+    "pnl_usd": -150.0,
+    "exit_reason": "Hard stop-loss triggered (-$319.20 <= -$150.00).",
+    "broker_exit_result": {
+      "symbol": "NVDA",
+      "status": "CLOSED_PAPER_POSITION",
+      "closed_at": "2026-08-28T13:11:12.846885"
+    }
+  },
+  {
+    "trade_id": "ORD-1787905576",
+    "symbol": "NVDA",
+    "strategy": "EARNINGS_STRADDLE",
+    "entry_date": "2026-08-28",
+    "underlying_entry_price": 227.98,
+    "cost_or_credit_usd": 1596.0,
+    "package_limit_price_usd": 1596.0,
+    "margin_requirement_usd": 0.0,
+    "is_credit": false,
+    "profit_target_usd": 798.0,
+    "stop_loss_usd": 150.0,
+    "status": "CLOSED_STOPPED",
+    "orders": [
+      {
+        "order_id": "ORACLE-1787905576",
+        "symbol": "NVDA260904C00230000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_MARKET_CLOSED",
+        "filled_at": "2026-08-28T13:26:16.618389",
+        "filled_avg_price": 100.0,
+        "notes": "Market is closed. Paper simulated fill executed at midpoint limit price.",
+        "midpoint_limit_price": 7.98,
+        "occ_symbol": "NVDA260904C00230000"
+      },
+      {
+        "order_id": "ORACLE-1787905576",
+        "symbol": "NVDA260904P00230000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_MARKET_CLOSED",
+        "filled_at": "2026-08-28T13:26:16.834836",
+        "filled_avg_price": 100.0,
+        "notes": "Market is closed. Paper simulated fill executed at midpoint limit price.",
+        "midpoint_limit_price": 7.98,
+        "occ_symbol": "NVDA260904P00230000"
+      }
+    ],
+    "exit_date": "2026-08-28",
+    "exit_price": 227.98,
+    "pnl_usd": -150.0,
+    "exit_reason": "Hard stop-loss triggered (-$319.20 <= -$150.00).",
+    "broker_exit_result": {
+      "symbol": "NVDA",
+      "status": "CLOSED_PAPER_POSITION",
+      "closed_at": "2026-08-28T13:26:27.228506"
+    }
+  },
+  {
+    "trade_id": "ORD-1787917364",
+    "symbol": "NVDA",
+    "strategy": "EARNINGS_STRADDLE",
+    "entry_date": "2026-08-28",
+    "underlying_entry_price": 220.15,
+    "cost_or_credit_usd": 1542.0,
+    "package_limit_price_usd": 1542.0,
+    "margin_requirement_usd": 0.0,
+    "is_credit": false,
+    "profit_target_usd": 771.0,
+    "stop_loss_usd": 150.0,
+    "status": "CLOSED",
+    "orders": [
+      {
+        "order_id": "6e7317db-269d-4156-81e9-ed8fe71aea5a",
+        "symbol": "NVDA260904C00220000",
+        "qty": 1.0,
+        "side": "OrderSide.BUY",
+        "type": "OrderType.MARKET",
+        "status": "OrderStatus.PENDING_NEW",
+        "submitted_at": "2026-08-28 16:42:45.454415+00:00",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 7.71,
+        "occ_symbol": "NVDA260904C00220000"
+      },
+      {
+        "order_id": "ec8b35ee-20ba-4b6a-bad8-ac07573d2ed7",
+        "symbol": "NVDA260904P00220000",
+        "qty": 1.0,
+        "side": "OrderSide.BUY",
+        "type": "OrderType.MARKET",
+        "status": "OrderStatus.PENDING_NEW",
+        "submitted_at": "2026-08-28 16:42:45.918355+00:00",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 7.71,
+        "occ_symbol": "NVDA260904P00220000"
+      }
+    ],
+    "exit_reason": "CLEAN_SLATE_RESET"
+  },
+  {
+    "trade_id": "ORD-1787917995",
+    "symbol": "AAPL",
+    "strategy": "EARNINGS_STRADDLE",
+    "entry_date": "2026-08-28",
+    "underlying_entry_price": 320.96,
+    "cost_or_credit_usd": 2246.0,
+    "package_limit_price_usd": 2246.0,
+    "margin_requirement_usd": 0.0,
+    "is_credit": false,
+    "profit_target_usd": 1123.0,
+    "stop_loss_usd": 150.0,
+    "status": "CLOSED",
+    "orders": [
+      {
+        "order_id": "d99f53f5-a6c2-4b7a-ab44-3252d3ebf9e4",
+        "symbol": "AAPL260904C00320000",
+        "qty": 1.0,
+        "side": "OrderSide.BUY",
+        "type": "OrderType.MARKET",
+        "status": "OrderStatus.PENDING_NEW",
+        "submitted_at": "2026-08-28 16:53:16.318675+00:00",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 11.23,
+        "occ_symbol": "AAPL260904C00320000"
+      },
+      {
+        "order_id": "92873aca-3f46-410e-bc49-649dbb68bb5b",
+        "symbol": "AAPL260904P00320000",
+        "qty": 1.0,
+        "side": "OrderSide.BUY",
+        "type": "OrderType.MARKET",
+        "status": "OrderStatus.PENDING_NEW",
+        "submitted_at": "2026-08-28 16:53:16.788176+00:00",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 11.23,
+        "occ_symbol": "AAPL260904P00320000"
+      }
+    ],
+    "exit_reason": "CLEAN_SLATE_RESET"
+  },
+  {
+    "trade_id": "ORD-1787926727",
+    "symbol": "AAPL",
+    "strategy": "EARNINGS_STRADDLE",
+    "entry_date": "2026-08-29",
+    "underlying_entry_price": 319.8,
+    "cost_or_credit_usd": 2238.0,
+    "package_limit_price_usd": 2238.0,
+    "margin_requirement_usd": 0.0,
+    "is_credit": false,
+    "profit_target_usd": 1119.0,
+    "stop_loss_usd": 150.0,
+    "status": "CLOSED_0DTE_RISK",
+    "orders": [
+      {
+        "order_id": "1f3f4dce-a0d8-4ef5-9f36-385fb9608f40",
+        "symbol": "AAPL260904C00320000",
+        "qty": 1.0,
+        "side": "OrderSide.BUY",
+        "type": "OrderType.MARKET",
+        "status": "OrderStatus.PENDING_NEW",
+        "submitted_at": "2026-08-28 19:18:48.220241+00:00",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 11.19,
+        "occ_symbol": "AAPL260904C00320000"
+      },
+      {
+        "order_id": "e70a84a7-e34c-479a-8f32-ac2f9fdae5b5",
+        "symbol": "AAPL260904P00320000",
+        "qty": 1.0,
+        "side": "OrderSide.BUY",
+        "type": "OrderType.MARKET",
+        "status": "OrderStatus.PENDING_NEW",
+        "submitted_at": "2026-08-28 19:18:48.663590+00:00",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 11.19,
+        "occ_symbol": "AAPL260904P00320000"
+      }
+    ],
+    "pnl_usd": -55.0,
+    "exit_reason": "Friday 3:30 PM EST reached. Closing near-the-money options to avoid weekend stock assignment."
+  },
+  {
+    "trade_id": "ORD-1787931128",
+    "symbol": "TSLA",
+    "strategy": "EARNINGS_STRADDLE",
+    "entry_date": "2026-08-29",
+    "underlying_entry_price": 348.75,
+    "cost_or_credit_usd": 2442.0,
+    "package_limit_price_usd": 2442.0,
+    "margin_requirement_usd": 0.0,
+    "is_credit": false,
+    "profit_target_usd": 1221.0,
+    "stop_loss_usd": 150.0,
+    "status": "CLOSED_STOPPED",
+    "orders": [
+      {
+        "order_id": "ORACLE-1787931128",
+        "symbol": "TSLA260904C00350000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_MARKET_CLOSED",
+        "filled_at": "2026-08-28T20:32:08.688931",
+        "filled_avg_price": 100.0,
+        "notes": "Market is closed. Paper simulated fill executed at midpoint limit price.",
+        "midpoint_limit_price": 12.21,
+        "occ_symbol": "TSLA260904C00350000"
+      },
+      {
+        "order_id": "ORACLE-1787931128",
+        "symbol": "TSLA260904P00350000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_MARKET_CLOSED",
+        "filled_at": "2026-08-28T20:32:08.944693",
+        "filled_avg_price": 100.0,
+        "notes": "Market is closed. Paper simulated fill executed at midpoint limit price.",
+        "midpoint_limit_price": 12.21,
+        "occ_symbol": "TSLA260904P00350000"
+      }
+    ],
+    "exit_date": "2026-08-29",
+    "exit_price": 348.75,
+    "pnl_usd": -150.0,
+    "exit_reason": "Hard stop-loss triggered (-$488.40 <= -$150.00).",
+    "broker_exit_result": {
+      "symbol": "TSLA",
+      "status": "CLOSED_PAPER_POSITION",
+      "closed_at": "2026-08-28T20:32:35.493204"
+    }
+  },
+  {
+    "trade_id": "ORD-1787931524",
+    "symbol": "TSLA",
+    "strategy": "EARNINGS_STRADDLE",
+    "entry_date": "2026-08-29",
+    "underlying_entry_price": 348.75,
+    "cost_or_credit_usd": 2442.0,
+    "package_limit_price_usd": 2442.0,
+    "margin_requirement_usd": 0.0,
+    "is_credit": false,
+    "profit_target_usd": 1221.0,
+    "stop_loss_usd": 150.0,
+    "status": "CLOSED_STOPPED",
+    "orders": [
+      {
+        "order_id": "ORACLE-1787931523",
+        "symbol": "TSLA260904C00350000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_MARKET_CLOSED",
+        "filled_at": "2026-08-28T20:38:43.810056",
+        "filled_avg_price": 100.0,
+        "notes": "Market is closed. Paper simulated fill executed at midpoint limit price.",
+        "midpoint_limit_price": 12.21,
+        "occ_symbol": "TSLA260904C00350000"
+      },
+      {
+        "order_id": "ORACLE-1787931523",
+        "symbol": "TSLA260904P00350000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_MARKET_CLOSED",
+        "filled_at": "2026-08-28T20:38:44.014463",
+        "filled_avg_price": 100.0,
+        "notes": "Market is closed. Paper simulated fill executed at midpoint limit price.",
+        "midpoint_limit_price": 12.21,
+        "occ_symbol": "TSLA260904P00350000"
+      }
+    ],
+    "exit_date": "2026-08-29",
+    "exit_price": 348.75,
+    "pnl_usd": -150.0,
+    "exit_reason": "Hard stop-loss triggered (-$488.40 <= -$150.00).",
+    "broker_exit_result": {
+      "symbol": "TSLA",
+      "status": "CLOSED_PAPER_POSITION",
+      "closed_at": "2026-08-28T20:38:54.300860"
+    }
+  },
+  {
+    "trade_id": "ORD-1787931663",
+    "symbol": "TSLA",
+    "strategy": "EARNINGS_STRADDLE",
+    "entry_date": "2026-08-29",
+    "underlying_entry_price": 348.75,
+    "cost_or_credit_usd": 2442.0,
+    "package_limit_price_usd": 2442.0,
+    "margin_requirement_usd": 0.0,
+    "is_credit": false,
+    "profit_target_usd": 1221.0,
+    "stop_loss_usd": 150.0,
+    "status": "CLOSED_STOPPED",
+    "orders": [
+      {
+        "order_id": "ORACLE-1787931662",
+        "symbol": "TSLA260904C00350000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_MARKET_CLOSED",
+        "filled_at": "2026-08-28T20:41:03.098817",
+        "filled_avg_price": 100.0,
+        "notes": "Market is closed. Paper simulated fill executed at midpoint limit price.",
+        "midpoint_limit_price": 12.21,
+        "occ_symbol": "TSLA260904C00350000"
+      },
+      {
+        "order_id": "ORACLE-1787931663",
+        "symbol": "TSLA260904P00350000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_MARKET_CLOSED",
+        "filled_at": "2026-08-28T20:41:03.338163",
+        "filled_avg_price": 100.0,
+        "notes": "Market is closed. Paper simulated fill executed at midpoint limit price.",
+        "midpoint_limit_price": 12.21,
+        "occ_symbol": "TSLA260904P00350000"
+      }
+    ],
+    "exit_date": "2026-08-29",
+    "exit_price": 348.75,
+    "pnl_usd": -150.0,
+    "exit_reason": "Hard stop-loss triggered (-$488.40 <= -$150.00).",
+    "broker_exit_result": {
+      "symbol": "TSLA",
+      "status": "CLOSED_PAPER_POSITION",
+      "closed_at": "2026-08-28T20:41:12.050893"
+    }
+  },
+  {
+    "trade_id": "ORD-1787931734",
+    "symbol": "TSLA",
+    "strategy": "EARNINGS_STRADDLE",
+    "entry_date": "2026-08-29",
+    "underlying_entry_price": 348.75,
+    "cost_or_credit_usd": 2442.0,
+    "package_limit_price_usd": 2442.0,
+    "margin_requirement_usd": 0.0,
+    "is_credit": false,
+    "profit_target_usd": 1221.0,
+    "stop_loss_usd": 150.0,
+    "status": "CLOSED_STOPPED",
+    "orders": [
+      {
+        "order_id": "ORACLE-1787931733",
+        "symbol": "TSLA260904C00350000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_MARKET_CLOSED",
+        "filled_at": "2026-08-28T20:42:13.795874",
+        "filled_avg_price": 100.0,
+        "notes": "Market is closed. Paper simulated fill executed at midpoint limit price.",
+        "midpoint_limit_price": 12.21,
+        "occ_symbol": "TSLA260904C00350000"
+      },
+      {
+        "order_id": "ORACLE-1787931733",
+        "symbol": "TSLA260904P00350000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_MARKET_CLOSED",
+        "filled_at": "2026-08-28T20:42:14.010697",
+        "filled_avg_price": 100.0,
+        "notes": "Market is closed. Paper simulated fill executed at midpoint limit price.",
+        "midpoint_limit_price": 12.21,
+        "occ_symbol": "TSLA260904P00350000"
+      }
+    ],
+    "exit_date": "2026-08-29",
+    "exit_price": 348.75,
+    "pnl_usd": -150.0,
+    "exit_reason": "Hard stop-loss triggered (-$488.40 <= -$150.00).",
+    "broker_exit_result": {
+      "symbol": "TSLA",
+      "status": "CLOSED_PAPER_POSITION",
+      "closed_at": "2026-08-28T20:42:20.568066"
+    }
+  },
+  {
+    "trade_id": "ORD-1787932031",
+    "symbol": "TSLA",
+    "strategy": "EARNINGS_STRADDLE",
+    "entry_date": "2026-08-29",
+    "underlying_entry_price": 348.75,
+    "cost_or_credit_usd": 2442.0,
+    "package_limit_price_usd": 2442.0,
+    "margin_requirement_usd": 0.0,
+    "is_credit": false,
+    "profit_target_usd": 1221.0,
+    "stop_loss_usd": 150.0,
+    "status": "CLOSED_STOPPED",
+    "orders": [
+      {
+        "order_id": "ORACLE-1787932030",
+        "symbol": "TSLA260904C00350000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_MARKET_CLOSED",
+        "filled_at": "2026-08-28T20:47:10.767160",
+        "filled_avg_price": 100.0,
+        "notes": "Market is closed. Paper simulated fill executed at midpoint limit price.",
+        "midpoint_limit_price": 12.21,
+        "occ_symbol": "TSLA260904C00350000"
+      },
+      {
+        "order_id": "ORACLE-1787932030",
+        "symbol": "TSLA260904P00350000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_MARKET_CLOSED",
+        "filled_at": "2026-08-28T20:47:11.000206",
+        "filled_avg_price": 100.0,
+        "notes": "Market is closed. Paper simulated fill executed at midpoint limit price.",
+        "midpoint_limit_price": 12.21,
+        "occ_symbol": "TSLA260904P00350000"
+      }
+    ],
+    "exit_date": "2026-08-29",
+    "exit_price": 348.75,
+    "pnl_usd": -150.0,
+    "exit_reason": "Hard stop-loss triggered (-$488.40 <= -$150.00).",
+    "broker_exit_result": {
+      "symbol": "TSLA",
+      "status": "CLOSED_PAPER_POSITION",
+      "closed_at": "2026-08-28T20:47:17.104757"
+    }
+  },
+  {
+    "trade_id": "ORD-1787932955",
+    "symbol": "TSLA",
+    "strategy": "EARNINGS_STRADDLE",
+    "entry_date": "2026-08-29",
+    "underlying_entry_price": 348.75,
+    "cost_or_credit_usd": 2442.0,
+    "package_limit_price_usd": 2442.0,
+    "margin_requirement_usd": 0.0,
+    "is_credit": false,
+    "profit_target_usd": 1221.0,
+    "stop_loss_usd": 150.0,
+    "status": "CLOSED_STOPPED",
+    "orders": [
+      {
+        "order_id": "ORACLE-1787932955",
+        "symbol": "TSLA260904C00350000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_MARKET_CLOSED",
+        "filled_at": "2026-08-28T21:02:35.554721",
+        "filled_avg_price": 100.0,
+        "notes": "Market is closed. Paper simulated fill executed at midpoint limit price.",
+        "midpoint_limit_price": 12.21,
+        "occ_symbol": "TSLA260904C00350000"
+      },
+      {
+        "order_id": "ORACLE-1787932955",
+        "symbol": "TSLA260904P00350000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_MARKET_CLOSED",
+        "filled_at": "2026-08-28T21:02:35.826885",
+        "filled_avg_price": 100.0,
+        "notes": "Market is closed. Paper simulated fill executed at midpoint limit price.",
+        "midpoint_limit_price": 12.21,
+        "occ_symbol": "TSLA260904P00350000"
+      }
+    ],
+    "exit_date": "2026-08-29",
+    "exit_price": 348.75,
+    "pnl_usd": -150.0,
+    "exit_reason": "Hard stop-loss triggered (-$488.40 <= -$150.00).",
+    "broker_exit_result": {
+      "symbol": "TSLA",
+      "status": "CLOSED_PAPER_POSITION",
+      "closed_at": "2026-08-28T21:02:48.937166"
+    }
+  },
+  {
+    "trade_id": "ORD-1787933275",
+    "symbol": "TSLA",
+    "strategy": "EARNINGS_STRADDLE",
+    "entry_date": "2026-08-29",
+    "underlying_entry_price": 348.75,
+    "cost_or_credit_usd": 2442.0,
+    "package_limit_price_usd": 2442.0,
+    "margin_requirement_usd": 0.0,
+    "is_credit": false,
+    "profit_target_usd": 1221.0,
+    "stop_loss_usd": 150.0,
+    "status": "CLOSED_STOPPED",
+    "orders": [
+      {
+        "order_id": "ORACLE-1787933274",
+        "symbol": "TSLA260904C00350000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_MARKET_CLOSED",
+        "filled_at": "2026-08-28T21:07:55.064084",
+        "filled_avg_price": 100.0,
+        "notes": "Market is closed. Paper simulated fill executed at midpoint limit price.",
+        "midpoint_limit_price": 12.21,
+        "occ_symbol": "TSLA260904C00350000"
+      },
+      {
+        "order_id": "ORACLE-1787933275",
+        "symbol": "TSLA260904P00350000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_MARKET_CLOSED",
+        "filled_at": "2026-08-28T21:07:55.284359",
+        "filled_avg_price": 100.0,
+        "notes": "Market is closed. Paper simulated fill executed at midpoint limit price.",
+        "midpoint_limit_price": 12.21,
+        "occ_symbol": "TSLA260904P00350000"
+      }
+    ],
+    "exit_date": "2026-08-29",
+    "exit_price": 348.75,
+    "pnl_usd": -150.0,
+    "exit_reason": "Hard stop-loss triggered (-$488.40 <= -$150.00).",
+    "broker_exit_result": {
+      "symbol": "TSLA",
+      "status": "CLOSED_PAPER_POSITION",
+      "closed_at": "2026-08-28T21:08:02.248963"
+    }
+  },
+  {
+    "trade_id": "ORD-1787933705",
+    "symbol": "TSLA",
+    "strategy": "EARNINGS_STRADDLE",
+    "entry_date": "2026-08-29",
+    "underlying_entry_price": 348.75,
+    "cost_or_credit_usd": 2442.0,
+    "package_limit_price_usd": 2442.0,
+    "margin_requirement_usd": 0.0,
+    "is_credit": false,
+    "profit_target_usd": 1221.0,
+    "stop_loss_usd": 150.0,
+    "status": "CLOSED_PROFIT",
+    "orders": [
+      {
+        "order_id": "ORACLE-1787933704",
+        "symbol": "TSLA260904C00350000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_MARKET_CLOSED",
+        "filled_at": "2026-08-28T21:15:04.807971",
+        "filled_avg_price": 100.0,
+        "notes": "Market is closed. Paper simulated fill executed at midpoint limit price.",
+        "midpoint_limit_price": 12.21,
+        "occ_symbol": "TSLA260904C00350000"
+      },
+      {
+        "order_id": "ORACLE-1787933704",
+        "symbol": "TSLA260904P00350000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_MARKET_CLOSED",
+        "filled_at": "2026-08-28T21:15:05.037676",
+        "filled_avg_price": 100.0,
+        "notes": "Market is closed. Paper simulated fill executed at midpoint limit price.",
+        "midpoint_limit_price": 12.21,
+        "occ_symbol": "TSLA260904P00350000"
+      }
+    ],
+    "exit_date": "2026-08-29",
+    "exit_price": 100.0,
+    "pnl_usd": 1221.0,
+    "exit_reason": "Profit target achieved (+$1221.00, +50.0%).",
+    "broker_exit_result": {
+      "symbol": "TSLA",
+      "status": "CLOSED_PAPER_POSITION",
+      "closed_at": "2026-08-29T05:15:50.182614"
+    }
+  },
+  {
+    "trade_id": "ORD-1787967288",
+    "symbol": "NVDA",
+    "strategy": "EARNINGS_STRADDLE",
+    "entry_date": "2026-08-29",
+    "underlying_entry_price": 200.0,
+    "cost_or_credit_usd": 1400.0,
+    "package_limit_price_usd": 1400.0,
+    "margin_requirement_usd": 0.0,
+    "is_credit": false,
+    "profit_target_usd": 700.0,
+    "stop_loss_usd": 150.0,
+    "status": "CLOSED_STOPPED",
+    "orders": [
+      {
+        "order_id": "ORACLE-1787967288",
+        "symbol": "NVDA260904C00200000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_MARKET_CLOSED",
+        "filled_at": "2026-08-29T06:34:48.327514",
+        "filled_avg_price": 100.0,
+        "notes": "Market is closed. Paper simulated fill executed at midpoint limit price.",
+        "midpoint_limit_price": 7.0,
+        "occ_symbol": "NVDA260904C00200000"
+      },
+      {
+        "order_id": "ORACLE-1787967288",
+        "symbol": "NVDA260904P00200000",
+        "qty": 1,
+        "side": "buy",
+        "type": "limit",
+        "status": "FILLED_PAPER_MARKET_CLOSED",
+        "filled_at": "2026-08-29T06:34:48.561407",
+        "filled_avg_price": 100.0,
+        "notes": "Market is closed. Paper simulated fill executed at midpoint limit price.",
+        "midpoint_limit_price": 7.0,
+        "occ_symbol": "NVDA260904P00200000"
+      }
+    ],
+    "exit_date": "2026-08-29",
+    "exit_price": 200.0,
+    "pnl_usd": -150.0,
+    "exit_reason": "Hard stop-loss triggered (-$280.00 <= -$150.00).",
+    "broker_exit_result": {
+      "symbol": "NVDA",
+      "status": "CLOSED_PAPER_POSITION",
+      "closed_at": "2026-08-29T06:34:55.713426"
+    }
   }
 ]

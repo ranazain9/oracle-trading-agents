@@ -24,6 +24,7 @@ from langgraph.graph import StateGraph, START, END
 
 from tools.market_data_tools import MarketDataTool
 from tools.macro_calendar_tools import MacroCalendarTool
+from tools.alpaca_tools import AlpacaTool
 from agents.macro_intelligence_agent import MacroIntelligenceAgent, MacroAssessment
 from agents.strategy_brain_agent import StrategyBrainAgent, StrategyDecision
 from agents.hitl_supervisor_agent import HITLSupervisorAgent, HITLApprovalResult
@@ -200,14 +201,23 @@ def post_trade_analyst_node(state: OracleState) -> Dict[str, Any]:
 
 def capital_preservation_node(state: OracleState) -> Dict[str, Any]:
     """
-    Fallback Node: Capital Preservation Mode when a trade is vetoed or strategy is NO_TRADE.
+    Fallback Node: Capital Preservation Mode when a trade is vetoed, strategy is NO_TRADE, or market is closed.
     """
     decision = state.get("decision")
-    print(f"🛑 [LangGraph: Fallback Node] Capital Preservation Mode: {decision.validator_status if decision else 'NO_TRADE'}", flush=True)
+    alpaca = AlpacaTool()
+    if not alpaca.is_market_open():
+        clock = alpaca.get_market_clock()
+        reason = f"Market is CLOSED (Next Open: {clock.get('next_open', '09:30 EST')}). Preserving capital in standby."
+        status = "MARKET_CLOSED_STANDBY"
+    else:
+        reason = decision.validator_status if decision else "NO_TRADE"
+        status = "CAPITAL_PRESERVED_NO_ORDERS"
+
+    print(f"🛑 [LangGraph: Fallback Node] Capital Preservation Mode: {reason}", flush=True)
     return {
         "execution_result": {
-            "status": "CAPITAL_PRESERVED_NO_ORDERS",
-            "reason": decision.validator_status if decision else "NO_TRADE"
+            "status": status,
+            "reason": reason
         }
     }
 
@@ -218,8 +228,13 @@ def capital_preservation_node(state: OracleState) -> Dict[str, Any]:
 
 def check_trade_approval_edge(state: OracleState) -> str:
     """
-    LangGraph Conditional Edge routing based on deterministic validation & HITL approval.
+    LangGraph Conditional Edge routing based on deterministic validation, HITL approval, and market open gate.
     """
+    alpaca = AlpacaTool()
+    if not alpaca.is_market_open():
+        print("ℹ️ [LangGraph] Market is closed. Preserving capital via Fallback Node.", flush=True)
+        return "capital_preservation_node"
+
     if state.get("is_approved", False) and state.get("decision") and state["decision"].strategy != "NO_TRADE":
         return "trader_execution_node"
     return "capital_preservation_node"

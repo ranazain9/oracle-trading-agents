@@ -1,0 +1,164 @@
+[
+  {
+    "proposal_id": "TEST-PROP-01",
+    "symbol": "UNKNOWN",
+    "strategy": "UNKNOWN",
+    "decision": "APPROVED",
+    "operator": "Test Chief",
+    "timestamp": "2026-08-28T12:50:34.170129",
+    "notes": "Approved in unit test"
+  },
+  {
+    "proposal_id": "TEST-PROP-02",
+    "symbol": "UNKNOWN",
+    "strategy": "UNKNOWN",
+    "decision": "REJECTED",
+    "operator": "Test Chief",
+    "timestamp": "2026-08-28T12:50:34.189282",
+    "notes": "Vetoed in unit test"
+  },
+  {
+    "proposal_id": "TEST-PROP-01",
+    "symbol": "UNKNOWN",
+    "strategy": "UNKNOWN",
+    "decision": "APPROVED",
+    "operator": "Test Chief",
+    "timestamp": "2026-08-28T13:10:55.466768",
+    "notes": "Approved in unit test"
+  },
+  {
+    "proposal_id": "TEST-PROP-02",
+    "symbol": "UNKNOWN",
+    "strategy": "UNKNOWN",
+    "decision": "REJECTED",
+    "operator": "Test Chief",
+    "timestamp": "2026-08-28T13:10:55.491245",
+    "notes": "Vetoed in unit test"
+  },
+  {
+    "proposal_id": "TEST-PROP-01",
+    "symbol": "UNKNOWN",
+    "strategy": "UNKNOWN",
+    "decision": "APPROVED",
+    "operator": "Test Chief",
+    "timestamp": "2026-08-28T13:26:05.911668",
+    "notes": "Approved in unit test"
+  },
+  {
+    "proposal_id": "TEST-PROP-02",
+    "symbol": "UNKNOWN",
+    "strategy": "UNKNOWN",
+    "decision": "REJECTED",
+    "operator": "Test Chief",
+    "timestamp": "2026-08-28T13:26:05.923499",
+    "notes": "Vetoed in unit test"
+  },
+  {
+    "proposal_id": "TEST-PROP-01",
+    "symbol": "UNKNOWN",
+    "strategy": "UNKNOWN",
+    "decision": "APPROVED",
+    "operator": "Test Chief",
+    "timestamp": "2026-08-28T16:42:27.841963",
+    "notes": "Approved in unit test"
+  },
+  {
+    "proposal_id": "TEST-PROP-02",
+    "symbol": "UNKNOWN",
+    "strategy": "UNKNOWN",
+    "decision": "REJECTED",
+    "operator": "Test Chief",
+    "timestamp": "2026-08-28T16:42:27.858658",
+    "notes": "Vetoed in unit test"
+  },
+  {
+    "proposal_id": "TEST-PROP-01",
+    "symbol": "UNKNOWN",
+    "strategy": "UNKNOWN",
+    "decision": "APPROVED",
+    "operator": "Test Chief",
+    "timestamp": "2026-08-28T17:20:12.654063",
+    "notes": "Approved in unit test"
+  },
+  {
+    "proposal_id": "TEST-PROP-02",
+    "symbol": "UNKNOWN",
+    "strategy": "UNKNOWN",
+    "decision": "REJECTED",
+    "operator": "Test Chief",
+    "timestamp": "2026-08-28T17:20:12.669385",
+    "notes": "Vetoed in unit test"
+  },
+  {
+    "proposal_id": "TEST-PROP-01",
+    "symbol": "UNKNOWN",
+    "strategy": "UNKNOWN",
+    "decision": "APPROVED",
+    "operator": "Test Chief",
+    "timestamp": "2026-08-28T17:21:51.780497",
+    "notes": "Approved in unit test"
+  },
+  {
+    "proposal_id": "TEST-PROP-02",
+    "symbol": "UNKNOWN",
+    "strategy": "UNKNOWN",
+    "decision": "REJECTED",
+    "operator": "Test Chief",
+    "timestamp": "2026-08-28T17:21:51.794283",
+    "notes": "Vetoed in unit test"
+  },
+  {
+    "proposal_id": "TEST-PROP-01",
+    "symbol": "UNKNOWN",
+    "strategy": "UNKNOWN",
+    "decision": "APPROVED",
+    "operator": "Test Chief",
+    "timestamp": "2026-08-28T17:23:05.853659",
+    "notes": "Approved in unit test"
+  },
+  {
+    "proposal_id": "TEST-PROP-02",
+    "symbol": "UNKNOWN",
+    "strategy": "UNKNOWN",
+    "decision": "REJECTED",
+    "operator": "Test Chief",
+    "timestamp": "2026-08-28T17:23:05.908643",
+    "notes": "Vetoed in unit test"
+  },
+  {
+    "proposal_id": "TEST-PROP-01",
+    "symbol": "UNKNOWN",
+    "strategy": "UNKNOWN",
+    "decision": "APPROVED",
+    "operator": "Test Chief",
+    "timestamp": "2026-08-29T07:19:43.850006",
+    "notes": "Approved in unit test"
+  },
+  {
+    "proposal_id": "TEST-PROP-02",
+    "symbol": "UNKNOWN",
+    "strategy": "UNKNOWN",
+    "decision": "REJECTED",
+    "operator": "Test Chief",
+    "timestamp": "2026-08-29T07:19:43.903233",
+    "notes": "Vetoed in unit test"
+  },
+  {
+    "proposal_id": "TEST-PROP-01",
+    "symbol": "UNKNOWN",
+    "strategy": "UNKNOWN",
+    "decision": "APPROVED",
+    "operator": "Test Chief",
+    "timestamp": "2026-08-29T07:44:46.854247",
+    "notes": "Approved in unit test"
+  },
+  {
+    "proposal_id": "TEST-PROP-02",
+    "symbol": "UNKNOWN",
+    "strategy": "UNKNOWN",
+    "decision": "REJECTED",
+    "operator": "Test Chief",
+    "timestamp": "2026-08-29T07:44:46.872861",
+    "notes": "Vetoed in unit test"
+  }
+]

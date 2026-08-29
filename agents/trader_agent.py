@@ -45,7 +45,19 @@ class TraderAgent:
     ) -> Dict[str, Any]:
         """
         Calculates the order blueprint and submits the multi-leg order to Alpaca.
+        Enforces strict Market Open Gate and capital preservation during off-hours.
         """
+        # Step 0: Check Market Open Status Gate
+        if not self.alpaca.is_market_open():
+            clock = self.alpaca.get_market_clock()
+            print(f"🛑 [TraderAgent] Market is CLOSED (Next Open: {clock.get('next_open', '09:30 EST')}). Preserving capital. Zero orders dispatched and ledger untouched.")
+            return {
+                "status": "MARKET_CLOSED_STANDBY",
+                "reason": "Market is currently closed. Strategy execution is permitted only during regular trading hours (Mon-Fri 9:30 AM - 4:00 PM EST).",
+                "blueprint": None,
+                "orders_executed": []
+            }
+
         # Step 1: Check Account Buying Power
         account = self.alpaca.get_account_status()
         cash = account.get("cash", 100000.0)
@@ -171,6 +183,20 @@ class TraderAgent:
             order_res["midpoint_limit_price"] = leg.midpoint_limit_price
             order_res["occ_symbol"] = leg.occ_symbol
             executed_orders.append(order_res)
+
+        # Check for any rejected orders
+        has_failed_orders = any(
+            o.get("status") in ["REJECTED_MARKET_CLOSED", "REJECTED_ORDER_ERROR", "REJECTED", "REJECTED_MARGIN_EXCEEDED"]
+            for o in executed_orders
+        )
+        if has_failed_orders:
+            print("🛑 [TraderAgent] Order execution was not completed by broker. Ledger write skipped.")
+            return {
+                "status": "EXECUTION_ABORTED",
+                "reason": "One or more legs could not be executed on broker.",
+                "blueprint": blueprint,
+                "executed_orders": executed_orders
+            }
 
         # Step 5: Persist Trade Record to data/trades.json
         trade_record = {

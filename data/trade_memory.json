@@ -58,5 +58,275 @@
     "primary_driver": "THETA_DECAY",
     "grade": "B",
     "lesson": "The trade did not realize any profit despite a favorable entry IV rank, indicating that the expected theta decay was insufficient to offset the lack of IV expansion. Future trades should consider tighter stop-loss parameters or adjustments to the exit strategy to capture more value from theta decay."
+  },
+  {
+    "timestamp": "2026-08-28T12:50:37.023397",
+    "symbol": "NVDA",
+    "strategy": "EARNINGS_STRADDLE",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "IV_CRUSH",
+    "grade": "B",
+    "lesson": "The trade did not realize a profit due to a decline in implied volatility from entry to exit, indicating that the market's expectations for volatility were overly optimistic at entry. Future earnings straddle trades should consider tighter management of implied volatility expectations to mitigate IV crush risk."
+  },
+  {
+    "timestamp": "2026-08-28T12:50:48.952331",
+    "symbol": "NVDA",
+    "strategy": "EARNINGS_STRADDLE",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "IV_CRUSH",
+    "grade": "B",
+    "lesson": "The trade experienced a decline in implied volatility from entry to exit, indicating a missed opportunity for profit due to IV crush. Future strategies should consider the timing of earnings announcements and potential IV behavior to optimize entry and exit points."
+  },
+  {
+    "timestamp": "2026-08-28T12:52:48.663705",
+    "symbol": "AAPL",
+    "strategy": "EARNINGS_STRADDLE",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "THETA_DECAY",
+    "grade": "B",
+    "lesson": "The trade did not realize a profit due to a lack of significant IV expansion despite a favorable entry IV rank. Future strategies should consider tighter stop-loss parameters to mitigate the impact of theta decay in low volatility environments."
+  },
+  {
+    "timestamp": "2026-08-28T13:01:08.609883",
+    "symbol": "AAPL",
+    "strategy": "EARNINGS_STRADDLE",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "THETA_DECAY",
+    "grade": "B",
+    "lesson": "The strategy did not capitalize on the expected volatility increase prior to earnings, resulting in a neutral PnL despite a favorable entry IV rank. Future trades should consider tighter stop-loss parameters to mitigate the impact of theta decay in low volatility environments."
+  },
+  {
+    "timestamp": "2026-08-28T13:07:39.870623",
+    "symbol": "AAPL",
+    "strategy": "EARNINGS_STRADDLE",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "THETA_DECAY",
+    "grade": "B",
+    "lesson": "The trade did not realize any profit due to the lack of significant IV expansion despite a favorable entry IV rank. Future strategies should consider tighter stop-loss parameters to mitigate the impact of theta decay in low volatility environments."
+  },
+  {
+    "timestamp": "2026-08-28T13:11:17.044210",
+    "symbol": "NVDA",
+    "strategy": "EARNINGS_STRADDLE",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "IV_CRUSH",
+    "grade": "B",
+    "lesson": "The trade experienced a neutral outcome due to a decrease in implied volatility despite a favorable entry IV rank. Future strategies should consider the potential impact of IV crush on earnings straddles, especially when exiting positions close to expiration."
+  },
+  {
+    "timestamp": "2026-08-28T13:26:30.415443",
+    "symbol": "NVDA",
+    "strategy": "EARNINGS_STRADDLE",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "IV_CRUSH",
+    "grade": "B",
+    "lesson": "The trade experienced a decline in implied volatility from entry to exit, leading to no realized PnL despite a favorable IV rank at entry. Future strategies should consider the timing of exit relative to IV trends to maximize profitability."
+  },
+  {
+    "timestamp": "2026-08-28T16:43:04.002292",
+    "symbol": "NVDA",
+    "strategy": "EARNINGS_STRADDLE",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "IV_CRUSH",
+    "grade": "B",
+    "lesson": "The trade was negatively impacted by a decrease in implied volatility (IV) from entry to exit, leading to no realized PnL despite a stable underlying price. Future strategies should consider the timing of IV changes relative to earnings announcements to optimize entry and exit points."
+  },
+  {
+    "timestamp": "2026-08-28T16:53:34.459013",
+    "symbol": "AAPL",
+    "strategy": "EARNINGS_STRADDLE",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "THETA_DECAY",
+    "grade": "B",
+    "lesson": "The trade did not realize any profit despite a favorable entry IV rank, indicating that the theta decay was not sufficient to offset the lack of IV expansion. Future strategies should consider tighter stop-loss thresholds to mitigate the impact of time decay on earnings straddles."
+  },
+  {
+    "timestamp": "2026-08-28T17:20:37.028248",
+    "symbol": "NVDA",
+    "strategy": "NO_TRADE",
+    "pnl_usd": 0.0,
+    "outcome": "STOPPED_OUT_DISCIPLINE",
+    "primary_driver": "THETA_DECAY",
+    "grade": "B",
+    "lesson": "Maintaining discipline in trade exit strategies is crucial, even when the realized PnL is neutral. Future strategies should consider tighter management of IV rank changes to optimize exit timing."
+  },
+  {
+    "timestamp": "2026-08-28T17:22:02.790936",
+    "symbol": "NVDA",
+    "strategy": "NO_TRADE",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "THETA_DECAY",
+    "grade": "B",
+    "lesson": "The trade was executed with a neutral outcome, indicating that the strategy of holding until cycle completion can be effective in low-volatility environments. Future trades should consider tighter risk management to capitalize on potential theta decay while monitoring IV rank changes."
+  },
+  {
+    "timestamp": "2026-08-28T17:23:13.902158",
+    "symbol": "NVDA",
+    "strategy": "NO_TRADE",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "THETA_DECAY",
+    "grade": "B",
+    "lesson": "The trade was executed with a neutral outcome, indicating that the strategy of holding through the cycle was appropriate given the lack of significant market movement. Future trades should consider the impact of IV rank changes on potential Theta decay, especially in low volatility environments."
+  },
+  {
+    "timestamp": "2026-08-28T19:19:02.888136",
+    "symbol": "AAPL",
+    "strategy": "EARNINGS_STRADDLE",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "THETA_DECAY",
+    "grade": "B",
+    "lesson": "The trade did not realize any profit due to the lack of significant IV expansion despite a favorable entry IV rank. Future strategies should consider the potential for IV crush post-earnings announcements to better assess risk and reward."
+  },
+  {
+    "timestamp": "2026-08-28T20:32:37.991286",
+    "symbol": "TSLA",
+    "strategy": "EARNINGS_STRADDLE",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "IV_CRUSH",
+    "grade": "B",
+    "lesson": "The trade experienced minimal PnL due to a decrease in implied volatility despite the strategy being a straddle. Future trades should consider the potential for IV crush post-earnings announcements and adjust entry points accordingly."
+  },
+  {
+    "timestamp": "2026-08-28T20:38:56.774151",
+    "symbol": "TSLA",
+    "strategy": "EARNINGS_STRADDLE",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "IV_CRUSH",
+    "grade": "B",
+    "lesson": "The trade did not realize any profit due to the decline in implied volatility from entry to exit, indicating that the market's expectations were overly optimistic prior to earnings. Future strategies should consider the potential for IV crush more carefully when entering straddles around earnings announcements."
+  },
+  {
+    "timestamp": "2026-08-28T20:41:15.117248",
+    "symbol": "TSLA",
+    "strategy": "EARNINGS_STRADDLE",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "IV_CRUSH",
+    "grade": "B",
+    "lesson": "The trade experienced minimal PnL due to a decline in implied volatility from entry to exit, indicating a potential IV crush effect. Future strategies should consider the timing of earnings announcements and the impact of IV on straddle profitability."
+  },
+  {
+    "timestamp": "2026-08-28T20:42:24.021609",
+    "symbol": "TSLA",
+    "strategy": "EARNINGS_STRADDLE",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "THETA_DECAY",
+    "grade": "B",
+    "lesson": "The trade did not realize any profit due to the lack of significant IV expansion despite a favorable entry IV rank. Future earnings straddles should consider the potential for IV crush post-earnings announcement to better gauge risk and reward."
+  },
+  {
+    "timestamp": "2026-08-28T20:47:21.930573",
+    "symbol": "TSLA",
+    "strategy": "EARNINGS_STRADDLE",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "IV_CRUSH",
+    "grade": "B",
+    "lesson": "The trade experienced a decline in implied volatility from entry to exit, indicating a potential IV crush effect that negated any gains from the straddle position. Future strategies should consider the timing of earnings announcements and the associated IV dynamics to optimize entry and exit points."
+  },
+  {
+    "timestamp": "2026-08-28T21:02:51.792201",
+    "symbol": "TSLA",
+    "strategy": "EARNINGS_STRADDLE",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "IV_CRUSH",
+    "grade": "B",
+    "lesson": "The trade did not realize any profit due to a decline in implied volatility, despite a favorable entry IV rank. Future strategies should consider the potential impact of IV changes on earnings straddles, especially when exiting positions close to expiration."
+  },
+  {
+    "timestamp": "2026-08-28T21:08:06.427356",
+    "symbol": "TSLA",
+    "strategy": "EARNINGS_STRADDLE",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "IV_CRUSH",
+    "grade": "B",
+    "lesson": "The trade did not realize any profit due to a decline in implied volatility (IV) from entry to exit, indicating that the market's expectations for volatility decreased post-earnings announcement. Future strategies should consider the timing of IV changes relative to earnings events to optimize entry and exit points."
+  },
+  {
+    "timestamp": "2026-08-29T05:15:50.502073",
+    "symbol": "TSLA",
+    "strategy": "EARNINGS_STRADDLE",
+    "pnl_usd": 0.0,
+    "outcome": "OPTIMAL_ALPHA",
+    "primary_driver": "THETA_DECAY",
+    "grade": "A",
+    "lesson": "EARNINGS_STRADDLE on TSLA executed with realized PnL of $0.00. Risk controls respected."
+  },
+  {
+    "timestamp": "2026-08-29T06:34:58.445665",
+    "symbol": "NVDA",
+    "strategy": "EARNINGS_STRADDLE",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "IV_CRUSH",
+    "grade": "B",
+    "lesson": "The trade did not realize any profit due to a decline in implied volatility despite a favorable entry IV rank. Future strategies should consider the potential impact of IV changes on earnings straddles, particularly in high IV environments."
+  },
+  {
+    "timestamp": "2026-08-29T07:13:44.876067",
+    "symbol": "NVDA",
+    "strategy": "EARNINGS_STRADDLE",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "IV_CRUSH",
+    "grade": "B",
+    "lesson": "The trade experienced minimal PnL due to a decline in implied volatility despite a favorable entry IV rank. Future trades should consider the potential for IV crush post-earnings announcements and adjust profit targets accordingly."
+  },
+  {
+    "timestamp": "2026-08-29T07:13:46.183785",
+    "symbol": "NVDA",
+    "strategy": "EARNINGS_STRADDLE",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "THETA_DECAY",
+    "grade": "B",
+    "lesson": "The trade did not realize any profit despite a favorable entry IV rank, indicating that the theta decay was not sufficient to offset the lack of movement in the underlying asset. Future strategies should consider tighter stop-loss parameters to mitigate losses in low-volatility environments."
+  },
+  {
+    "timestamp": "2026-08-29T07:14:32.360383",
+    "symbol": "NVDA",
+    "strategy": "EARNINGS_STRADDLE",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "IV_CRUSH",
+    "grade": "B",
+    "lesson": "The trade experienced a decline in implied volatility from entry to exit, leading to a neutral PnL despite a favorable market movement. Future strategies should account for potential IV crush post-earnings announcements to better manage expectations and risk."
+  },
+  {
+    "timestamp": "2026-08-29T07:19:59.295174",
+    "symbol": "NVDA",
+    "strategy": "EARNINGS_STRADDLE",
+    "pnl_usd": 0.0,
+    "outcome": "THESIS_INVALIDATED",
+    "primary_driver": "IV_CRUSH",
+    "grade": "B",
+    "lesson": "The strategy did not yield a profit due to a decrease in implied volatility despite a favorable entry IV rank. Future trades should consider the potential for IV crush post-earnings announcements and adjust entry criteria accordingly."
+  },
+  {
+    "timestamp": "2026-08-29T07:45:09.887249",
+    "symbol": "SPY",
+    "strategy": "THETA_IRON_CONDOR",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "THETA_DECAY",
+    "grade": "B",
+    "lesson": "Despite the strategy being a Theta Iron Condor, the lack of realized PnL indicates that the theta decay was insufficient to overcome the impact of the IV rank decrease. Future trades should consider tighter management of IV fluctuations to enhance profitability."
   }
 ]

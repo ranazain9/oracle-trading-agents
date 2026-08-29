@@ -111,13 +111,23 @@ class MarketDataTool:
                 ticker = yf.Ticker(symbol)
                 hist = ticker.history(period="1mo")
                 
-                if not hist.empty:
-                    current_price = round(float(hist["Close"].iloc[-1]), 2)
-                    returns = hist["Close"].pct_change().dropna()
-                    std_dev = float(returns.std()) * (252 ** 0.5) * 100
+                import math
+                valid_closes = hist["Close"].dropna() if not hist.empty and "Close" in hist else None
+                if valid_closes is not None and not valid_closes.empty:
+                    last_val = float(valid_closes.iloc[-1])
+                    current_price = round(last_val, 2) if not math.isnan(last_val) else 100.0
+                    returns = valid_closes.pct_change().dropna()
+                    std_dev = float(returns.std()) * (252 ** 0.5) * 100 if len(returns) > 1 else 30.0
+                    if math.isnan(std_dev):
+                        std_dev = 30.0
                     iv_rank = round(min(max(std_dev * 1.2, 10.0), 95.0), 1)
                 else:
                     current_price = 100.0
+                    iv_rank = 50.0
+
+                if math.isnan(current_price) or current_price <= 0:
+                    current_price = 100.0
+                if math.isnan(iv_rank):
                     iv_rank = 50.0
 
                 # 1. Earnings Date Check

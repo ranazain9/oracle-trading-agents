@@ -1,156 +1,178 @@
-# ORACLE: Institutional Web Dashboard & Frontend Architecture Specification
-## Master Blueprint for the AI-Powered Autonomous Options Trading Terminal
+# ORACLE Trading System - Master Frontend Architecture Specification (Redesigned)
+
+## Institutional Bloomberg-Style AI Options Terminal & Fund Dashboard
 
 ---
 
-## 📋 1. Executive Summary & Design Vision
+## 1. Executive Summary & Design Vision
 
-The **ORACLE Web Dashboard** is designed to transform the multi-agent algorithmic options hedge fund into an institutional-grade, visual **Bloomberg-style Web Terminal**. 
+The **ORACLE Frontend Terminal** is an institutional-grade, real-time web application providing total transparency, control, and quantitative visualization for the multi-agent autonomous options hedge fund.
 
-### 🎨 Visual Theme & Aesthetics
-* **Theme:** Sleek Dark Mode / Deep Navy Fintech Palette (`#0B0F19` background, `#111827` cards).
-* **Accents:** Neon Emerald Green (`#10B981`) for profits & positive deltas, Electric Coral (`#EF4444`) for stop-losses, Cyan/Indigo (`#06B6D4` / `#6366F1`) for AI reasoning.
-* **Typography:** Modern Google Fonts (`Inter` & `JetBrains Mono` for tabular numbers and OCC options codes).
-* **Interactivity:** Glassmorphism cards, micro-animations on telemetry updates, and dynamic 2D payoff curves.
+It connects directly to the **FastAPI Backend (35 Endpoints + 2 WebSockets)**, providing sub-millisecond telemetry synchronization with Alpaca Securities, live CBOE options market feeds, and the 8-node LangGraph multi-agent cognitive architecture.
+
+### 🎨 Visual Theme & Fintech Aesthetics
+* **Theme:** Deep Obsidian & Navy Fintech Palette (`#0B0F19` base, `#111827` cards, `#1E293B` elevated containers).
+* **Accents:**
+  * **Neon Emerald (`#10B981`)**: Profit lock-in, positive theta decay, bullish bias.
+  * **Electric Crimson (`#EF4444`)**: Stop-losses, negative delta shocks, bearish bias.
+  * **Cyan & Indigo (`#06B6D4` / `#6366F1`)**: AI reasoning, Tree-of-Thoughts scenario matrices, WebSocket heartbeats.
+  * **Amber Gold (`#F59E0B`)**: HITL pending authorizations, circuit breaker warnings, high-alert loops.
+  * **Amethyst Purple (`#A855F7`)**: Macro intelligence, Yield curve shifts, Broken Wing Butterfly convexity.
+* **Typography:**
+  * Header/Brand: Google Fonts `Outfit` (600/700 weight).
+  * Body/Labels: Google Fonts `Inter` (400/500 weight).
+  * Financial Numbers & OCC Codes: `JetBrains Mono` (tabular lining numbers).
+* **Interactivity:** Glassmorphism cards with `backdrop-filter: blur(12px)`, glowing pulse indicators, smooth micro-transitions, and 2D canvas payoff curves.
 
 ---
 
-## 🏛️ 2. Core Dashboard Modules & Wireframe Layout
+## 2. Master Dashboard Wireframe & Layout Architecture
 
 ```
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ 🏛️ ORACLE AI OPTIONS TRADING TERMINAL                         🟢 MARKET OPEN | ALPACA BROKER SYNC (f7421290-...)       │
-├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-│  PORTFOLIO EQUITY: $100,000.00   |   DAY P&L: +$250.00 (+0.25%)   |   CBOE VIX: 14.50   |   WIN RATE: 83.3%        │
-├─────────────────────────────────────────────────────────────────┬──────────────────────────────────────────────────────┤
-│ 🎯 MODULE 1: ACTIVE OPTIONS POSITIONS (LIVE ALPACA SYNC)        │ 🧠 MODULE 2: AGENT 1 TREE-OF-THOUGHTS ($EV) RADAR    │
-│ • MSFT: 4-Leg OCC Iron Condor (P&L: +$125.00 | Tier 2 Ratchet)  │ • Best Candidate: MSFT (EV: +$120.00)                │
-│ • TSLA: 2-Leg Earnings Straddle (Open | Risk: $500.00)          │ • Red Team Verdict: CONFIRMED_ROBUST (temp=0.0)      │
-│ • Greeks: Net Delta = -0.02 (Neutral) | Theta = +$35.00/day     │ • Bayesian Sizing: $500.00 (Quarter-Kelly)           │
-├─────────────────────────────────────────────────────────────────┼──────────────────────────────────────────────────────┤
-│ 🌐 MODULE 3: 8-ASSET STOCK & VOLATILITY SCREENER                │ 📉 MODULE 4: 2D OPTIONS PAYOFF & PROFIT TENT         │
-│ • Watchlist: NVDA, AAPL, MSFT, TSLA, AMZN, META, AMD, SPY       │ • Green Profit Zone: $480.00 to $530.00              │
-│ • IV Rank % & 25-Delta Skew Barometers                          │ • Lower BE: $477.50 | Upper BE: $532.50              │
-│ • Multi-Source RSS News Sentiment Scores                        │ • Current Stock Needle: $505.06 (Center Safe)        │
-├─────────────────────────────────────────────────────────────────┴──────────────────────────────────────────────────────┤
-│ 🕹️ MODULE 5: FUND COMMAND BAR:  [ 🚀 Run Trade Cycle ]   [ 🛡️ Bodyguard Audit ]   [ 🚨 Emergency Liquidate All ]         │
-├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-│ 📟 MODULE 6: LIVE MULTI-AGENT LOG STREAM (CONSOLE)              │ 📑 MODULE 7: HACKATHON SOCIAL & TEARSHEET EXPORTER   │
-│ [Scout] Ingested CBOE VIX 14.50 & 10Y Yield 4.67%...            │ • [Copy Today's Twitter/X Post (280 chars)]          │
-│ [Brain] Generated ToT Scenario Matrix across 3 paths...         │ • [Copy LinkedIn Daily Review]                       │
-│ [Bodyguard] Active scan: Ratcheted stop-loss to +$62.50...      │ • [Download Official JSON / PDF Tearsheet]           │
-└─────────────────────────────────────────────────────────────────┴──────────────────────────────────────────────────────┘
-```
-
----
-
-## 📦 3. Deep-Dive Specification of Each Dashboard Module
-
-### Module 1: Live Telemetry & KPI Header
-* **Live Refresh:** Polls the backend API every 5 seconds.
-* **Metrics:**
-  * Total Portfolio Equity (`$100,000.00`)
-  * Cash Balance & Buying Power (`$100,000.00` / `$400,000.00`)
-  * Today's Realized & Unrealized P&L (`+$250.00`)
-  * CBOE VIX Gauge (`14.50 - LOW_VOLATILITY`)
-  * US Market Clock Status (`🟢 OPEN` / `🔴 CLOSED`)
-
----
-
-### Module 2: Active Positions & OCC Options Table
-* Connects directly to `AlpacaTool.get_open_positions()`.
-* **Columns:**
-  1. **Ticker & Strategy:** E.g., `MSFT` — `4-Leg Theta Iron Condor`.
-  2. **OCC Option Symbols:** Full 21-character contracts (`MSFT260904C00530000`).
-  3. **Entry Limit Price:** Midpoint Limit Price (`$2.50 Net Credit`).
-  4. **Mark-to-Market P&L:** Live Dollar P&L with color-coded profit badges.
-  5. **Dynamic Trailing Ratchet Status:** `Tier 0 (Hard Stop)`, `Tier 1 (Break-Even)`, `Tier 2 (+25% Locked)`, `Tier 3 (Target Exit)`.
-  6. **Greeks Summary:** Delta exposure ($\Delta$) and Daily Theta Decay Rent ($\Theta$).
-
----
-
-### Module 3: Stock Universe & Volatility Screener
-* Live radar tracking the top 8 liquid equity universe:
-  * **Columns:** Symbol, Live Price, 24h Change (%), Implied Volatility Rank (IV Rank %), 25-Delta Skew Direction, Upcoming Earnings Calendar, News Sentiment Score (`-1.0` to `+1.0`), and Recommended Strategy.
-  * **Expected Move Bands:** Visual range indicators displaying standard deviation price targets.
-
----
-
-### Module 4: 2D Options Payoff & Profit Tent Visualizer
-* Generates an interactive Black-Scholes payoff graph:
-  * **Shaded Green Region:** Max Profit plateau where time decay is captured.
-  * **Red Shaded Regions:** Defined max loss zones outside the protective wings.
-  * **Breakeven Vertical Markers:** Exact dollar price points where the trade crosses zero.
-  * **Current Price Marker:** Glowing cursor showing where the stock is trading right now.
-
----
-
-### Module 5: AI Multi-Turn Reasoning & Tree-of-Thoughts Card
-* Visualizes **Agent 1 (The Strategy Brain)**:
-  * Displays the 3 future price branches (Bullish $+4.5\%$, Flat $0.0\%$, Bearish $-4.5\%$).
-  * Shows the **Expected Value ($EV$)** calculation.
-  * Displays the **Asymmetric Red Team Stress-Test Verdict** (`CONFIRMED_ROBUST` or `REVISE_AND_HARDEN`).
-  * Shows Bayesian Win-Rate Sizing Corridor (`$450 – $600`).
-
----
-
-### Module 6: Live Multi-Agent Streaming Terminal
-* Dark-mode scrolling terminal displaying live timestamps and actions from all 5 agents:
-  * `[Scout]`, `[StrategyBrain]`, `[TraderAgent]`, `[BodyguardAgent]`, `[OrchestratorCOO]`.
-
----
-
-### Module 7: 1-Click Hackathon Social & Tearsheet Broadcaster
-* Built specifically for the **Alpaca Hackathon**:
-  * **Twitter/X Button:** Automatically formats today's trade summary within 280 characters with tags `@AlpacaHQ @lablabai #AlpacaHQ`.
-  * **LinkedIn Button:** Formats a 3-paragraph executive summary.
-  * **JSON/Tearsheet Download:** Instant download of `trades.json` and backtest statistics.
-
----
-
-## 🛠️ 4. Technology Stack & Implementation Roadmap
-
-```mermaid
-flowchart TD
-    classDef ui fill:#1E293B,stroke:#38BDF8,stroke-width:2px,color:#FFFFFF;
-    classDef api fill:#312E81,stroke:#C084FC,stroke-width:2px,color:#FFFFFF;
-    classDef core fill:#14532D,stroke:#4ADE80,stroke-width:2px,color:#FFFFFF;
-
-    subgraph FRONTEND ["🖥️ FRONTEND WEB APP"]
-        UI1[Vite + React / HTML5 + Vanilla CSS Modern Dashboard]:::ui
-        UI2[Chart.js / Plotly for 2D Payoff & Equity Curve]:::ui
-    end
-
-    subgraph BACKEND_BRIDGE ["⚡ FASTAPI REST & TELEMETRY BRIDGE"]
-        API1[GET /api/status - Live Alpaca Balance & Positions]:::api
-        API2[GET /api/screener - 8-Asset IV Rank & News Sentiment]:::api
-        API3[POST /api/trade-now - Trigger LangGraph Cycle]:::api
-        API4[POST /api/emergency-stop - Liquidate All Positions]:::api
-    end
-
-    subgraph AGENT_CORE ["👑 ORACLE 5-AGENT MULTI-TURN BACKEND"]
-        CORE1[Master Orchestrator Agent & LangGraph State Machine]:::core
-    end
-
-    UI1 & UI2 <-->|Fast JSON Polling / SSE| API1 & API2 & API3 & API4
-    API1 & API2 & API3 & API4 <--> CORE1
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ 🏛️ ORACLE AI OPTIONS TRADING TERMINAL                🟢 LIVE ALPACA WS SYNC  |  SESSION: ACTIVE  |  MODE: PAPER TRADING (REST/WS)     │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│  EQUITY: $100,000.00  |  CASH: $100,000.00  |  NET Δ: +0.02  |  DAILY Θ: +$45.00  |  VIX: 14.50  |  MSI: 0.50  |  WIN RATE: 83.3%  │
+├───────────────────────────────────────────────────────────────────┬───────────────────────────────────────────────────────────────────┤
+│ 🌐 MODULE 1: MULTI-AGENT STATE MACHINE & LANGGRAPH RUNNER         │ 🏛️ MODULE 2: HITL GOVERNANCE & CAPITAL SIGN-OFF DESK              │
+│ • Active Node: Node 3 [StrategyBrain] (Progress: 60%)             │ • Pending Proposals: 1 (NVDA Earnings Straddle for $500.00)       │
+│ • Regime: RISK_ON_EXPANSION (Macro Multiplier: 1.0x)              │ • Actions: [ ✅ Authorize Order ]   [ ❌ Veto Proposal ]          │
+│ • Runner-Up Fallback: AAPL (Passed 4/4 Hard Veto Checks)          │ • Risk Desk Override: Adjusted Budget Input ($450.00)             │
+├───────────────────────────────────────────────────────────────────┼───────────────────────────────────────────────────────────────────┤
+│ 📊 MODULE 3: 8-ASSET QUANTITATIVE SCREENER & ALTERNATIVE RADAR     │ 📉 MODULE 4: 2D OPTIONS PAYOFF TENT & RISK BOUNDARIES             │
+│ • Screener: NVDA, AAPL, MSFT, TSLA, AMZN, SPY (IV Rank % & Skew)  │ • Interactive Canvas Payoff Curve (Max Profit Plateau)            │
+│ • Volume Profile: POC $225.46 | VAH $228.16 | VAL $215.84         │ • Breakeven Markers: Lower $217.02 | Upper $242.98                │
+│ • Anchored VWAP: $219.72 (BULLISH_ABOVE_VWAP)                     │ • Stock Needle: $230.00 (In Max Profit Zone)                      │
+│ • Unusual Flow: AGGRESSIVE_CALL_SWEEPS ($4.5M Premium)            │ • Net Greeks: Delta +0.05 | Theta +$12.50/day                     │
+├───────────────────────────────────────────────────────────────────┴───────────────────────────────────────────────────────────────────┤
+│ 🎯 MODULE 5: ACTIVE POSITIONS & DYNAMIC TRAILING PROFIT RATCHET                                                                      │
+│ • NVDA 4-Leg Theta Iron Condor | PnL: +$125.00 (+50.0%) | Ratchet Tier: TIER_2_LOCKED (+25% Floor: +$62.50)                          │
+│ • Actions: [ 🔄 Roll Untested Wing (+$140 Credit) ]   [ 🛑 Liquidate Position ]   [ 🛡️ Run Bodyguard Scan ]                          │
+├───────────────────────────────────────────────────────────────────┬───────────────────────────────────────────────────────────────────┤
+│ 🧪 MODULE 6: 7-STRATEGY QUANTITATIVE LAB & BLUEPRINT CALCULATOR   │ 📈 MODULE 7: MACRO SENTINEL & TREASURY YIELD BAROMETER            │
+│ • Selector: Straddle / Condor / Vertical / 0DTE / Calendar / Wheel│ • 10Y Yield: 4.25% | 2Y Yield: 4.10% (Spread: +15 bps Normal)     │
+│ • Strike Snapping, Package Midpoint Limit & Slippage Savings      │ • Macro Shock Index: 0.50 (RISK_ON_EXPANSION)                     │
+├───────────────────────────────────────────────────────────────────┼───────────────────────────────────────────────────────────────────┤
+│ 📟 MODULE 8: REAL-TIME TELEMETRY LOG STREAM (/ws/telemetry)       │ 📑 MODULE 9: POST-TRADE REFLECTION & HACKATHON SOCIAL EXPORTER    │
+│ • [17:50:04] StrategyBrain: Evaluated 3 ToT Branches...           │ • Win Rate: 83.3% | Profit Factor: 3.2 | Sharpe Ratio: 2.45       │
+│ • [17:50:18] Bodyguard: Stop floor ratcheted to +$62.50...        │ • [ 🐦 Copy Twitter/X Post ]  [ 💼 Copy LinkedIn ]  [ 📥 Export ] │
+├───────────────────────────────────────────────────────────────────┴───────────────────────────────────────────────────────────────────┤
+│ 🕹️ MODULE 10: FUND COMMAND BAR:  [ 🚀 Run Trade Cycle ]   [ 🛡️ Guardian Scan ]   [ 🚨 Emergency Kill-Switch (Liquidate All) ]         │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 🗓️ 5. Step-by-Step Build Plan (When Ready)
+## 3. Deep-Dive Specification of the 10 Frontend Modules
 
-1. **Step 1: Lightweight FastAPI Bridge (`backend_server.py`)**  
-   Create REST endpoints wrapping `MasterOrchestratorAgent` and `AlpacaTool`.
-2. **Step 2: Frontend Layout & Styling (`dashboard/`)**  
-   Implement the dark-mode grid layout, glassmorphism cards, and Google Fonts.
-3. **Step 3: Payoff & Equity Curve Charts**  
-   Integrate 2D Black-Scholes profit tent and portfolio equity curve.
-4. **Step 4: Interactive Command Buttons & Social Broadcaster**  
-   Connect the action buttons (`Trade Now`, `Bodyguard Scan`, `Emergency Stop`, `Copy Social Post`).
-5. **Step 5: End-to-End Verification**  
-   Launch the web app locally on `localhost:8000` and verify live telemetry synchronization with Alpaca.
+### Module 1: Live Multi-Agent LangGraph Pipeline Streamer
+* **Backend Connection:** `POST /api/v1/pipeline/run`, `GET /api/v1/pipeline/status`, `WebSocket /ws/telemetry`.
+* **Visuals:**
+  * Animated node-progression stepper (Node 1 Macro $\to$ Node 2 Scout $\to$ Node 3 Brain $\to$ Node 4 HITL $\to$ Node 5 Trader $\to$ Node 6 Hedge $\to$ Node 7 Bodyguard $\to$ Node 8 Analyst).
+  * Real-time progress bar (0% to 100%).
+  * Collapsible tree showing Tree-of-Thoughts branches (+4.5% Bull, 0% Flat, -4.5% Bear) with calculated Expected Values ($EV$).
+  * Red Team critique badge (`CONFIRMED_ROBUST` vs `REJECTED_RUNNER_UP_SELECTED`).
+
+### Module 2: Human-In-The-Loop (HITL) Governance Modal
+* **Backend Connection:** `GET /api/v1/hitl/pending`, `POST /api/v1/hitl/approve/{id}`, `POST /api/v1/hitl/reject/{id}`.
+* **Visuals:**
+  * Glowing Amber notification badge when a trade proposal exceeds $500.00 or requires operator review.
+  * Trade details card: Symbol, Strategy, Proposed Risk Budget, AI Confidence Score, Macro Regime thesis.
+  * Interactive operator inputs: Operator Name, Notes, Budget Override slider, **[Authorize]** and **[Veto]** buttons.
+
+### Module 3: 8-Asset Quantitative Screener & Alternative Data Radar
+* **Backend Connection:** `GET /api/v1/signals/universe`, `GET /api/v1/signals/volume-profile`, `GET /api/v1/signals/sentiment`, `GET /api/v1/signals/unusual-flow`.
+* **Visuals:**
+  * High-density financial data table with ticker search & filtering.
+  * **Volume Profile Gauge:** Visual bar indicating Point of Control (POC), Value Area High (VAH), and Value Area Low (VAL).
+  * **Anchored VWAP Badge:** Green/Red pills showing if stock is trading above or below VWAP $\pm 1\text{SD} / \pm 2\text{SD}$.
+  * **Social & Insider Sentiment:** Crowd polarity score (`+0.72`) + SEC Form 4 insider flow status.
+  * **Unusual Flow Sweeps:** Radar icon highlighting aggressive institutional call/put sweep orders.
+
+### Module 4: Dynamic 2D Options Payoff & Profit Tent Visualizer
+* **Backend Connection:** `GET /api/v1/signals/tot-matrix`, `POST /api/v1/strategies/calculate`.
+* **Visuals:**
+  * High-resolution HTML5 Canvas / Chart.js interactive graph.
+  * Green shaded polygon showing max profit zone across strike ranges.
+  * Red shaded tails showing defined maximum risk boundaries.
+  * Vertical dashed markers for Lower Breakeven and Upper Breakeven.
+  * Glowing animated vertical line indicating current underlying stock price.
+
+### Module 5: Active Positions & Trailing Profit Ratchet Matrix
+* **Backend Connection:** `GET /api/v1/portfolio/positions`, `GET /api/v1/portfolio/greeks`, `POST /api/v1/strategies/roll-wing`, `POST /api/v1/portfolio/close/{symbol}`.
+* **Visuals:**
+  * Real-time Mark-to-Market PnL badges ($+\$125.00$ / $+50.0\%$).
+  * Dynamic Trailing Ratchet status badge (`Tier 0 Hard Stop`, `Tier 1 Break-Even`, `Tier 2 Profit Lock`, `Tier 3 Target`).
+  * **1-Click Wing Roll Button:** Triggers `OptionLegRoller` to roll untested wings inward for extra credit.
+  * **1-Click Close Button:** Immediate individual position liquidation on exchange.
+
+### Module 6: 7-Strategy Quantitative Order Calculator
+* **Backend Connection:** `GET /api/v1/strategies/list`, `POST /api/v1/strategies/calculate`, `POST /api/v1/strategies/execute`.
+* **Visuals:**
+  * Strategy switcher:
+    1. Earnings Volatility Straddle
+    2. Theta Iron Condor
+    3. Directional Vertical Spread
+    4. 0DTE Mean Reversion Spread
+    5. Calendar & Diagonal Spread
+    6. Systematic Wheel Strategy
+    7. Broken Wing Butterfly (BWB)
+  * Real-time CBOE strike snapping, package limit price, margin requirement, and estimated slippage savings indicator ($+\$32.00$).
+  * **[Simulate Blueprint]** and **[Execute Live]** action buttons.
+
+### Module 7: Macro Intelligence & Treasury Yield Barometer
+* **Backend Connection:** `GET /api/v1/agents/macro`.
+* **Visuals:**
+  * 10-Year vs 2-Year Treasury Yield Spread inversion gauge.
+  * Macro Shock Index (MSI) circular dial meter.
+  * Sizing multiplier indicator ($0.25\times$ to $1.0\times$).
+  * Fed catalyst calendar countdown (CPI, FOMC, NFP).
+
+### Module 8: Real-Time Multi-Agent Telemetry Terminal
+* **Backend Connection:** `WebSocket /ws/telemetry`.
+* **Visuals:**
+  * Retro-modern dark console with color-coded log entries:
+    * `[Macro]` (Purple), `[Scout]` (Blue), `[Brain]` (Cyan), `[HITL]` (Amber), `[Trader]` (Emerald), `[Hedge]` (Indigo), `[Bodyguard]` (Red), `[Analyst]` (Green).
+  * Auto-scroll toggle, pause stream button, and log search filter.
+
+### Module 9: Trade Memory Ledger & Hackathon Social Exporter
+* **Backend Connection:** `GET /api/v1/trades/history`, `GET /api/v1/trades/memory`, `GET /api/v1/trades/stats`, `POST /api/v1/trades/export`.
+* **Visuals:**
+  * Win Rate %, Profit Factor, Sharpe Ratio ($2.45$), Max Drawdown ($3.8\%$).
+  * Post-trade reflections card displaying AI lessons learned from `trade_memory.json`.
+  * **1-Click Social Buttons**:
+    * **[ 🐦 Copy Twitter/X Post ]**: Auto-generates compliant 280-character hackathon recap with `#AlpacaHQ @AlpacaHQ @lablabai`.
+    * **[ 💼 Copy LinkedIn Review ]**: Generates executive 3-paragraph fund overview.
+    * **[ 📥 Download Tearsheet ]**: Exports clean JSON / CSV dataset.
+
+### Module 10: Fund Command Hub & Emergency Kill-Switch
+* **Backend Connection:** `POST /api/v1/pipeline/run`, `POST /api/v1/agents/bodyguard/scan`, `POST /api/v1/portfolio/close-all`.
+* **Visuals:**
+  * Glassmorphism floating bottom bar.
+  * Primary Action: **[ 🚀 Run Autonomous Trade Cycle ]**
+  * Secondary Action: **[ 🛡️ Trigger Bodyguard Scan ]**
+  * Emergency Action: **[ 🚨 Emergency Kill-Switch (Liquidate All) ]** (opens double-confirmation dialog requiring code entry).
 
 ---
 
-*This report is preserved in `FRONTEND_ARCHITECTURE_SPEC.md` as our complete master blueprint for when we build the web dashboard.*
+## 4. Frontend Technology Stack
+
+* **Structure & UI Logic:** Modern Vanilla HTML5 + Modular ES6 JavaScript (Zero heavy build dependencies, instant local loading, high maintainability).
+* **Styling:** Vanilla CSS3 with Custom Properties (CSS Tokens), CSS Grid / Flexbox, Glassmorphism, and GPU-accelerated micro-animations.
+* **Charting:** Chart.js 4.x via CDN for 2D Payoff curves, VIX gauges, and Macro dials.
+* **WebSockets & Networking:** Native JavaScript `WebSocket` with automatic reconnection backoff and `fetch()` API.
+
+---
+
+## 5. Master Step-by-Step Build Sequence
+
+1. **Step 1: Create Frontend Structure & Design Tokens (`frontend/index.html`, `frontend/css/`)**
+   * Set up modern dark-mode CSS theme, glassmorphism tokens, responsive grid layouts, and typography.
+2. **Step 2: Build API & WebSocket Client Service (`frontend/js/api.js` & `frontend/js/ws.js`)**
+   * Implement type-safe async fetch wrapper for all 35 endpoints and resilient WebSocket listeners for telemetry & positions.
+3. **Step 3: Build Core Components & Visual Modules (`frontend/js/components/`)**
+   * KPI header, Multi-Agent Stepper, 8-Asset Screener table, Active Positions with Ratchet badges, HITL modal, and Strategy Calculator.
+4. **Step 4: Build Interactive 2D Payoff & Chart Visualizers (`frontend/js/charts.js`)**
+   * 2D Black-Scholes profit tent with dynamic breakevens and current stock needle.
+5. **Step 5: Assemble App, Connect Command Hub & End-to-End Verification (`frontend/js/app.js` & Browser Subagent Testing)**
+   * Bind all buttons, test live streaming with backend on `http://localhost:8000`, and verify 100% responsiveness.

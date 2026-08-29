@@ -3,8 +3,10 @@ ORACLE Trading Agent - 100% Real Live Options Liquidity & Bid-Ask Spread Auditor
 Pulls real-time Bid, Ask, Spread Width (%), and Open Interest directly from active CBOE option chains.
 """
 import logging
+import math
 import warnings
 from typing import Dict, Any
+import pandas as pd
 
 warnings.filterwarnings("ignore")
 logging.getLogger("yfinance").setLevel(logging.CRITICAL)
@@ -14,6 +16,24 @@ try:
     YF_AVAILABLE = True
 except ImportError:
     YF_AVAILABLE = False
+
+
+def _safe_float(val, default=0.0) -> float:
+    try:
+        if val is None or pd.isna(val) or math.isnan(float(val)):
+            return default
+        return float(val)
+    except Exception:
+        return default
+
+
+def _safe_int(val, default=0) -> int:
+    try:
+        if val is None or pd.isna(val) or math.isnan(float(val)):
+            return default
+        return int(float(val))
+    except Exception:
+        return default
 
 
 class LiquidityGuard:
@@ -53,10 +73,10 @@ class LiquidityGuard:
             calls["strike_diff"] = (calls["strike"] - current_price).abs()
             atm_call = calls.sort_values("strike_diff").iloc[0]
 
-            live_bid = float(atm_call.get("bid", 0.0))
-            live_ask = float(atm_call.get("ask", 0.0))
-            live_oi = int(atm_call.get("openInterest", 0)) if not str(atm_call.get("openInterest", "")).lower() == "nan" else 1500
-            live_vol = int(atm_call.get("volume", 0)) if not str(atm_call.get("volume", "")).lower() == "nan" else 500
+            live_bid = _safe_float(atm_call.get("bid"), 0.0)
+            live_ask = _safe_float(atm_call.get("ask"), 0.0)
+            live_oi = _safe_int(atm_call.get("openInterest"), 1500)
+            live_vol = _safe_int(atm_call.get("volume"), 500)
 
             # 3. Calculate exact live Bid-Ask Spread Width (%)
             if live_ask > 0 and live_bid > 0:
