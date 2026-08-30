@@ -1,0 +1,344 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap');
+
+:root {
+  --openbb-bg-canvas: #06090F;
+  --openbb-bg-surface: #0B111C;
+  --openbb-bg-widget: #0F1726;
+  --openbb-bg-widget-hover: #141F33;
+  --openbb-bg-elevated: #18253D;
+  --openbb-bg-input: #080C14;
+
+  --openbb-cyan: #00E5FF;
+  --openbb-cyan-subtle: rgba(0, 229, 255, 0.10);
+  --openbb-cyan-glow: 0 0 16px rgba(0, 229, 255, 0.25);
+
+  --openbb-emerald: #00E676;
+  --openbb-emerald-subtle: rgba(0, 230, 118, 0.10);
+  --openbb-emerald-glow: 0 0 16px rgba(0, 230, 118, 0.25);
+
+  --openbb-crimson: #FF3366;
+  --openbb-crimson-subtle: rgba(255, 51, 102, 0.10);
+  --openbb-crimson-glow: 0 0 16px rgba(255, 51, 102, 0.25);
+
+  --openbb-amber: #FFB703;
+  --openbb-amber-subtle: rgba(255, 183, 3, 0.10);
+  --openbb-amber-glow: 0 0 16px rgba(255, 183, 3, 0.25);
+
+  --openbb-purple: #A855F7;
+  --openbb-purple-subtle: rgba(168, 85, 247, 0.10);
+  --openbb-purple-glow: 0 0 16px rgba(168, 85, 247, 0.25);
+
+  --openbb-border: rgba(255, 255, 255, 0.08);
+  --openbb-border-medium: rgba(255, 255, 255, 0.15);
+  --openbb-border-focus: rgba(0, 229, 255, 0.40);
+
+  --font-heading: 'Outfit', 'Inter', -apple-system, sans-serif;
+  --font-body: 'Inter', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Roboto Mono', monospace;
+
+  --text-pure: #FFFFFF;
+  --text-primary: #F8FAFC;
+  --text-body: #CBD5E1;
+  --text-muted: #94A3B8;
+  --text-dim: #64748B;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--openbb-bg-canvas);
+  color: var(--text-body);
+  font-family: var(--font-body);
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Sleek Scrollbars */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.25); }
+
+/* Typography Helpers */
+.font-heading { font-family: var(--font-heading); }
+.font-mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+/* Micro-Animations & Glow Effects */
+@keyframes pulse-emerald {
+  0% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0.5); }
+  70% { box-shadow: 0 0 0 7px rgba(0, 230, 118, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0); }
+}
+
+@keyframes pulse-amber {
+  0% { box-shadow: 0 0 0 0 rgba(255, 183, 3, 0.5); }
+  70% { box-shadow: 0 0 0 7px rgba(255, 183, 3, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 183, 3, 0); }
+}
+
+@keyframes pulse-cyan {
+  0% { box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.5); }
+  70% { box-shadow: 0 0 0 7px rgba(0, 229, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 229, 255, 0); }
+}
+
+@keyframes fade-slide-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.pulse-dot-green {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--openbb-emerald);
+  animation: pulse-emerald 2s infinite;
+  display: inline-block;
+}
+
+.pulse-dot-amber {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--openbb-amber);
+  animation: pulse-amber 2s infinite;
+  display: inline-block;
+}
+
+.pulse-dot-cyan {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--openbb-cyan);
+  animation: pulse-cyan 2s infinite;
+  display: inline-block;
+}
+
+.fade-in-view {
+  animation: fade-slide-in 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Glassmorphic Cards */
+.openbb-card {
+  background: var(--openbb-bg-widget);
+  border: 1px solid var(--openbb-border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(10px);
+  min-width: 0;
+  max-width: 100%;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.openbb-card.hover-lift:hover {
+  border-color: var(--openbb-border-medium);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+  transform: translateY(-2px);
+}
+
+/* Status Badges */
+.openbb-badge {
+  font-family: var(--font-mono);
+  font-size: 0.63rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  letter-spacing: 0.3px;
+}
+.openbb-badge.profit { background: var(--openbb-emerald-subtle); color: var(--openbb-emerald); border: 1px solid rgba(0, 230, 118, 0.30); }
+.openbb-badge.loss { background: var(--openbb-crimson-subtle); color: var(--openbb-crimson); border: 1px solid rgba(255, 51, 102, 0.30); }
+.openbb-badge.neutral { background: var(--openbb-cyan-subtle); color: var(--openbb-cyan); border: 1px solid rgba(0, 229, 255, 0.30); }
+.openbb-badge.warn { background: var(--openbb-amber-subtle); color: var(--openbb-amber); border: 1px solid rgba(255, 183, 3, 0.30); }
+.openbb-badge.purple { background: var(--openbb-purple-subtle); color: var(--openbb-purple); border: 1px solid rgba(168, 85, 247, 0.30); }
+
+/* Buttons */
+.btn-terminal {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 5px;
+  background: var(--openbb-bg-surface);
+  border: 1px solid var(--openbb-border);
+  color: var(--text-pure);
+  font-family: var(--font-heading);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+.btn-terminal:hover {
+  background: var(--openbb-bg-elevated);
+  border-color: var(--openbb-border-medium);
+  transform: translateY(-1px);
+}
+.btn-terminal.primary {
+  background: linear-gradient(135deg, rgba(0, 229, 255, 0.18), rgba(0, 229, 255, 0.08));
+  border-color: rgba(0, 229, 255, 0.40);
+  color: var(--openbb-cyan);
+}
+.btn-terminal.primary:hover {
+  background: linear-gradient(135deg, rgba(0, 229, 255, 0.28), rgba(0, 229, 255, 0.15));
+  border-color: var(--openbb-cyan);
+  box-shadow: var(--openbb-cyan-glow);
+}
+.btn-terminal.danger {
+  background: linear-gradient(135deg, rgba(255, 51, 102, 0.18), rgba(255, 51, 102, 0.08));
+  border-color: rgba(255, 51, 102, 0.40);
+  color: var(--openbb-crimson);
+}
+.btn-terminal.danger:hover {
+  background: linear-gradient(135deg, rgba(255, 51, 102, 0.28), rgba(255, 51, 102, 0.15));
+  border-color: var(--openbb-crimson);
+  box-shadow: var(--openbb-crimson-glow);
+}
+
+/* ==========================================================================
+   Scrollable Tables Architecture with Sticky Backdrop Headers
+   ========================================================================== */
+.terminal-table-wrapper {
+  width: 100%;
+  max-width: 100%;
+  height: 230px;
+  max-height: 230px;
+  overflow-y: auto;
+  overflow-x: auto;
+  border-radius: 6px;
+  border: 1px solid var(--openbb-border);
+  background: var(--openbb-bg-surface);
+  position: relative;
+}
+
+.terminal-table-wrapper.blotter-wrapper {
+  height: 190px;
+  max-height: 190px;
+}
+
+.terminal-table-wrapper.watchlist-wrapper {
+  height: 240px;
+  max-height: 240px;
+}
+
+.terminal-table-wrapper.ledger-wrapper {
+  height: 250px;
+  max-height: 250px;
+}
+
+.terminal-table-wrapper.hitl-wrapper {
+  height: 210px;
+  max-height: 210px;
+}
+
+.terminal-table {
+  width: 100%;
+  min-width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.72rem;
+  text-align: left;
+}
+
+.terminal-table th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 8px 10px;
+  color: var(--text-dim);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  border-bottom: 1px solid var(--openbb-border-medium);
+  letter-spacing: 0.5px;
+  background: #0E1624;
+  backdrop-filter: blur(8px);
+  font-family: var(--font-heading);
+  white-space: nowrap;
+}
+
+.terminal-table td {
+  padding: 6px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-body);
+  white-space: nowrap;
+}
+
+.terminal-table td.wrap-cell {
+  white-space: normal !important;
+  word-break: break-word;
+  min-width: 160px;
+  max-width: none;
+  line-height: 1.35;
+}
+
+.terminal-table tbody tr {
+  cursor: pointer;
+  transition: background 0.12s ease, transform 0.12s ease;
+}
+
+.terminal-table tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.terminal-table tbody tr:hover {
+  background: rgba(0, 229, 255, 0.06);
+}
+
+/* OpenBB Full-Width Fluid Tables */
+.openbb-table {
+  width: 100%;
+  min-width: 100%;
+  border-collapse: collapse;
+  font-size: 0.72rem;
+  text-align: left;
+}
+
+.openbb-table th {
+  padding: 8px 12px;
+  color: var(--text-dim);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  border-bottom: 1px solid var(--openbb-border-medium);
+  letter-spacing: 0.5px;
+  background: #0E1624;
+  font-family: var(--font-heading);
+}
+
+.openbb-table td {
+  padding: 7px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  font-family: var(--font-mono);
+  color: var(--text-body);
+}
+
+.openbb-table td.wrap-cell {
+  white-space: normal !important;
+  word-break: break-word;
+  min-width: 180px;
+  max-width: none;
+  line-height: 1.35;
+}
+
+.openbb-table tbody tr {
+  transition: background 0.12s ease;
+}
+
+.openbb-table tbody tr:hover {
+  background: rgba(0, 229, 255, 0.05);
+}

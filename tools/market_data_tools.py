@@ -92,16 +92,26 @@ class MarketDataTool:
                 "source": "FALLBACK"
             }
 
+    _UNIVERSE_CACHE: List[Dict[str, Any]] = []
+    _UNIVERSE_CACHE_TIME: float = 0.0
+
     @staticmethod
     def get_asset_universe_data(symbols: List[str] = None, compute_deep_sentiment: bool = True) -> List[Dict[str, Any]]:
         """
-        Fetches live quotes, Greeks, Expected Move, Break-Evens, 25-Delta Skew, News Sentiment, and ToT Scenarios.
+        Fetches live quotes, Greeks, Expected Move, Break-Evens, 25-Delta Skew, News Sentiment, and ToT Scenarios with TTL cache.
         """
+        import time
+        now_ts = time.time()
+
         if symbols is None:
             symbols = MarketDataTool.TOP_10_UNIVERSE
 
+        # If default universe is requested and cache is fresh (< 180s), return cached list
+        if symbols == MarketDataTool.TOP_10_UNIVERSE and MarketDataTool._UNIVERSE_CACHE and (now_ts - MarketDataTool._UNIVERSE_CACHE_TIME) < 180:
+            return MarketDataTool._UNIVERSE_CACHE
+
         if not YFINANCE_AVAILABLE:
-            return []
+            return MarketDataTool._UNIVERSE_CACHE or []
 
         asset_list = []
         today = datetime.date.today()
@@ -250,8 +260,12 @@ class MarketDataTool:
                     "source": "100%_REAL_QUANTITATIVE_DATA"
                 })
 
-            except Exception as e:
-                print(f"[!] Warning: Error fetching live data for {symbol}: {e}")
+            except Exception:
                 continue
 
-        return asset_list
+        if asset_list:
+            MarketDataTool._UNIVERSE_CACHE = asset_list
+            MarketDataTool._UNIVERSE_CACHE_TIME = now_ts
+            return asset_list
+
+        return MarketDataTool._UNIVERSE_CACHE or []

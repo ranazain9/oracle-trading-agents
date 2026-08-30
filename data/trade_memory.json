@@ -328,5 +328,95 @@
     "primary_driver": "THETA_DECAY",
     "grade": "B",
     "lesson": "Despite the strategy being a Theta Iron Condor, the lack of realized PnL indicates that the theta decay was insufficient to overcome the impact of the IV rank decrease. Future trades should consider tighter management of IV fluctuations to enhance profitability."
+  },
+  {
+    "timestamp": "2026-08-29T10:56:27.681016",
+    "symbol": "TSLA",
+    "strategy": "THETA_IRON_CONDOR",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "THETA_DECAY",
+    "grade": "B",
+    "lesson": "The trade achieved its intended theta decay objective, but the lack of realized PnL indicates that the market conditions did not favor significant profit capture. Future trades should consider tighter profit targets and monitor IV rank changes more closely to optimize exit timing."
+  },
+  {
+    "timestamp": "2026-08-29T14:18:35.378330",
+    "symbol": "TSLA",
+    "strategy": "THETA_IRON_CONDOR",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "THETA_DECAY",
+    "grade": "B",
+    "lesson": "The trade successfully captured theta decay over a short holding period, but the lack of realized PnL indicates that the profit potential was limited by the exit IV rank decrease. Future trades should consider adjusting exit strategies to optimize for potential IV changes closer to expiration."
+  },
+  {
+    "timestamp": "2026-08-29T16:43:54.087542",
+    "symbol": "TSLA",
+    "strategy": "THETA_IRON_CONDOR",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "THETA_DECAY",
+    "grade": "B",
+    "lesson": "The trade achieved its objective of harvesting theta, but the lack of realized PnL indicates that the market conditions did not favor significant profit generation. Future trades should consider tighter risk management to capture more favorable theta decay while monitoring IV rank changes."
+  },
+  {
+    "timestamp": "2026-08-29T16:44:47.241523",
+    "symbol": "TSLA",
+    "strategy": "THETA_IRON_CONDOR",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "THETA_DECAY",
+    "grade": "B",
+    "lesson": "In a THETA_IRON_CONDOR strategy, maintaining a favorable IV rank is crucial for maximizing theta decay benefits. Future trades should consider tighter management of IV rank fluctuations to enhance profitability."
+  },
+  {
+    "timestamp": "2026-08-29T16:44:54.139668",
+    "symbol": "TSLA",
+    "strategy": "THETA_IRON_CONDOR",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "THETA_DECAY",
+    "grade": "B",
+    "lesson": "The trade successfully captured theta decay over a short holding period, but the lack of realized PnL indicates that the strategy may require tighter management of exit conditions. Future trades should consider adjusting exit thresholds to better capitalize on time decay while minimizing the impact of IV fluctuations."
+  },
+  {
+    "timestamp": "2026-08-29T16:44:56.765539",
+    "symbol": "TSLA",
+    "strategy": "THETA_IRON_CONDOR",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "THETA_DECAY",
+    "grade": "B",
+    "lesson": "While the strategy aimed to capitalize on theta decay, the lack of realized PnL indicates that the trade did not benefit from sufficient theta erosion within the holding period. Future trades should consider tighter management of IV rank changes and potential adjustments to exit strategies to optimize outcomes."
+  },
+  {
+    "timestamp": "2026-08-29T16:44:58.439733",
+    "symbol": "TSLA",
+    "strategy": "THETA_IRON_CONDOR",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "THETA_DECAY",
+    "grade": "B",
+    "lesson": "Despite the strategy aiming for theta decay, the lack of realized PnL indicates that the trade did not capture sufficient time decay within the holding period. Future trades should consider tighter exit criteria to ensure that theta decay is effectively realized before expiration."
+  },
+  {
+    "timestamp": "2026-08-29T16:45:00.706563",
+    "symbol": "TSLA",
+    "strategy": "THETA_IRON_CONDOR",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "THETA_DECAY",
+    "grade": "B",
+    "lesson": "The trade was executed with a reasonable expectation of theta decay, but the lack of realized PnL indicates that the market conditions did not favor significant decay within the holding period. Future trades should consider tighter exit criteria or adjustments based on IV rank changes to optimize outcomes."
+  },
+  {
+    "timestamp": "2026-08-29T16:45:16.923305",
+    "symbol": "TSLA",
+    "strategy": "THETA_IRON_CONDOR",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "THETA_DECAY",
+    "grade": "B",
+    "lesson": "While the trade did not realize a profit, the strategy effectively captured theta decay over a short holding period. Future trades should consider tighter management of IV rank to optimize exit timing."
   }
 ]

@@ -49,7 +49,7 @@ class AssetUniverseDataSchema(BaseModel):
 
 class VolumeProfileSchema(BaseModel):
     """
-    14-day Volume Profile (POC/VAH/VAL)
+    14-day Volume Profile (POC/VAH/VAL) with real volume bins
     """
     symbol: str
     current_price: float
@@ -58,6 +58,7 @@ class VolumeProfileSchema(BaseModel):
     value_area_low_val: float
     profile_regime: str
     total_volume_analyzed: int
+    volume_bins: Optional[List[Dict[str, Any]]] = None
 
 
 class AnchoredVWAPSchema(BaseModel):
@@ -67,6 +68,7 @@ class AnchoredVWAPSchema(BaseModel):
     symbol: str
     current_price: float
     anchored_vwap: float
+    trend_distance_pct: Optional[float] = None
     vwap_upper_band_1sd: float
     vwap_lower_band_1sd: float
     vwap_upper_band_2sd: float
@@ -94,11 +96,16 @@ class UnusualFlowSchema(BaseModel):
     timestamp: str
     unusual_activity_detected: bool
     flow_type: str
-    dominant_strike: float
+    dominant_strike: Optional[float] = None
     dominant_expiry: str
-    premium_spent_usd: float
+    premium_spent_usd: Optional[float] = None
     put_call_volume_ratio: float
     institutional_sentiment: str
+    unusual_call_volume: Optional[int] = None
+    unusual_put_volume: Optional[int] = None
+    call_percentage: Optional[float] = None
+    put_percentage: Optional[float] = None
+    flow_feed: Optional[List[Dict[str, Any]]] = None
 
 
 class ToTMatrixSchema(BaseModel):

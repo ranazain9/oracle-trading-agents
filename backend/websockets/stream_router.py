@@ -7,8 +7,7 @@ import asyncio
 import json
 
 from backend.services.websocket_service import ws_manager
-from tools.alpaca_tools import AlpacaTool
-from tools.portfolio_greeks_tools import PortfolioGreeksTool
+from backend.services.dashboard_service import dashboard_cache
 from backend.core.logging import logger
 
 router = APIRouter(prefix="/ws", tags=["WebSockets"])
@@ -52,22 +51,23 @@ async def websocket_positions_endpoint(websocket: WebSocket):
             "message": "Connected to ORACLE Live Position & Greek Stream."
         }))
         
-        # Periodically push live position snapshots every 10 seconds asynchronously
-        alpaca = AlpacaTool()
+        # Periodically push live position snapshots every 15 seconds from memory cache
         while True:
             try:
-                positions = await asyncio.to_thread(alpaca.get_open_positions)
-                greeks = await asyncio.to_thread(PortfolioGreeksTool.calculate_portfolio_greeks)
+                bootstrap = dashboard_cache.get_bootstrap_data()
+                positions = bootstrap.get("positions", [])
+                greeks = bootstrap.get("greeks", {})
                 await websocket.send_text(json.dumps({
                     "event_type": "POSITION_HEARTBEAT",
                     "positions_count": len(positions),
+                    "positions": positions,
                     "net_delta": greeks.get("net_portfolio_delta", 0.0),
                     "net_theta": greeks.get("net_portfolio_theta_daily_usd", 0.0),
                     "requires_hedge": greeks.get("requires_hedge", False)
                 }))
             except Exception:
                 pass
-            await asyncio.sleep(10.0)
+            await asyncio.sleep(15.0)
 
     except WebSocketDisconnect:
         ws_manager.disconnect_positions(websocket)

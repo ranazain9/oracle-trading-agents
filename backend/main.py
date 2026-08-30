@@ -13,6 +13,10 @@ from backend.core.config import settings
 from backend.core.logging import logger
 from backend.api.v1.api_router import api_v1_router
 from backend.websockets.stream_router import router as websocket_router
+from backend.services.dashboard_service import dashboard_cache
+from backend.services.daemon_service import daemon_service
+from backend.db.database import init_db
+import threading
 
 
 @asynccontextmanager
@@ -24,7 +28,27 @@ async def lifespan(app: FastAPI):
     logger.info(f"🚀 Starting {settings.PROJECT_NAME} v{settings.VERSION}")
     logger.info(f"📡 API Documentation available at: http://localhost:{settings.PORT}/docs")
     logger.info("=" * 60)
+    
+    # 1. Initialize SQLite Database & Auto-Migrate Tables
+    try:
+        init_db()
+    except Exception as e:
+        logger.error(f"Database initialization error: {e}")
+
+    # 2. Warm up in-memory dashboard cache asynchronously
+    try:
+        threading.Thread(target=dashboard_cache._refresh_data_background, daemon=True).start()
+    except Exception as e:
+        logger.warning(f"Initial cache warmup notice: {e}")
+
+    # 3. Start 24/7 Autonomous Market Daemon
+    try:
+        daemon_service.start()
+    except Exception as e:
+        logger.warning(f"24/7 Daemon service start notice: {e}")
+
     yield
+    daemon_service.stop()
     logger.info("🛑 Shutting down ORACLE FastAPI Backend.")
 
 
@@ -80,9 +104,13 @@ async def health_check():
         "timestamp": datetime.datetime.utcnow().isoformat()
     }
 
-# Mount Frontend Static Web Application
+# Mount Frontend Static Web Application (Prioritize compiled React app if available)
+REACT_DIST_DIR = Path(__file__).resolve().parent.parent / "frontend-react" / "dist"
 FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
-if FRONTEND_DIR.exists():
+
+if REACT_DIST_DIR.exists():
+    app.mount("/", StaticFiles(directory=str(REACT_DIST_DIR), html=True), name="frontend_react")
+elif FRONTEND_DIR.exists():
     app.mount("/", StaticFiles(directory=str(FRONTEND_DIR), html=True), name="frontend")
 
 

@@ -30,6 +30,18 @@ async def trigger_pipeline_run(
         force_auto_approve=req.force_auto_approve
     )
 
+    try:
+        from backend.services.daemon_service import daemon_service
+        target_sym = req.symbols[0] if req.symbols else "SPX"
+        daemon_service.record_external_pipeline_run(
+            run_id=run_id,
+            symbol=target_sym,
+            status="RUNNING",
+            summary=f"8-Node LangGraph cycle dispatched for {target_sym}"
+        )
+    except Exception:
+        pass
+
     return PipelineRunResponse(
         success=True,
         run_id=run_id,

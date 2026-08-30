@@ -69,12 +69,22 @@ class AlpacaTool(BaseBroker):
         clock = self.get_market_clock()
         return bool(clock.get("is_open", False))
 
+    _account_cache = {"timestamp": 0.0, "data": None}
+    _positions_cache = {"timestamp": 0.0, "data": []}
+    CACHE_TTL_SEC = 8.0
+
     def get_account_status(self) -> Dict[str, Any]:
         """
         Retrieves real-time account cash, equity, buying power, and portfolio status.
+        Uses 8-second TTL cache to prevent hitting Alpaca rate limits.
         """
+        import time
+        now = time.time()
+        if now - self._account_cache["timestamp"] < self.CACHE_TTL_SEC and self._account_cache["data"]:
+            return self._account_cache["data"]
+
         if not self.client:
-            return {
+            default_acc = {
                 "account_id": "MOCK-PAPER-100K",
                 "cash": settings.INITIAL_BALANCE,
                 "equity": settings.INITIAL_BALANCE,
@@ -83,10 +93,12 @@ class AlpacaTool(BaseBroker):
                 "is_live_alpaca": False,
                 "currency": "USD"
             }
+            self._account_cache = {"timestamp": now, "data": default_acc}
+            return default_acc
 
         try:
             account = self.client.get_account()
-            return {
+            data = {
                 "account_id": str(account.id),
                 "cash": float(account.cash),
                 "equity": float(account.equity),
@@ -95,8 +107,11 @@ class AlpacaTool(BaseBroker):
                 "is_live_alpaca": True,
                 "currency": str(account.currency)
             }
+            self._account_cache = {"timestamp": now, "data": data}
+            return data
         except Exception as e:
-            print(f"[!] Error fetching Alpaca account: {e}")
+            if self._account_cache["data"]:
+                return self._account_cache["data"]
             return {
                 "account_id": "FALLBACK-ACCOUNT",
                 "cash": settings.INITIAL_BALANCE,
@@ -121,7 +136,7 @@ class AlpacaTool(BaseBroker):
                     "next_close": clock.next_close.isoformat() if hasattr(clock.next_close, "isoformat") else str(clock.next_close),
                     "timestamp": clock.timestamp.isoformat() if hasattr(clock.timestamp, "isoformat") else str(clock.timestamp)
                 }
-            except Exception as e:
+            except Exception:
                 pass
 
         # Fallback using US Eastern Time
@@ -149,10 +164,15 @@ class AlpacaTool(BaseBroker):
 
     def get_open_positions(self) -> List[Dict[str, Any]]:
         """
-        Retrieves active open positions.
+        Retrieves active open positions with TTL cache to protect against Alpaca rate limits.
         If broker has 0 positions (e.g. during off-market hours or paper testing),
-        synchronizes with data/trades.json to provide live tracking.
+        synchronizes with SQLite / data/trades.json to provide live tracking.
         """
+        import time
+        now = time.time()
+        if now - self._positions_cache["timestamp"] < self.CACHE_TTL_SEC and self._positions_cache["data"]:
+            return self._positions_cache["data"]
+
         pos_list = []
         if self.client:
             try:
@@ -170,11 +190,12 @@ class AlpacaTool(BaseBroker):
                         "asset_class": "us_option" if len(str(p.symbol)) > 6 else "us_equity",
                         "source": "ALPACA_BROKER_LIVE"
                     })
-            except Exception as e:
-                print(f"[!] Warning fetching live positions from Alpaca: {e}")
+            except Exception:
+                pass
 
         # If broker returns positions, use them
         if pos_list:
+            self._positions_cache = {"timestamp": now, "data": pos_list}
             return pos_list
 
         # Fallback: Read local trades.json for paper positions

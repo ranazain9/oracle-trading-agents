@@ -102,11 +102,12 @@ def execute_emergency_kill_switch(
         raise HTTPException(status_code=400, detail="Invalid confirmation code. Must be 'CONFIRM_KILL_SWITCH'.")
 
     res = alpaca.close_all_positions()
+    count = len(res) if isinstance(res, list) else int(res.get("closed_count", 0))
     return CloseAllPositionsResponse(
-        action="EMERGENCY_DESK_KILL",
-        positions_closed_count=res.get("closed_count", 0),
-        timestamp=datetime.datetime.utcnow().isoformat(),
-        status="EXECUTED"
+        success=True,
+        positions_closed_count=count,
+        details=res if isinstance(res, list) else [],
+        timestamp=datetime.datetime.utcnow().isoformat()
     )
 
 
