@@ -152,7 +152,7 @@ export const PayoffChart: React.FC<PayoffChartProps> = ({
 
   return (
     <div className="openbb-card" style={{ width: '100%' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', paddingBottom: '8px', borderBottom: '1px solid var(--openbb-border)' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', paddingBottom: '8px', borderBottom: '1px solid var(--openbb-border)', flexWrap: 'wrap', gap: '8px' }}>
         <div>
           <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '0.92rem', fontWeight: 800, color: 'var(--text-pure)', display: 'flex', alignItems: 'center', gap: '6px' }}>
             <TrendingUp size={16} style={{ color: 'var(--openbb-emerald)' }} />
@@ -169,7 +169,7 @@ export const PayoffChart: React.FC<PayoffChartProps> = ({
 
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))',
         gap: '8px',
         marginBottom: '10px',
         background: 'var(--openbb-bg-surface)',

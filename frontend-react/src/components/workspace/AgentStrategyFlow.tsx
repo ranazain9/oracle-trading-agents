@@ -95,6 +95,8 @@ export const AgentStrategyFlow: React.FC<AgentStrategyFlowProps> = ({
           marginBottom: '10px',
           paddingBottom: '8px',
           borderBottom: '1px solid var(--openbb-border)',
+          flexWrap: 'wrap',
+          gap: '8px',
         }}
       >
         <div>
@@ -125,7 +127,7 @@ export const AgentStrategyFlow: React.FC<AgentStrategyFlowProps> = ({
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
           gap: '8px',
           marginBottom: '12px',
           width: '100%',

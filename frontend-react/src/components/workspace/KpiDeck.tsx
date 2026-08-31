@@ -23,8 +23,8 @@ export const KpiDeck: React.FC<KpiDeckProps> = ({ account, greeks, stats }) => {
   return (
     <div style={{
       display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(155px, 1fr))',
-      gap: '10px',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(135px, 1fr))',
+      gap: '8px',
       marginBottom: '12px',
       width: '100%'
     }}>

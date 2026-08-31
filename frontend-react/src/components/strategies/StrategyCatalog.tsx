@@ -297,11 +297,11 @@ export const StrategyCatalog: React.FC<StrategyCatalogProps> = ({ strategies, on
       </div>
 
       {/* 2. Interactive SVG Payoff Graph & Parameter Modeler (Side-by-Side) */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(440px, 1fr))', gap: '14px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '12px' }}>
         {/* A. Live Interactive Payoff Curve Diagram */}
         <div className="openbb-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', paddingBottom: '6px', borderBottom: '1px solid var(--openbb-border)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', paddingBottom: '6px', borderBottom: '1px solid var(--openbb-border)', flexWrap: 'wrap', gap: '6px' }}>
               <div>
                 <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '0.88rem', fontWeight: 800, color: 'var(--text-pure)' }}>
                   📈 {activeStrategy.name} Payoff Surface ({selectedTicker})
@@ -343,7 +343,7 @@ export const StrategyCatalog: React.FC<StrategyCatalogProps> = ({ strategies, on
               </svg>
 
               {/* Labels overlay */}
-              <div style={{ position: 'absolute', top: '12px', left: '14px', fontSize: '0.64rem', fontFamily: 'var(--font-mono)', display: 'flex', gap: '12px' }}>
+              <div style={{ position: 'absolute', top: '12px', left: '14px', fontSize: '0.64rem', fontFamily: 'var(--font-mono)', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                 <span style={{ color: 'var(--openbb-emerald)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <span style={{ width: '8px', height: '8px', background: 'var(--openbb-emerald)', borderRadius: '50%' }} />
                   Expiration PnL Curve
@@ -361,7 +361,7 @@ export const StrategyCatalog: React.FC<StrategyCatalogProps> = ({ strategies, on
           </div>
 
           {/* Breakeven Summary Row */}
-          <div style={{ marginTop: '10px', paddingTop: '8px', borderTop: '1px solid var(--openbb-border)', display: 'flex', justifyContent: 'space-between', fontSize: '0.68rem', fontFamily: 'var(--font-mono)' }}>
+          <div style={{ marginTop: '10px', paddingTop: '8px', borderTop: '1px solid var(--openbb-border)', display: 'flex', justifyContent: 'space-between', fontSize: '0.68rem', fontFamily: 'var(--font-mono)', flexWrap: 'wrap', gap: '6px' }}>
             <span style={{ color: 'var(--text-dim)' }}>
               Lower Breakeven: <strong style={{ color: 'var(--openbb-emerald)' }}>${(spot - strikeWidth + (activeStrategy.baseCredit / 100)).toFixed(2)}</strong>
             </span>

@@ -165,7 +165,7 @@ export const ConfigRiskDesk: React.FC<ConfigRiskDeskProps> = ({ onSave, showToas
       </div>
 
       {/* 2. Main 2-Column Grid: Circuit Breakers & Greeks Corridors */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(440px, 1fr))', gap: '14px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '12px' }}>
         {/* Module 1: Risk Bodyguard Circuit Breakers */}
         <div className="openbb-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '12px' }}>
           <div>
@@ -351,7 +351,7 @@ export const ConfigRiskDesk: React.FC<ConfigRiskDeskProps> = ({ onSave, showToas
       </div>
 
       {/* 3. Bottom 3-Column Grid: Daemon Controls, LLM Vault & Sizing */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '14px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px' }}>
         {/* Module 3: Autonomous Daemon Controls */}
         <div className="openbb-card" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '6px', borderBottom: '1px solid var(--openbb-border)' }}>

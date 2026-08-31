@@ -232,8 +232,8 @@ export const LedgerStream: React.FC<LedgerStreamProps> = ({ trades, logs, stats,
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-          gap: '10px',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(135px, 1fr))',
+          gap: '8px',
         }}
       >
         {/* Net Realized PnL */}

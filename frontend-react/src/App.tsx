@@ -424,21 +424,15 @@ export const App: React.FC = () => {
 
         <TickerRibbon onSelectTicker={handleSelectTicker} />
 
-        <div style={{ padding: '12px 16px', width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}>
+        <div className="app-main-content" style={{ padding: '12px 16px', width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}>
           {/* TAB 1: DASHBOARD WORKSPACE */}
           {activeTab === 'dashboard' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', width: '100%' }}>
               {/* 1. Full Width KPI Hero Deck */}
               <KpiDeck account={account} greeks={greeks} stats={stats} />
 
-              {/* 2. Strategy Modeler & Cognitive Agent Bus (Side-by-Side) */}
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'minmax(0, 1.15fr) minmax(0, 1fr)',
-                gap: '12px',
-                width: '100%',
-                alignItems: 'stretch',
-              }}>
+              {/* 2. Strategy Modeler & Cognitive Agent Bus (Responsive Split Grid) */}
+              <div className="dashboard-split-grid">
                 <PayoffChart
                   symbol={selectedSymbol}
                   spotPrice={selectedSpotPrice}
@@ -484,7 +478,7 @@ export const App: React.FC = () => {
 
               {/* 6. Full-Width Closed Trades & Loss Toll Audit Table */}
               <div className="openbb-card" style={{ width: '100%' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', paddingBottom: '6px', borderBottom: '1px solid var(--openbb-border)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', paddingBottom: '6px', borderBottom: '1px solid var(--openbb-border)', flexWrap: 'wrap', gap: '6px' }}>
                   <div>
                     <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-pure)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <span>📜</span> <span>Closed Trades & Loss Toll Audit Ledger</span>
@@ -493,7 +487,7 @@ export const App: React.FC = () => {
                       Historical trade memory, vectorized P&L attribution, and risk audit logs
                     </span>
                   </div>
-                  <div style={{ display: 'flex', gap: '4px' }}>
+                  <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
                     <span className="openbb-badge profit">Win Rate: {stats?.win_rate_percent?.toFixed(1) || '88.5'}%</span>
                     <span className="openbb-badge neutral">Sharpe: {stats?.sharpe_ratio?.toFixed(2) || '2.45'}</span>
                     <span className="openbb-badge neutral">{trades.length} Records</span>
@@ -629,6 +623,7 @@ export const App: React.FC = () => {
       {/* Prominent Floating Pop-Up Notification Modal with Time */}
       {notification && (
         <div
+          className="floating-toast-container"
           style={{
             position: 'fixed',
             top: '20px',

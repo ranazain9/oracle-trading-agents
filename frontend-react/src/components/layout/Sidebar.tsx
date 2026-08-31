@@ -124,248 +124,304 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   return (
-    <aside
-      style={{
-        width: isCollapsed ? '68px' : '224px',
-        minWidth: isCollapsed ? '68px' : '224px',
-        maxWidth: isCollapsed ? '68px' : '224px',
-        background: 'linear-gradient(180deg, #090E17 0%, #05080E 100%)',
-        borderRight: '1px solid var(--openbb-border)',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        padding: isCollapsed ? '16px 8px' : '16px 12px',
-        height: '100vh',
-        flexShrink: 0,
-        zIndex: 100,
-        overflowY: 'auto',
-        overflowX: 'hidden',
-        transition: 'all 0.22s cubic-bezier(0.16, 1, 0.3, 1)',
-      }}
-    >
-      <div>
-        {/* Brand Header with Collapse Toggle */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: isCollapsed ? 'center' : 'space-between',
-            paddingBottom: '14px',
-            borderBottom: '1px solid var(--openbb-border)',
-            position: 'relative',
-          }}
-        >
-          {!isCollapsed ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
-              {/* Glowing Logo Icon */}
+    <>
+      {/* Desktop & Tablet Sidebar */}
+      <aside
+        className="mobile-hide"
+        style={{
+          width: isCollapsed ? '68px' : '224px',
+          minWidth: isCollapsed ? '68px' : '224px',
+          maxWidth: isCollapsed ? '68px' : '224px',
+          background: 'linear-gradient(180deg, #090E17 0%, #05080E 100%)',
+          borderRight: '1px solid var(--openbb-border)',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          padding: isCollapsed ? '16px 8px' : '16px 12px',
+          height: '100vh',
+          flexShrink: 0,
+          zIndex: 100,
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          transition: 'all 0.22s cubic-bezier(0.16, 1, 0.3, 1)',
+        }}
+      >
+        <div>
+          {/* Brand Header with Collapse Toggle */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: isCollapsed ? 'center' : 'space-between',
+              paddingBottom: '14px',
+              borderBottom: '1px solid var(--openbb-border)',
+              position: 'relative',
+            }}
+          >
+            {!isCollapsed ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
+                {/* Glowing Logo Icon */}
+                <div
+                  style={{
+                    width: '28px',
+                    height: '28px',
+                    borderRadius: '7px',
+                    background: 'linear-gradient(135deg, #00E5FF 0%, #3B82F6 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: '0 0 14px rgba(0, 229, 255, 0.40)',
+                    flexShrink: 0,
+                  }}
+                >
+                  <Radio size={16} style={{ color: '#000' }} />
+                </div>
+                <div>
+                  <div
+                    style={{
+                      fontFamily: 'var(--font-heading)',
+                      fontWeight: 900,
+                      fontSize: '0.98rem',
+                      letterSpacing: '-0.3px',
+                      color: 'var(--text-pure)',
+                      lineHeight: 1.1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                    }}
+                  >
+                    <span>ORACLE</span>
+                    <span style={{ color: 'var(--openbb-cyan)', fontSize: '0.72rem', fontWeight: 800 }}>PRO</span>
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '0.60rem',
+                      color: 'var(--text-dim)',
+                      fontFamily: 'var(--font-mono)',
+                      letterSpacing: '0.6px',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    Theta Engine v2.4
+                  </div>
+                </div>
+              </div>
+            ) : (
               <div
                 style={{
-                  width: '30px',
-                  height: '30px',
-                  borderRadius: '7px',
-                  background: 'linear-gradient(135deg, var(--openbb-cyan), #2563EB)',
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '8px',
+                  background: 'linear-gradient(135deg, #00E5FF 0%, #3B82F6 100%)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontWeight: 900,
-                  color: '#000000',
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '0.90rem',
-                  boxShadow: '0 0 16px rgba(0, 229, 255, 0.50)',
-                  flexShrink: 0,
+                  boxShadow: '0 0 14px rgba(0, 229, 255, 0.40)',
                 }}
+                title="Oracle Autonomous Options Terminal"
               >
-                Ω
+                <Radio size={18} style={{ color: '#000' }} />
               </div>
+            )}
 
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  <span style={{ fontFamily: 'var(--font-heading)', fontSize: '1.08rem', fontWeight: 800, color: 'var(--text-pure)', letterSpacing: '0.4px' }}>
-                    ORACLE
-                  </span>
-                  <span
-                    style={{
-                      fontSize: '0.56rem',
-                      background: 'rgba(0, 229, 255, 0.15)',
-                      color: 'var(--openbb-cyan)',
-                      border: '1px solid rgba(0, 229, 255, 0.35)',
-                      padding: '1px 4px',
-                      borderRadius: '3px',
-                      fontWeight: 800,
-                    }}
-                  >
-                    PRO 5.0
-                  </span>
-                </div>
-                <div style={{ fontSize: '0.60rem', color: 'var(--text-dim)', fontFamily: 'var(--font-mono)' }}>
-                  Quant Alpha Terminal
-                </div>
+            {/* Collapse / Expand Button */}
+            <button
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              style={{
+                background: 'transparent',
+                border: '1px solid var(--openbb-border)',
+                borderRadius: '4px',
+                color: 'var(--text-muted)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '3px',
+                transition: 'all 0.15s ease',
+              }}
+              title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
+            >
+              {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+            </button>
+          </div>
+
+          {/* Navigation Items */}
+          <nav style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            {navItems.map((item) => {
+              const isActive = activeTab === item.key;
+              const badgeStyle = getBadgeStyle(item.badgeType);
+
+              return (
+                <button
+                  key={item.key}
+                  onClick={() => onSelectTab(item.key)}
+                  title={isCollapsed ? `${item.label} [${item.shortcut}]` : undefined}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: isCollapsed ? 'center' : 'space-between',
+                    width: '100%',
+                    padding: isCollapsed ? '10px 0' : '8px 10px',
+                    borderRadius: '6px',
+                    border: '1px solid',
+                    borderColor: isActive ? 'rgba(0, 229, 255, 0.35)' : 'transparent',
+                    background: isActive
+                      ? 'linear-gradient(90deg, rgba(0, 229, 255, 0.12) 0%, rgba(0, 229, 255, 0.03) 100%)'
+                      : 'transparent',
+                    color: isActive ? 'var(--text-pure)' : 'var(--text-muted)',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s cubic-bezier(0.16, 1, 0.3, 1)',
+                    position: 'relative',
+                    textAlign: 'left',
+                  }}
+                >
+                  {/* Left Icon + Label */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
+                    <span style={{ color: isActive ? 'var(--openbb-cyan)' : 'inherit', display: 'flex' }}>
+                      {item.icon}
+                    </span>
+                    {!isCollapsed && (
+                      <span
+                        style={{
+                          fontFamily: 'var(--font-heading)',
+                          fontSize: '0.80rem',
+                          fontWeight: isActive ? 700 : 500,
+                          letterSpacing: '-0.1px',
+                        }}
+                      >
+                        {item.label}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Right Badge + Shortcut */}
+                  {!isCollapsed && item.badge && (
+                    <span
+                      style={{
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '0.62rem',
+                        fontWeight: 700,
+                        padding: '2px 5px',
+                        borderRadius: '4px',
+                        background: badgeStyle.bg,
+                        color: badgeStyle.text,
+                        border: `1px solid ${badgeStyle.border}`,
+                        lineHeight: 1,
+                      }}
+                    >
+                      {item.badge}
+                    </span>
+                  )}
+
+                  {/* Active Indicator Bar on Edge */}
+                  {isActive && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        left: isCollapsed ? '2px' : '0',
+                        top: '15%',
+                        bottom: '15%',
+                        width: '3px',
+                        background: 'var(--openbb-cyan)',
+                        borderRadius: '0 3px 3px 0',
+                        boxShadow: '0 0 8px rgba(0, 229, 255, 0.8)',
+                      }}
+                    />
+                  )}
+                </button>
+              );
+            })}
+          </nav>
+        </div>
+
+        {/* Bottom Section: Telemetry Pod & AI Copilot Button */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', borderTop: '1px solid var(--openbb-border)', paddingTop: '10px' }}>
+          {/* Mini Telemetry Status Pod */}
+          {!isCollapsed ? (
+            <div
+              style={{
+                background: 'rgba(0, 0, 0, 0.35)',
+                border: '1px solid var(--openbb-border)',
+                borderRadius: '5px',
+                padding: '6px 8px',
+                fontSize: '0.62rem',
+                fontFamily: 'var(--font-mono)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '3px',
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ color: 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <span className={isWsConnected ? 'pulse-dot-green' : 'pulse-dot-amber'} /> WS STREAM
+                </span>
+                <span style={{ color: isWsConnected ? 'var(--openbb-emerald)' : 'var(--openbb-amber)', fontWeight: 800 }}>
+                  {isWsConnected ? '15s ACTIVE' : 'OFFLINE'}
+                </span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ color: 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <Cpu size={10} style={{ color: 'var(--openbb-cyan)' }} /> LLM BRAIN
+                </span>
+                <span style={{ color: 'var(--openbb-cyan)', fontWeight: 800 }}>⚡ 1.6s</span>
               </div>
             </div>
-          ) : null}
+          ) : (
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <span className={isWsConnected ? 'pulse-dot-green' : 'pulse-dot-amber'} title={isWsConnected ? 'Telemetry & Broker Live' : 'Offline'} />
+            </div>
+          )}
 
-          {/* Collapse / Expand Toggle Button */}
+          {/* AI Copilot Button */}
           <button
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
+            onClick={onOpenCopilot}
+            title={isCollapsed ? 'AI Copilot Desk [Alt+C]' : undefined}
             style={{
-              background: isCollapsed ? 'rgba(0, 229, 255, 0.12)' : 'rgba(255, 255, 255, 0.05)',
-              border: `1px solid ${isCollapsed ? 'rgba(0, 229, 255, 0.4)' : 'var(--openbb-border)'}`,
-              borderRadius: '6px',
-              color: isCollapsed ? 'var(--openbb-cyan)' : 'var(--text-dim)',
-              width: isCollapsed ? '32px' : '20px',
-              height: isCollapsed ? '32px' : '20px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              gap: '6px',
+              background: 'linear-gradient(135deg, #00E5FF 0%, #3B82F6 100%)',
+              color: '#000000',
+              fontFamily: 'var(--font-heading)',
+              fontSize: isCollapsed ? '0.70rem' : '0.80rem',
+              fontWeight: 800,
+              padding: isCollapsed ? '8px 0' : '8px 10px',
+              borderRadius: '6px',
+              border: 'none',
               cursor: 'pointer',
-              padding: 0,
+              width: '100%',
+              boxShadow: '0 4px 16px rgba(0, 229, 255, 0.35)',
               transition: 'all 0.15s ease',
-              marginLeft: isCollapsed ? 0 : '4px',
             }}
           >
-            {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={12} />}
+            <Sparkles size={15} />
+            {!isCollapsed && <span>AI Copilot Desk</span>}
           </button>
         </div>
+      </aside>
 
-        {/* Navigation Tabs */}
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: '5px', marginTop: '14px' }}>
-          {navItems.map((item) => {
-            const isActive = activeTab === item.key;
-            const badgeStyle = getBadgeStyle(item.badgeType);
-
-            return (
-              <button
-                key={item.key}
-                onClick={() => onSelectTab(item.key)}
-                title={isCollapsed ? `${item.label} [Alt+${item.shortcut}]` : undefined}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: isCollapsed ? 'center' : 'space-between',
-                  gap: '8px',
-                  padding: isCollapsed ? '9px 0' : '8px 10px',
-                  borderRadius: '6px',
-                  background: isActive
-                    ? 'linear-gradient(90deg, rgba(0, 229, 255, 0.16), rgba(0, 229, 255, 0.03))'
-                    : 'transparent',
-                  borderLeft: isActive ? '3px solid var(--openbb-cyan)' : '3px solid transparent',
-                  borderTop: isActive ? '1px solid rgba(0, 229, 255, 0.20)' : '1px solid transparent',
-                  borderRight: isActive ? '1px solid rgba(0, 229, 255, 0.20)' : '1px solid transparent',
-                  borderBottom: isActive ? '1px solid rgba(0, 229, 255, 0.20)' : '1px solid transparent',
-                  color: isActive ? 'var(--text-pure)' : 'var(--text-muted)',
-                  fontFamily: 'var(--font-heading)',
-                  fontSize: '0.80rem',
-                  fontWeight: isActive ? 800 : 500,
-                  cursor: 'pointer',
-                  width: '100%',
-                  textAlign: 'left',
-                  transition: 'all 0.15s cubic-bezier(0.16, 1, 0.3, 1)',
-                  boxShadow: isActive ? '0 0 14px rgba(0, 229, 255, 0.12)' : 'none',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
-                  <span
-                    style={{
-                      color: isActive ? 'var(--openbb-cyan)' : 'var(--text-dim)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      filter: isActive ? 'drop-shadow(0 0 6px rgba(0, 229, 255, 0.4))' : 'none',
-                    }}
-                  >
-                    {item.icon}
-                  </span>
-                  {!isCollapsed && <span>{item.label}</span>}
-                </div>
-
-                {/* Dynamic Status Badge */}
-                {!isCollapsed && item.badge && (
-                  <span
-                    style={{
-                      background: badgeStyle.bg,
-                      color: badgeStyle.text,
-                      border: `1px solid ${badgeStyle.border}`,
-                      padding: '1px 5px',
-                      borderRadius: '3px',
-                      fontSize: '0.58rem',
-                      fontFamily: 'var(--font-mono)',
-                      fontWeight: 800,
-                    }}
-                  >
-                    {item.badge}
-                  </span>
+      {/* Mobile Bottom Navigation Bar (< 768px) */}
+      <nav className="mobile-bottom-nav">
+        {navItems.map((item) => {
+          const isActive = activeTab === item.key;
+          return (
+            <button
+              key={item.key}
+              onClick={() => onSelectTab(item.key)}
+              className={`mobile-nav-item ${isActive ? 'active' : ''}`}
+            >
+              <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {item.icon}
+                {item.key === 'agents' && pendingProposalsCount > 0 && (
+                  <span className="mobile-nav-badge amber">{pendingProposalsCount}</span>
                 )}
-              </button>
-            );
-          })}
-        </nav>
-      </div>
-
-      {/* Bottom Section: Telemetry Pod & AI Copilot Button */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', borderTop: '1px solid var(--openbb-border)', paddingTop: '10px' }}>
-        {/* Mini Telemetry Status Pod */}
-        {!isCollapsed ? (
-          <div
-            style={{
-              background: 'rgba(0, 0, 0, 0.35)',
-              border: '1px solid var(--openbb-border)',
-              borderRadius: '5px',
-              padding: '6px 8px',
-              fontSize: '0.62rem',
-              fontFamily: 'var(--font-mono)',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '3px',
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ color: 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span className={isWsConnected ? 'pulse-dot-green' : 'pulse-dot-amber'} /> WS STREAM
-              </span>
-              <span style={{ color: isWsConnected ? 'var(--openbb-emerald)' : 'var(--openbb-amber)', fontWeight: 800 }}>
-                {isWsConnected ? '15s ACTIVE' : 'OFFLINE'}
-              </span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ color: 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <Cpu size={10} style={{ color: 'var(--openbb-cyan)' }} /> LLM BRAIN
-              </span>
-              <span style={{ color: 'var(--openbb-cyan)', fontWeight: 800 }}>⚡ 1.6s</span>
-            </div>
-          </div>
-        ) : (
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <span className={isWsConnected ? 'pulse-dot-green' : 'pulse-dot-amber'} title={isWsConnected ? 'Telemetry & Broker Live' : 'Offline'} />
-          </div>
-        )}
-
-        {/* AI Copilot Button */}
-        <button
-          onClick={onOpenCopilot}
-          title={isCollapsed ? 'AI Copilot Desk [Alt+C]' : undefined}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '6px',
-            background: 'linear-gradient(135deg, #00E5FF 0%, #3B82F6 100%)',
-            color: '#000000',
-            fontFamily: 'var(--font-heading)',
-            fontSize: isCollapsed ? '0.70rem' : '0.80rem',
-            fontWeight: 800,
-            padding: isCollapsed ? '8px 0' : '8px 10px',
-            borderRadius: '6px',
-            border: 'none',
-            cursor: 'pointer',
-            width: '100%',
-            boxShadow: '0 4px 16px rgba(0, 229, 255, 0.35)',
-            transition: 'all 0.15s ease',
-          }}
-        >
-          <Sparkles size={15} />
-          {!isCollapsed && <span>AI Copilot Desk</span>}
-        </button>
-      </div>
-    </aside>
+              </div>
+              <span>{item.label === 'Signals & Radar' ? 'Radar' : item.label === 'Strategy Studio' ? 'Strategies' : item.label === 'Ledger & Stream' ? 'Ledger' : item.label === 'Config & Risk' ? 'Config' : item.label}</span>
+            </button>
+          );
+        })}
+      </nav>
+    </>
   );
 };

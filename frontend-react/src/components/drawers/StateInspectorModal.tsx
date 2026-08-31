@@ -286,7 +286,7 @@ export const StateInspectorModal: React.FC<StateInspectorModalProps> = ({ isOpen
             </div>
           ) : (
             /* 8-Node Visual Cognitive Graph Deck */
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(245px, 1fr))', gap: '12px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '10px' }}>
               
               {/* NODE 1: Macro Assessment */}
               <div className="openbb-card" style={{ background: 'var(--openbb-bg-surface)', border: '1px solid var(--openbb-border)', display: 'flex', flexDirection: 'column', gap: '8px' }}>

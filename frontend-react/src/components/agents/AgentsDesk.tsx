@@ -233,7 +233,7 @@ export const AgentsDesk: React.FC<AgentsDeskProps> = ({
           </span>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '8px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '8px' }}>
           {agents.map((a) => (
             <div key={a.id} className="openbb-card" style={{ background: 'var(--openbb-bg-surface)', padding: '8px 10px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -252,7 +252,7 @@ export const AgentsDesk: React.FC<AgentsDeskProps> = ({
       </div>
 
       {/* Diagnostics & HITL Split */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '10px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '10px' }}>
         {/* Macro & Hedge */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           <div className="openbb-card">

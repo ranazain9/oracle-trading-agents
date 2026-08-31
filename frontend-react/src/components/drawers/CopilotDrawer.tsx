@@ -369,24 +369,41 @@ How can I assist your quantitative trading desk today?`,
   const drawerWidth = isWide ? '680px' : '440px';
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        top: 0,
-        right: isOpen ? 0 : `-${drawerWidth}`,
-        width: drawerWidth,
-        maxWidth: '96vw',
-        height: '100vh',
-        background: 'linear-gradient(180deg, #0C1322 0%, #060A12 100%)',
-        borderLeft: '1px solid rgba(0, 229, 255, 0.35)',
-        boxShadow: '-16px 0 70px rgba(0, 0, 0, 0.95), 0 0 35px rgba(0, 229, 255, 0.15)',
-        zIndex: 99999,
-        display: 'flex',
-        flexDirection: 'column',
-        transition: 'all 0.28s cubic-bezier(0.16, 1, 0.3, 1)',
-        overflow: 'hidden',
-      }}
-    >
+    <>
+      {/* Mobile Backdrop */}
+      {isOpen && (
+        <div
+          onClick={onClose}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0, 0, 0, 0.65)',
+            backdropFilter: 'blur(4px)',
+            WebkitBackdropFilter: 'blur(4px)',
+            zIndex: 99998,
+            transition: 'opacity 0.2s ease',
+          }}
+        />
+      )}
+
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          right: isOpen ? 0 : '-100vw',
+          width: '100%',
+          maxWidth: drawerWidth,
+          height: '100vh',
+          background: 'linear-gradient(180deg, #0C1322 0%, #060A12 100%)',
+          borderLeft: '1px solid rgba(0, 229, 255, 0.35)',
+          boxShadow: '-16px 0 70px rgba(0, 0, 0, 0.95), 0 0 35px rgba(0, 229, 255, 0.15)',
+          zIndex: 99999,
+          display: 'flex',
+          flexDirection: 'column',
+          transition: 'all 0.28s cubic-bezier(0.16, 1, 0.3, 1)',
+          overflow: 'hidden',
+        }}
+      >
       {/* 1. Header Bar */}
       <div
         style={{
@@ -868,9 +885,9 @@ How can I assist your quantitative trading desk today?`,
           }}
         >
           <Send size={13} />
-          <span style={{ fontSize: '0.72rem', fontWeight: 700 }}>Send</span>
         </button>
       </div>
     </div>
+    </>
   );
 };

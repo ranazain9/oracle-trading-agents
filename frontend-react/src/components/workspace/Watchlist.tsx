@@ -12,7 +12,7 @@ export const Watchlist: React.FC<WatchlistProps> = ({ universe, isMarketOpen, on
   const list = Array.isArray(universe) ? universe : [];
   return (
     <div className="openbb-card" style={{ width: '100%' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', paddingBottom: '8px', borderBottom: '1px solid var(--openbb-border)' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', paddingBottom: '8px', borderBottom: '1px solid var(--openbb-border)', flexWrap: 'wrap', gap: '8px' }}>
         <div>
           <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '0.90rem', fontWeight: 800, color: 'var(--text-pure)', display: 'flex', alignItems: 'center', gap: '6px' }}>
             <Target size={15} style={{ color: 'var(--openbb-cyan)' }} />

@@ -20,13 +20,15 @@ export const TickerRibbon: React.FC<TickerRibbonProps> = ({ onSelectTicker }) =>
     <section style={{
       background: '#090E17',
       borderBottom: '1px solid var(--openbb-border)',
-      padding: '5px 16px',
+      padding: '5px 12px',
       display: 'flex',
       alignItems: 'center',
       gap: '8px',
       overflowX: 'auto',
+      WebkitOverflowScrolling: 'touch',
       flexShrink: 0,
-      width: '100%'
+      width: '100%',
+      boxSizing: 'border-box',
     }}>
       {tickers.map((t) => (
         <div
@@ -84,7 +86,7 @@ export const TickerRibbon: React.FC<TickerRibbonProps> = ({ onSelectTicker }) =>
           </span>
         </div>
       ))}
-      <div style={{ marginLeft: 'auto', border: 'none', background: 'transparent', flexShrink: 0 }}>
+      <div className="mobile-hide" style={{ marginLeft: 'auto', border: 'none', background: 'transparent', flexShrink: 0 }}>
         <span style={{ fontSize: '0.65rem', color: 'var(--text-dim)', fontFamily: 'var(--font-mono)' }}>
           Real-Time OCC Options Engine • High-Frequency Feed
         </span>

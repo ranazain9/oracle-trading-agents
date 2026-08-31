@@ -342,3 +342,229 @@ body {
 .openbb-table tbody tr:hover {
   background: rgba(0, 229, 255, 0.05);
 }
+
+/* ==========================================================================
+   Responsive Breakpoints & Mobile Utilities
+   ========================================================================== */
+
+/* Utility display classes */
+.mobile-only {
+  display: none !important;
+}
+
+.desktop-only {
+  display: block;
+}
+
+.flex-desktop-only {
+  display: flex !important;
+}
+
+.mobile-hide {
+  display: flex;
+}
+
+/* Layout Grids */
+.dashboard-split-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 12px;
+  width: 100%;
+  align-items: stretch;
+}
+
+.dashboard-bottom-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: 12px;
+  width: 100%;
+  align-items: stretch;
+}
+
+.signals-radar-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 12px;
+  width: 100%;
+}
+
+.signals-bottom-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+
+.agents-top-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 12px;
+  width: 100%;
+}
+
+.strategy-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+
+.config-columns-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+
+/* Mobile Bottom Navigation Bar */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 58px;
+  background: rgba(11, 17, 28, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--openbb-border-medium);
+  z-index: 9999;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 4px calc(env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.65);
+}
+
+.mobile-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  flex: 1;
+  height: 100%;
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-family: var(--font-heading);
+  font-size: 0.62rem;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.15s ease;
+  padding: 4px 2px;
+}
+
+.mobile-nav-item.active {
+  color: var(--openbb-cyan);
+}
+
+.mobile-nav-item.active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 25%;
+  right: 25%;
+  height: 2px;
+  background: var(--openbb-cyan);
+  box-shadow: var(--openbb-cyan-glow);
+  border-radius: 9999px;
+}
+
+.mobile-nav-badge {
+  position: absolute;
+  top: 4px;
+  right: calc(50% - 16px);
+  background: var(--openbb-cyan);
+  color: #000;
+  font-size: 0.52rem;
+  font-weight: 800;
+  padding: 1px 4px;
+  border-radius: 9999px;
+  line-height: 1;
+}
+
+.mobile-nav-badge.amber {
+  background: var(--openbb-amber);
+}
+
+/* Tablet & Mobile Media Queries */
+@media screen and (max-width: 1024px) {
+  .tablet-hide {
+    display: none !important;
+  }
+
+  .dashboard-split-grid,
+  .dashboard-bottom-grid,
+  .signals-radar-grid,
+  .agents-top-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .mobile-only {
+    display: block !important;
+  }
+
+  .flex-mobile-only {
+    display: flex !important;
+  }
+
+  .desktop-only,
+  .flex-desktop-only,
+  .mobile-hide {
+    display: none !important;
+  }
+
+  .mobile-bottom-nav {
+    display: flex;
+  }
+
+  body {
+    font-size: 12px;
+  }
+
+  .openbb-card {
+    padding: 10px 12px;
+    border-radius: 6px;
+  }
+
+  /* Responsive Table Heights on Mobile */
+  .terminal-table-wrapper,
+  .terminal-table-wrapper.blotter-wrapper,
+  .terminal-table-wrapper.watchlist-wrapper,
+  .terminal-table-wrapper.ledger-wrapper,
+  .terminal-table-wrapper.hitl-wrapper {
+    height: auto;
+    max-height: 280px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .terminal-table th,
+  .openbb-table th {
+    padding: 6px 8px;
+    font-size: 0.60rem;
+  }
+
+  .terminal-table td,
+  .openbb-table td {
+    padding: 6px 8px;
+    font-size: 0.68rem;
+  }
+
+  /* Responsive App container padding */
+  .app-main-content {
+    padding: 8px 10px 70px 10px !important; /* Bottom padding for mobile tab bar */
+  }
+
+  /* Notification Toast on Mobile */
+  .floating-toast-container {
+    top: 10px !important;
+    right: 10px !important;
+    left: 10px !important;
+    max-width: none !important;
+    min-width: 0 !important;
+  }
+}
+

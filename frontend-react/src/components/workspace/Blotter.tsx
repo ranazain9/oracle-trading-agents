@@ -12,7 +12,7 @@ export const Blotter: React.FC<BlotterProps> = ({ positions, onClosePosition, on
   const list = Array.isArray(positions) ? positions : [];
   return (
     <div className="openbb-card" style={{ width: '100%' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', paddingBottom: '8px', borderBottom: '1px solid var(--openbb-border)' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', paddingBottom: '8px', borderBottom: '1px solid var(--openbb-border)', flexWrap: 'wrap', gap: '8px' }}>
         <div>
           <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '0.90rem', fontWeight: 800, color: 'var(--text-pure)', display: 'flex', alignItems: 'center', gap: '6px' }}>
             <Briefcase size={15} style={{ color: 'var(--openbb-cyan)' }} />

@@ -258,7 +258,7 @@ export const SignalsStudio: React.FC<SignalsStudioProps> = ({
       </div>
 
       {/* 3. Middle Section: Visual Volume Profile Histogram & Options Flow Stream */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))', gap: '14px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '12px' }}>
         {/* A. Interactive Volume Profile Histogram */}
         <div className="openbb-card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', paddingBottom: '6px', borderBottom: '1px solid var(--openbb-border)' }}>
@@ -398,7 +398,7 @@ export const SignalsStudio: React.FC<SignalsStudioProps> = ({
 
       {/* 4. Tree-of-Thoughts (ToT) Scenario Payoff & Monte Carlo Deck */}
       <div className="openbb-card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', paddingBottom: '6px', borderBottom: '1px solid var(--openbb-border)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', paddingBottom: '6px', borderBottom: '1px solid var(--openbb-border)', flexWrap: 'wrap', gap: '8px' }}>
           <div>
             <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '0.88rem', fontWeight: 800, color: 'var(--text-pure)', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <Brain size={16} style={{ color: 'var(--openbb-purple)' }} />
@@ -417,7 +417,7 @@ export const SignalsStudio: React.FC<SignalsStudioProps> = ({
         </div>
 
         {/* 4 Scenario Cards Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '10px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px' }}>
           {scenarios.map((sc) => {
             const isSelected = selectedScenario === sc.id;
 
