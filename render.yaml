@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: oracle-trading-agents
+    runtime: python
+    plan: free
+    buildCommand: "npm --prefix frontend-react install && npm --prefix frontend-react run build && pip install -r requirements.txt"
+    startCommand: "uvicorn backend.main:app --host 0.0.0.0 --port $PORT"
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: APCA_API_BASE_URL
+        value: https://paper-api.alpaca.markets
+      - key: AIML_BASE_URL
+        value: https://api.aimlapi.com/v1
+      - key: AI_MODEL
+        value: openai/gpt-4o-mini
+      - key: APCA_API_KEY_ID
+        sync: false
+      - key: APCA_API_SECRET_KEY
+        sync: false
+      - key: AIML_API_KEY
+        sync: false
