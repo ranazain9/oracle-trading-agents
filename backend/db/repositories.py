@@ -96,7 +96,7 @@ class TradeRepository:
         conn = get_db_connection()
         try:
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM trades WHERE status = 'CLOSED';")
+            cursor.execute("SELECT * FROM trades WHERE status LIKE 'CLOSED%' OR status = 'CLOSED';")
             closed_trades = [dict(r) for r in cursor.fetchall()]
 
             total = len(closed_trades)

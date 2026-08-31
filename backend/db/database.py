@@ -129,19 +129,14 @@ def init_db():
 
 
 def _migrate_trades(conn: sqlite3.Connection):
-    """Imports existing trade records from JSON into SQLite if database is empty."""
-    cursor = conn.cursor()
-    cursor.execute("SELECT COUNT(*) as count FROM trades;")
-    row = cursor.fetchone()
-    if row and row["count"] > 0:
-        return  # Already populated
-
+    """Imports and syncs existing trade records from JSON into SQLite."""
     trades_to_import = []
     if TRADES_JSON.exists():
         try:
             with open(TRADES_JSON, "r") as f:
                 trades_to_import = json.load(f)
-        except Exception:
+        except Exception as e:
+            logger.warning(f"Failed to read trades.json: {e}")
             trades_to_import = []
 
     if not trades_to_import and BACKTEST_JSON.exists():
@@ -151,30 +146,31 @@ def _migrate_trades(conn: sqlite3.Connection):
         except Exception:
             trades_to_import = []
 
-    if not isinstance(trades_to_import, list):
+    if not isinstance(trades_to_import, list) or len(trades_to_import) == 0:
         return
 
+    cursor = conn.cursor()
     now_iso = datetime.datetime.utcnow().isoformat()
     for t in trades_to_import:
         if not isinstance(t, dict):
             continue
         trade_id = t.get("trade_id") or f"TRADE_{t.get('symbol', 'NVDA')}_{int(datetime.datetime.utcnow().timestamp())}"
         symbol = t.get("symbol", "NVDA")
-        strategy = t.get("strategy", "EARNINGS_STRADDLE")
+        strategy = t.get("strategy", "THETA_IRON_CONDOR")
         status = t.get("status", "OPEN")
         entry_price = float(t.get("underlying_entry_price", t.get("entry_price", 100.0)))
         exit_price = float(t.get("exit_price")) if t.get("exit_price") is not None else None
-        cost = float(t.get("cost_or_credit_usd", 500.0))
+        cost = float(t.get("cost_or_credit_usd", t.get("package_limit_price_usd", 500.0)))
         pt = float(t.get("profit_target_usd", 250.0))
         sl = float(t.get("stop_loss_usd", 150.0))
         pnl = float(t.get("pnl_usd")) if t.get("pnl_usd") is not None else None
         exit_reason = t.get("exit_reason")
         entry_date = t.get("entry_date", now_iso)
         exit_date = t.get("exit_date")
-        legs_json = json.dumps(t.get("order_legs", []))
+        legs_json = json.dumps(t.get("order_legs", t.get("orders", [])))
 
         cursor.execute("""
-        INSERT OR IGNORE INTO trades (
+        INSERT OR REPLACE INTO trades (
             trade_id, symbol, strategy, status, entry_price, exit_price,
             cost_or_credit_usd, profit_target_usd, stop_loss_usd, pnl_usd,
             exit_reason, entry_date, exit_date, order_legs, created_at
@@ -185,6 +181,7 @@ def _migrate_trades(conn: sqlite3.Connection):
         ))
 
     conn.commit()
+    logger.info(f"[DB] Synced {len(trades_to_import)} trades from JSON into SQLite.")
 
 
 def _migrate_hitl(conn: sqlite3.Connection):

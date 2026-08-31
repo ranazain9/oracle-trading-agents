@@ -1221,5 +1221,78 @@
       "status": "CLOSED_PAPER_POSITION",
       "closed_at": "2026-08-29T06:34:55.713426"
     }
+  },
+  {
+    "trade_id": "ORD-1788165052",
+    "symbol": "AAPL",
+    "strategy": "THETA_IRON_CONDOR",
+    "entry_date": "2026-08-31",
+    "underlying_entry_price": 319.7,
+    "cost_or_credit_usd": 250.0,
+    "package_limit_price_usd": 250.0,
+    "margin_requirement_usd": 1500.0,
+    "is_credit": true,
+    "profit_target_usd": 125.0,
+    "stop_loss_usd": 150.0,
+    "status": "CLOSED_STOPPED",
+    "orders": [
+      {
+        "order_id": "75732942-a589-4e8f-8208-6ae7a356306f",
+        "symbol": "AAPL260904C00335000",
+        "qty": 1.0,
+        "side": "OrderSide.SELL",
+        "type": "OrderType.MARKET",
+        "status": "OrderStatus.PENDING_NEW",
+        "submitted_at": "2026-08-31 13:30:52.525533+00:00",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 2.1,
+        "occ_symbol": "AAPL260904C00335000"
+      },
+      {
+        "order_id": "f19a3d41-f6ac-4fcf-aedc-3238cf02a572",
+        "symbol": "AAPL260904C00350000",
+        "qty": 1.0,
+        "side": "OrderSide.BUY",
+        "type": "OrderType.MARKET",
+        "status": "OrderStatus.PENDING_NEW",
+        "submitted_at": "2026-08-31 13:30:53.026530+00:00",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 0.9,
+        "occ_symbol": "AAPL260904C00350000"
+      },
+      {
+        "order_id": "128b559b-2833-4e82-8c37-0e822750085d",
+        "symbol": "AAPL260904P00305000",
+        "qty": 1.0,
+        "side": "OrderSide.SELL",
+        "type": "OrderType.MARKET",
+        "status": "OrderStatus.PENDING_NEW",
+        "submitted_at": "2026-08-31 13:30:53.576438+00:00",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 2.2,
+        "occ_symbol": "AAPL260904P00305000"
+      },
+      {
+        "order_id": "4c0120d6-c02b-47d5-a5c2-b49d00c10ab0",
+        "symbol": "AAPL260904P00290000",
+        "qty": 1.0,
+        "side": "OrderSide.BUY",
+        "type": "OrderType.MARKET",
+        "status": "OrderStatus.PENDING_NEW",
+        "submitted_at": "2026-08-31 13:30:54.072072+00:00",
+        "filled_avg_price": 100.0,
+        "midpoint_limit_price": 0.9,
+        "occ_symbol": "AAPL260904P00290000"
+      }
+    ],
+    "exit_date": "2026-08-31",
+    "exit_price": 317.78,
+    "pnl_usd": -150.0,
+    "exit_reason": "Hard stop-loss triggered (-$154.00 <= -$150.00).",
+    "broker_exit_result": {
+      "symbol": "AAPL",
+      "status": "CLOSED_PAPER_POSITION",
+      "closed_at": "2026-08-31T13:52:21.404472"
+    }
   }
 ]

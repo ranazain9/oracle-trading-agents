@@ -418,5 +418,75 @@
     "primary_driver": "THETA_DECAY",
     "grade": "B",
     "lesson": "While the trade did not realize a profit, the strategy effectively captured theta decay over a short holding period. Future trades should consider tighter management of IV rank to optimize exit timing."
+  },
+  {
+    "timestamp": "2026-08-31T13:31:02.654944",
+    "symbol": "AAPL",
+    "strategy": "THETA_IRON_CONDOR",
+    "pnl_usd": 0.0,
+    "outcome": "OPTIMAL_ALPHA",
+    "primary_driver": "THETA_DECAY",
+    "grade": "A",
+    "lesson": "THETA_IRON_CONDOR on AAPL executed with realized PnL of $0.00. Risk controls respected."
+  },
+  {
+    "timestamp": "2026-08-31T15:50:51.600317",
+    "symbol": "SPY",
+    "strategy": "THETA_IRON_CONDOR",
+    "pnl_usd": 125.5,
+    "outcome": "OPTIMAL_ALPHA",
+    "primary_driver": "THETA_DECAY",
+    "grade": "A",
+    "lesson": "THETA_IRON_CONDOR on SPY executed with realized PnL of $125.50. Risk controls respected."
+  },
+  {
+    "timestamp": "2026-08-31T15:56:55.777744",
+    "symbol": "SPY",
+    "strategy": "THETA_IRON_CONDOR",
+    "pnl_usd": 125.5,
+    "outcome": "OPTIMAL_ALPHA",
+    "primary_driver": "THETA_DECAY",
+    "grade": "A",
+    "lesson": "THETA_IRON_CONDOR on SPY executed with realized PnL of $125.50. Risk controls respected."
+  },
+  {
+    "timestamp": "2026-08-31T15:59:05.537617",
+    "symbol": "SPY",
+    "strategy": "THETA_IRON_CONDOR",
+    "pnl_usd": 125.5,
+    "outcome": "OPTIMAL_ALPHA",
+    "primary_driver": "THETA_DECAY",
+    "grade": "A",
+    "lesson": "THETA_IRON_CONDOR on SPY executed with realized PnL of $125.50. Risk controls respected."
+  },
+  {
+    "timestamp": "2026-08-31T15:59:30.565998",
+    "symbol": "SPY",
+    "strategy": "NO_TRADE",
+    "pnl_usd": 0.0,
+    "outcome": "OPTIMAL_ALPHA",
+    "primary_driver": "DELTA_DIRECTIONAL",
+    "grade": "A",
+    "lesson": "NO_TRADE on SPY executed with realized PnL of $0.00. Risk controls respected."
+  },
+  {
+    "timestamp": "2026-08-31T15:59:49.763661",
+    "symbol": "SPY",
+    "strategy": "THETA_IRON_CONDOR",
+    "pnl_usd": 125.5,
+    "outcome": "OPTIMAL_ALPHA",
+    "primary_driver": "THETA_DECAY",
+    "grade": "A",
+    "lesson": "THETA_IRON_CONDOR on SPY executed with realized PnL of $125.50. Risk controls respected."
+  },
+  {
+    "timestamp": "2026-08-31T16:00:21.583991",
+    "symbol": "SPY",
+    "strategy": "NO_TRADE",
+    "pnl_usd": 0.0,
+    "outcome": "OPTIMAL_ALPHA",
+    "primary_driver": "DELTA_DIRECTIONAL",
+    "grade": "A",
+    "lesson": "NO_TRADE on SPY executed with realized PnL of $0.00. Risk controls respected."
   }
 ]
