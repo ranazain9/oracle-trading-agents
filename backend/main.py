@@ -47,6 +47,43 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.warning(f"24/7 Daemon service start notice: {e}")
 
+    # 4. Warm up initial LangGraph cognitive state asynchronously
+    try:
+        from backend.services.pipeline_service import pipeline_service
+        def _warmup_langgraph():
+            import time
+            time.sleep(1)
+            try:
+                from graph import oracle_app
+                warmup_state = {
+                    "symbols": ["NVDA", "AAPL", "MSFT", "TSLA", "AMZN", "SPY"],
+                    "portfolio_cash": 100000.0,
+                    "market_overview": {},
+                    "macro_env": {},
+                    "macro_assessment": None,
+                    "assets_data": [],
+                    "trade_memory": "",
+                    "decision": None,
+                    "validation": None,
+                    "hitl_approval": None,
+                    "execution_result": None,
+                    "hedge_decision": None,
+                    "guardian_result": None,
+                    "analyst_reflection": None,
+                    "is_approved": False
+                }
+                res = oracle_app.invoke(warmup_state)
+                pipeline_service.latest_state = res
+                pipeline_service.current_node = "COMPLETED"
+                pipeline_service.progress_pct = 100
+                logger.info("🧠 [LangGraph] Initial 24/7 Cognitive State Machine Warmed Up.")
+            except Exception as e:
+                logger.debug(f"LangGraph warmup notice: {e}")
+
+        threading.Thread(target=_warmup_langgraph, daemon=True).start()
+    except Exception as e:
+        logger.warning(f"LangGraph warmup start notice: {e}")
+
     yield
     daemon_service.stop()
     logger.info("🛑 Shutting down ORACLE FastAPI Backend.")
