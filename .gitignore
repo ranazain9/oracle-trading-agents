@@ -88,6 +88,13 @@ htmlcov/
 .tox/
 .nox/
 
+# --- Media & Video Demos ---
+*.mp4
+*.webm
+*.mov
+*.avi
+*.mkv
+
 # --- IDE, Editor & OS Temporary Files ---
 .vscode/
 !.vscode/extensions.json
