@@ -17,24 +17,31 @@ BACKTEST_JSON = DATA_DIR / "historical_backtest.json"
 HITL_JSON = DATA_DIR / "hitl_history.json"
 
 
+_db_initialized = False
+
 def get_db_connection() -> sqlite3.Connection:
     """
     Returns a configured sqlite3 connection with Row factory and WAL mode.
     """
+    global _db_initialized
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(str(DB_PATH), timeout=15.0, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA journal_mode=WAL;")
     conn.execute("PRAGMA synchronous=NORMAL;")
     conn.execute("PRAGMA foreign_keys=ON;")
+    
+    if not _db_initialized:
+        _db_initialized = True
+        _create_tables_if_not_exists(conn)
+        
     return conn
 
 
-def init_db():
+def _create_tables_if_not_exists(conn: sqlite3.Connection):
     """
-    Initializes database schema and automatically migrates legacy JSON files into SQLite.
+    Internal helper to ensure all core tables exist immediately.
     """
-    conn = get_db_connection()
     try:
         cursor = conn.cursor()
 
@@ -100,31 +107,23 @@ def init_db():
             net_vega REAL DEFAULT 0.0
         );
         """)
-
-        # 5. Autonomous 24/7 Daemon Execution Runs Table
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS daemon_runs (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            run_id TEXT NOT NULL,
-            phase TEXT NOT NULL,
-            timestamp TEXT NOT NULL,
-            status TEXT NOT NULL,
-            summary TEXT,
-            details TEXT
-        );
-        """)
-
         conn.commit()
+    except Exception as e:
+        logger.warning(f"Auto-table creation notice: {e}")
 
+
+def init_db():
+    """
+    Initializes database schema and automatically migrates legacy JSON files into SQLite.
+    """
+    conn = get_db_connection()
+    try:
         # Run automatic migrations for legacy JSON records
         _migrate_trades(conn)
         _migrate_hitl(conn)
-
         logger.info(f"[DB] SQLite Database Initialized & Synced at: {DB_PATH}")
-
     except Exception as e:
         logger.error(f"Error initializing SQLite database: {e}")
-        conn.rollback()
     finally:
         conn.close()
 

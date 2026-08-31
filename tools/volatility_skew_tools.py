@@ -55,13 +55,21 @@ class VolatilitySkewAnalyzer:
             otm_put = puts.sort_values("put_diff").iloc[0]
 
             import math
-            import pandas as pd
+
+            def _check_nan(val):
+                if val is None:
+                    return True
+                try:
+                    f = float(val)
+                    return math.isnan(f) or f != f
+                except Exception:
+                    return True
 
             raw_call_iv = otm_call.get("impliedVolatility", 0.35)
             raw_put_iv = otm_put.get("impliedVolatility", 0.38)
 
-            call_iv = 35.0 if (raw_call_iv is None or pd.isna(raw_call_iv) or math.isnan(float(raw_call_iv))) else round(float(raw_call_iv) * 100, 1)
-            put_iv = 38.0 if (raw_put_iv is None or pd.isna(raw_put_iv) or math.isnan(float(raw_put_iv))) else round(float(raw_put_iv) * 100, 1)
+            call_iv = 35.0 if _check_nan(raw_call_iv) else round(float(raw_call_iv) * 100, 1)
+            put_iv = 38.0 if _check_nan(raw_put_iv) else round(float(raw_put_iv) * 100, 1)
 
             # Skew Index = Put IV - Call IV
             skew_index = round(put_iv - call_iv, 1)

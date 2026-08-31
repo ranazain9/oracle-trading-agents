@@ -6,21 +6,30 @@ import logging
 import math
 import warnings
 from typing import Dict, Any
-import pandas as pd
 
 warnings.filterwarnings("ignore")
-logging.getLogger("yfinance").setLevel(logging.CRITICAL)
 
 try:
     import yfinance as yf
     YF_AVAILABLE = True
-except ImportError:
+except (ImportError, Exception):
     YF_AVAILABLE = False
+
+
+
+def _is_nan(val) -> bool:
+    if val is None:
+        return True
+    try:
+        f = float(val)
+        return math.isnan(f) or f != f
+    except Exception:
+        return True
 
 
 def _safe_float(val, default=0.0) -> float:
     try:
-        if val is None or pd.isna(val) or math.isnan(float(val)):
+        if _is_nan(val):
             return default
         return float(val)
     except Exception:
@@ -29,7 +38,7 @@ def _safe_float(val, default=0.0) -> float:
 
 def _safe_int(val, default=0) -> int:
     try:
-        if val is None or pd.isna(val) or math.isnan(float(val)):
+        if _is_nan(val):
             return default
         return int(float(val))
     except Exception:
