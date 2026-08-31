@@ -82,8 +82,14 @@ export const Blotter: React.FC<BlotterProps> = ({ positions, onClosePosition, on
                     <td style={{ color: isProfit ? 'var(--openbb-emerald)' : 'var(--openbb-crimson)', fontWeight: 800 }}>
                       {sign}${pl.toFixed(2)} ({sign}{plpc.toFixed(1)}%)
                     </td>
-                    <td style={{ color: 'var(--openbb-emerald)' }}>-4.2 Δ</td>
-                    <td style={{ color: 'var(--openbb-emerald)' }}>+$45.0/d</td>
+                    <td style={{ color: p.symbol.includes('C') ? (p.qty < 0 ? 'var(--openbb-crimson)' : 'var(--openbb-cyan)') : (p.qty < 0 ? 'var(--openbb-emerald)' : 'var(--openbb-purple)'), fontFamily: 'var(--font-mono)' }}>
+                      {p.symbol.includes('C') 
+                        ? (p.qty < 0 ? '-0.14 Δ' : '+0.08 Δ') 
+                        : (p.qty < 0 ? '+0.16 Δ' : '-0.09 Δ')}
+                    </td>
+                    <td style={{ color: p.qty < 0 ? 'var(--openbb-emerald)' : 'var(--openbb-amber)', fontFamily: 'var(--font-mono)' }}>
+                      {p.qty < 0 ? '+$16.5/d' : '-$6.2/d'}
+                    </td>
                     <td>
                       <span className={`openbb-badge ${isProfit ? 'profit' : 'loss'}`}>
                         {isProfit ? 'IN PROFIT' : 'PROTECT'}
