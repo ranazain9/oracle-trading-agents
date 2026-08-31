@@ -1,5 +1,6 @@
 # 🏛️ ORACLE: Autonomous Multi-Agent AI Options Trading Hedge Fund
 
+[![Live Cloud Deployment](https://img.shields.io/badge/Render-Live%20Deployment-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://oracle-trading-agents.onrender.com/)
 [![Alpaca Paper Trading API](https://img.shields.io/badge/Alpaca-Paper%20Trading%20API-FCD535?style=for-the-badge&logo=alpaca&logoColor=black)](https://alpaca.markets)
 [![LangGraph StateGraph](https://img.shields.io/badge/LangGraph-Multi--Agent%20StateGraph-1C3C3C?style=for-the-badge&logo=langchain&logoColor=white)](https://langchain.com)
 [![FastAPI](https://img.shields.io/badge/FastAPI-v0.115%2B-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
@@ -8,7 +9,10 @@
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
+> 🌐 **Live Cloud Deployment & Command Center:** [https://oracle-trading-agents.onrender.com/](https://oracle-trading-agents.onrender.com/)
+>
 > **ORACLE** is an institutional-grade, fully autonomous algorithmic options trading fund built for the **Alpaca AI Trading Agents Hackathon**. Powered by a coordinated **10-Agent LangGraph Swarm & 24+ Sub-Agents**, ORACLE unifies **Tree-of-Thoughts (ToT) Expected Value ($EV$) modeling**, **Asymmetric Red Team self-critique (`temp=0.0`)**, **7 quantitative options strategies**, **Unusual Options Flow / Dark Pool tracking**, **CBOE Strike Grid Snapping**, **OCC 21-character option routing**, **Midpoint Limit Pricing**, and a **60s/15s Adaptive Risk Bodyguard** paired with a full-stack **FastAPI enterprise backend** and a **React 19 glassmorphic command center**.
+
 
 ---
 
@@ -358,7 +362,13 @@ d:/ALPACA/data/
 
 ## 🚀 Installation & Full-Stack Quickstart
 
-### 1. Environment Setup
+### 🌐 Live Cloud Deployment
+Access the hosted live production instance without local installation:
+👉 **[https://oracle-trading-agents.onrender.com/](https://oracle-trading-agents.onrender.com/)**
+
+---
+
+### 1. Local Environment Setup
 ```powershell
 # Clone the repository
 git clone https://github.com/ranazain9/oracle-trading-agents.git
