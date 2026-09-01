@@ -73,7 +73,8 @@ sdist/
 
 # --- Logs, Telemetry & Runtime Caches ---
 *.log
-logs/
+logs/*.log
+logs/*.json
 data/logs/
 backend/logs/
 npm-debug.log*

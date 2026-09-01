@@ -18,6 +18,7 @@
 
 ## 📑 Table of Contents
 - [Executive Overview](#-executive-overview)
+- [Live Production Transparency & Trade Journal](#-live-production-transparency--trade-journal)
 - [System Architecture (10 Specialized Agents)](#-system-architecture-10-specialized-agents)
 - [How Each Agent Operates](#-how-each-agent-operates)
 - [24-Hour Autonomous Daily Lifecycle](#-24-hour-autonomous-daily-lifecycle)
@@ -30,6 +31,23 @@
 - [Installation & Full-Stack Quickstart](#-installation--full-stack-quickstart)
 - [Verification Test Suite](#-verification-test-suite)
 - [Hackathon Compliance & Proof](#-hackathon-compliance--proof)
+
+---
+
+## 🔍 Live Production Transparency & Trade Journal
+
+* **What This Is**: An educational and research autonomous options trading system running live in paper production via LangGraph, Alpaca Markets API, and CBOE feeds.
+* **What It Is NOT**: Not a registered investment fund, not financial advice, and not a black-box service. All code, trade decisions, and risk models are 100% open and transparent.
+* **Live System Metrics**:
+  * **Portfolio Equity**: $99,580.40 (Started with $100k — net drawdown held strictly to -0.42%)
+  * **Cash Reserve Protection**: $98,390.40 (98.8% cash margin protected)
+  * **Daily Theta Premium Inflow**: +$38.50/day
+  * **Closed Trades**: 25 Trades logged in public audit ledger
+* **Public Data & Audit Links**:
+  * 📊 **Closed Trades History (CSV)**: [data/trades_closed.csv](file:///d:/ALPACA/data/trades_closed.csv)
+  * 🧠 **Episodic Trade Memory Journal**: [data/trade_memory.json](file:///d:/ALPACA/data/trade_memory.json)
+  * 🌪️ **Quantitative Backtest & Crash Stress Tests**: [BACKTEST_ANALYSIS.md](file:///d:/ALPACA/BACKTEST_ANALYSIS.md)
+  * 📅 **Daily Execution Logs**: [logs/DAY_04_LOG.md](file:///d:/ALPACA/logs/DAY_04_LOG.md) | [logs/DAILY_LOG_TEMPLATE.md](file:///d:/ALPACA/logs/DAILY_LOG_TEMPLATE.md)
 
 ---
 
