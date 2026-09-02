@@ -112,7 +112,7 @@ export const KpiDeck: React.FC<KpiDeckProps> = ({ account, greeks, stats }) => {
           {delta >= 0 ? '+' : ''}{delta.toFixed(1)} Δ
         </div>
         <div style={{ fontSize: '0.64rem', color: 'var(--text-dim)', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>
-          {delta === 0 ? 'Flat Delta-Neutral (Cash Protected)' : 'Within Safe Corridor (±25)'}
+          {delta === 0 ? 'Flat Delta-Neutral (Cash Protected)' : (Math.abs(delta) <= 25 ? 'Within Safe Corridor (±25)' : 'Delta Imbalance (> ±25 Δ)')}
         </div>
       </div>
 

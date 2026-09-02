@@ -43,14 +43,38 @@ class PortfolioGreeksTool:
                 pos_theta = 0.0
                 pos_vega = 0.0
             else:
-                # Options position approximation based on quantity
-                # Standard contract = 100 shares
+                # Parse OCC Options contract (e.g. AAPL260904C00350000)
                 is_call = "C" in symbol
                 is_put = "P" in symbol
                 delta_sign = 1.0 if is_call else -1.0
-                pos_delta = qty * 50.0 * delta_sign  # ~0.50 delta per option leg proxy
-                pos_gamma = qty * 0.02 * 100.0
-                pos_theta = -abs(qty * 3.50)  # -$3.50 theta per contract
+                
+                # Extract strike from OCC 21-char symbol if available
+                strike = 0.0
+                if len(symbol) >= 15:
+                    try:
+                        strike_part = symbol[-8:]
+                        strike = float(strike_part) / 1000.0
+                    except Exception:
+                        strike = 0.0
+
+                if current_price > 0 and current_price < 0.05:
+                    # Deep OTM / penny contract (mark <= $0.05) -> low delta
+                    leg_delta_unit = 0.04 * delta_sign
+                elif strike > 0 and current_price > 0:
+                    # Approximate delta based on moneyness
+                    moneyness = (strike - current_price) / current_price if is_call else (current_price - strike) / current_price
+                    if moneyness > 0.10:
+                        leg_delta_unit = 0.08 * delta_sign
+                    elif moneyness < -0.10:
+                        leg_delta_unit = 0.85 * delta_sign
+                    else:
+                        leg_delta_unit = 0.50 * delta_sign
+                else:
+                    leg_delta_unit = 0.50 * delta_sign
+
+                pos_delta = qty * leg_delta_unit * 100.0
+                pos_gamma = qty * 0.005 * 100.0
+                pos_theta = -abs(qty * 3.50)
                 pos_vega = qty * 5.00
 
             net_delta += pos_delta

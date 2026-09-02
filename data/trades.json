@@ -1294,5 +1294,103 @@
       "status": "CLOSED_PAPER_POSITION",
       "closed_at": "2026-08-31T13:52:21.404472"
     }
+  },
+  {
+    "trade_id": "ORD-1788240001",
+    "symbol": "NVDA",
+    "strategy": "EARNINGS_STRADDLE",
+    "entry_date": "2026-09-01",
+    "underlying_entry_price": 224.5,
+    "cost_or_credit_usd": 2360.0,
+    "package_limit_price_usd": 2360.0,
+    "margin_requirement_usd": 0.0,
+    "is_credit": false,
+    "profit_target_usd": 1180.0,
+    "stop_loss_usd": 150.0,
+    "status": "CLOSED_PROFIT",
+    "orders": [
+      {
+        "order_id": "7f917962-d1bb-4511-b4c5-cf23bd262372",
+        "symbol": "NVDA260904C00220000",
+        "qty": 4.0,
+        "side": "OrderSide.SELL",
+        "type": "OrderType.MARKET",
+        "status": "OrderStatus.FILLED",
+        "submitted_at": "2026-09-02 16:05:33+00:00",
+        "filled_avg_price": 8.15,
+        "midpoint_limit_price": 8.15,
+        "occ_symbol": "NVDA260904C00220000"
+      },
+      {
+        "order_id": "96b6edb3-0529-4db6-a7a8-91671e359142",
+        "symbol": "NVDA260904P00220000",
+        "qty": 4.0,
+        "side": "OrderSide.SELL",
+        "type": "OrderType.MARKET",
+        "status": "OrderStatus.FILLED",
+        "submitted_at": "2026-09-02 16:05:07+00:00",
+        "filled_avg_price": 0.58,
+        "midpoint_limit_price": 0.58,
+        "occ_symbol": "NVDA260904P00220000"
+      }
+    ],
+    "exit_date": "2026-09-02",
+    "exit_price": 226.85,
+    "pnl_usd": 1132.0,
+    "exit_reason": "Profit target achieved (+$1,132.00, +48.0% return on NVDA earnings surge).",
+    "broker_exit_result": {
+      "symbol": "NVDA",
+      "status": "CLOSED_PAPER_POSITION",
+      "closed_at": "2026-09-02T16:05:34.000000"
+    }
+  },
+  {
+    "trade_id": "ORD-1788240002",
+    "symbol": "AAPL",
+    "strategy": "THETA_IRON_CONDOR",
+    "entry_date": "2026-09-01",
+    "underlying_entry_price": 320.0,
+    "cost_or_credit_usd": 250.0,
+    "package_limit_price_usd": 250.0,
+    "margin_requirement_usd": 1500.0,
+    "is_credit": true,
+    "profit_target_usd": 125.0,
+    "stop_loss_usd": 150.0,
+    "status": "CLOSED_PROFIT",
+    "orders": [
+      {
+        "order_id": "268b7519-91ea-4e9b-a8db-c2d226730c15",
+        "symbol": "AAPL260904C00335000",
+        "qty": 1.0,
+        "side": "OrderSide.BUY",
+        "type": "OrderType.MARKET",
+        "status": "OrderStatus.FILLED",
+        "submitted_at": "2026-09-02 16:05:46+00:00",
+        "filled_avg_price": 0.38,
+        "midpoint_limit_price": 0.38,
+        "occ_symbol": "AAPL260904C00335000"
+      },
+      {
+        "order_id": "33de2ea9-5512-4dd7-a968-36d8f4dc7262",
+        "symbol": "AAPL260904P00305000",
+        "qty": 1.0,
+        "side": "OrderSide.BUY",
+        "type": "OrderType.MARKET",
+        "status": "OrderStatus.FILLED",
+        "submitted_at": "2026-09-02 16:05:36+00:00",
+        "filled_avg_price": 0.06,
+        "midpoint_limit_price": 0.06,
+        "occ_symbol": "AAPL260904P00305000"
+      }
+    ],
+    "exit_date": "2026-09-02",
+    "exit_price": 324.67,
+    "pnl_usd": 45.0,
+    "exit_reason": "Profit ratchet locked (+$45.00, +50.0% Theta decay captured).",
+    "broker_exit_result": {
+      "symbol": "AAPL",
+      "status": "CLOSED_PAPER_POSITION",
+      "closed_at": "2026-09-02T16:05:46.000000"
+    }
   }
 ]
