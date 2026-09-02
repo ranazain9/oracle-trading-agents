@@ -70,6 +70,9 @@ export interface AccountData {
   equity?: number;
   cash?: number;
   buying_power?: number;
+  daily_change_usd?: number;
+  daily_change_pct?: number;
+  last_equity?: number;
   status?: string;
   is_paper?: boolean;
   account_number?: string;

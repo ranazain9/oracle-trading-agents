@@ -98,10 +98,18 @@ class AlpacaTool(BaseBroker):
 
         try:
             account = self.client.get_account()
+            equity = float(account.equity)
+            last_equity = float(getattr(account, "last_equity", equity) or equity)
+            diff_usd = equity - last_equity
+            pct_change = (diff_usd / last_equity * 100.0) if last_equity > 0 else 0.0
+
             data = {
                 "account_id": str(account.id),
                 "cash": float(account.cash),
-                "equity": float(account.equity),
+                "equity": equity,
+                "last_equity": last_equity,
+                "daily_change_usd": round(diff_usd, 2),
+                "daily_change_pct": round(pct_change, 2),
                 "buying_power": float(account.buying_power),
                 "status": str(account.status),
                 "is_live_alpaca": True,

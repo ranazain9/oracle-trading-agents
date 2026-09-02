@@ -11,6 +11,8 @@ interface KpiDeckProps {
 export const KpiDeck: React.FC<KpiDeckProps> = ({ account, greeks, stats }) => {
   const equity = account?.equity ?? 100000.0;
   const cash = account?.cash ?? 100000.0;
+  const dailyChangeUSD = account?.daily_change_usd ?? (account?.last_equity ? equity - account.last_equity : 1206.20);
+  const dailyChangePct = account?.daily_change_pct ?? (account?.last_equity && account.last_equity > 0 ? ((equity - account.last_equity) / account.last_equity) * 100 : 1.21);
   const theta = greeks?.net_portfolio_theta_daily_usd ?? greeks?.net_portfolio_theta ?? 0.0;
   const delta = greeks?.net_portfolio_delta ?? 0.0;
   
@@ -40,12 +42,26 @@ export const KpiDeck: React.FC<KpiDeckProps> = ({ account, greeks, stats }) => {
           </span>
           <DollarSign size={13} style={{ color: 'var(--openbb-cyan)' }} />
         </div>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '1.20rem', fontWeight: 800, color: 'var(--text-pure)' }}>
-          ${equity.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '1.20rem', fontWeight: 800, color: 'var(--text-pure)' }}>
+            ${equity.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </div>
+          <div style={{
+            fontSize: '0.72rem',
+            fontWeight: 800,
+            color: dailyChangeUSD >= 0 ? 'var(--openbb-emerald)' : 'var(--openbb-crimson)',
+            fontFamily: 'var(--font-mono)'
+          }}>
+            {dailyChangeUSD >= 0 ? '▲ +' : '▼ '}{Math.abs(dailyChangePct).toFixed(2)}%
+          </div>
         </div>
-        <div style={{ fontSize: '0.64rem', color: pnlUSD >= 0 ? 'var(--openbb-emerald)' : 'var(--openbb-crimson)', fontFamily: 'var(--font-mono)', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '3px' }}>
-          <span>{pnlUSD >= 0 ? '▲' : '▼'}</span>
-          <span>{pnlUSD >= 0 ? '+' : ''}${pnlUSD.toFixed(2)} Realized P&L</span>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '3px' }}>
+          <span style={{ fontSize: '0.64rem', color: dailyChangeUSD >= 0 ? 'var(--openbb-emerald)' : 'var(--openbb-crimson)', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
+            {dailyChangeUSD >= 0 ? '+' : '-'}${Math.abs(dailyChangeUSD).toFixed(2)} Today
+          </span>
+          <span style={{ fontSize: '0.62rem', color: pnlUSD >= 0 ? 'var(--openbb-emerald)' : 'var(--openbb-crimson)', fontFamily: 'var(--font-mono)' }}>
+            {pnlUSD >= 0 ? '▲ +' : '▼ -'}${Math.abs(pnlUSD).toFixed(0)} Realized
+          </span>
         </div>
       </div>
 

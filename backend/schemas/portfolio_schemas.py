@@ -13,6 +13,9 @@ class AccountStatusSchema(BaseModel):
     cash: float
     equity: float
     buying_power: float
+    daily_change_usd: Optional[float] = 0.0
+    daily_change_pct: Optional[float] = 0.0
+    last_equity: Optional[float] = None
     status: str
     is_paper: bool = True
     account_number: Optional[str] = None

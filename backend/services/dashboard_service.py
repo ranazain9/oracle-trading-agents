@@ -308,6 +308,8 @@ class DashboardCacheService:
                         "cash": float(acc.get("cash", 100000.0)),
                         "equity": float(acc.get("equity", 100000.0)),
                         "buying_power": float(acc.get("buying_power", 200000.0)),
+                        "daily_change_usd": float(acc.get("daily_change_usd", 0.0)),
+                        "daily_change_pct": float(acc.get("daily_change_pct", 0.0)),
                         "status": acc.get("status", "ACTIVE"),
                         "is_paper": self._alpaca_tool.is_paper,
                         "account_number": acc.get("account_number", "PAPER-ACCOUNT-01"),
