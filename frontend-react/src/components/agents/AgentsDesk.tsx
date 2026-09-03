@@ -38,11 +38,13 @@ export const AgentsDesk: React.FC<AgentsDeskProps> = ({
     { id: 1, name: 'Macro Sentinel', role: 'Catalyst & Treasury Radar', regime: 'Yield Curve Ingest', icon: '🌐' },
     { id: 2, name: 'Market Scout', role: 'Volume POC & Options Skew', regime: '8-Asset Scanner', icon: '📊' },
     { id: 3, name: 'Strategy Brain', role: 'ToT Scenarios & Red Team', regime: 'temp=0.0 Stress Test', icon: '🧠' },
-    { id: 4, name: 'HITL Supervisor', role: 'Capital Governance Gate', regime: 'Kelly Corridor ($450-$600)', icon: '🏛️' },
-    { id: 5, name: 'Execution Trader', role: 'OCC Multi-Leg Midpoint Router', regime: 'Slippage Shield', icon: '⚡' },
-    { id: 6, name: 'Portfolio Hedge', role: 'Net Greek Delta-Neutral Balancer', regime: 'Beta-Weighted Hedge', icon: '🛡️' },
-    { id: 7, name: 'Risk Bodyguard', role: '60s/15s Active Profit Ratchet', regime: '+50% Lock / -$150 Stop', icon: '🚨' },
-    { id: 8, name: 'Analyst Memory', role: 'Episodic Long-Term Memory Synthesis', regime: 'Vectorized PnL Attribution', icon: '📈' },
+    { id: 4, name: 'Risk Validator', role: 'Deterministic 5-Rule Veto', regime: 'Kelly & Stop Floor Veto', icon: '🛡️' },
+    { id: 5, name: 'HITL Supervisor', role: 'Capital Governance Gate', regime: 'Kelly Corridor ($450-$600)', icon: '🏛️' },
+    { id: 6, name: 'Execution Trader', role: 'OCC Multi-Leg Midpoint Router', regime: 'Slippage Shield', icon: '⚡' },
+    { id: 7, name: 'Portfolio Hedge', role: 'Net Greek Delta-Neutral Balancer', regime: 'Beta-Weighted Hedge', icon: '🛡️' },
+    { id: 8, name: 'Risk Bodyguard', role: '60s/15s Active Profit Ratchet', regime: '+50% Lock / -$150 Stop', icon: '🚨' },
+    { id: 9, name: 'Analyst Memory', role: 'Episodic Long-Term Memory Synthesis', regime: 'Vectorized PnL Attribution', icon: '📈' },
+    { id: 10, name: 'AI Copilot Desk', role: 'Operator Supervisory Bridge', regime: 'LangChain LCEL Real-Time', icon: '🤖' },
   ];
 
   const timelinePhases = [
@@ -56,7 +58,7 @@ export const AgentsDesk: React.FC<AgentsDeskProps> = ({
     {
       time: '09:30 AM EST',
       title: 'Opening Bell Execution',
-      desc: '8-Node LangGraph autonomous trade generation & CBOE routing.',
+      desc: '10-Agent LangGraph autonomous trade generation & CBOE routing.',
       phaseKey: 'MARKET_OPEN_EXECUTION',
       icon: <Zap size={14} style={{ color: 'var(--openbb-emerald)' }} />
     },
@@ -222,14 +224,14 @@ export const AgentsDesk: React.FC<AgentsDeskProps> = ({
         </div>
       </div>
 
-      {/* 8-Agent Deck */}
+      {/* 10-Agent Deck */}
       <div className="openbb-card">
         <div style={{ marginBottom: '8px', paddingBottom: '6px', borderBottom: '1px solid var(--openbb-border)' }}>
           <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-pure)' }}>
-            8-Node Autonomous Multi-Agent Cognitive Architecture
+            10-Agent Autonomous Multi-Agent Cognitive Architecture
           </h3>
           <span style={{ fontSize: '0.68rem', color: 'var(--text-dim)', fontFamily: 'var(--font-mono)' }}>
-            Deep inspection of all 8 AI trading agents
+            Deep inspection of all 10 autonomous trading agents
           </span>
         </div>
 

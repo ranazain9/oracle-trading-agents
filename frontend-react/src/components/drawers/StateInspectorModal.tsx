@@ -15,7 +15,9 @@ import {
   Copy,
   Check,
   Code,
-  LayoutGrid
+  LayoutGrid,
+  Bot,
+  ShieldCheck
 } from 'lucide-react';
 import { PipelineState } from '../../api/types';
 
@@ -118,7 +120,7 @@ export const StateInspectorModal: React.FC<StateInspectorModalProps> = ({ isOpen
                 LangGraph Autonomous Cognitive State
               </strong>
               <div style={{ fontSize: '0.68rem', color: 'var(--text-dim)', fontFamily: 'var(--font-mono)' }}>
-                8-Node Multi-Agent Stateful Pipeline Inspector (0ms Broker Synchronized)
+                10-Agent Multi-Agent Stateful Pipeline Inspector (0ms Broker Synchronized)
               </div>
             </div>
           </div>
@@ -387,11 +389,37 @@ export const StateInspectorModal: React.FC<StateInspectorModalProps> = ({ isOpen
                 )}
               </div>
 
-              {/* NODE 4: HITL Supervisor */}
+              {/* NODE 4: Risk Validator (Deterministic 5-Rule Gatekeeper) */}
+              <div className="openbb-card" style={{ background: 'var(--openbb-bg-surface)', border: '1px solid var(--openbb-border)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--openbb-border)', paddingBottom: '6px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--openbb-emerald)', fontWeight: 800, fontSize: '0.80rem' }}>
+                    <ShieldCheck size={14} /> 4. Risk Validator
+                  </div>
+                  <span className="openbb-badge profit" style={{ fontSize: '0.58rem' }}>
+                    VETO PASS
+                  </span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', fontSize: '0.72rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: 'var(--text-dim)' }}>Veto Rules:</span>
+                    <strong style={{ color: 'var(--openbb-emerald)' }}>5 Hard Constraints</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: 'var(--text-dim)' }}>Hard Stop Limit:</span>
+                    <strong style={{ color: 'var(--openbb-crimson)' }}>-$150.00 Floor</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: 'var(--text-dim)' }}>Capital Cap:</span>
+                    <strong style={{ color: 'var(--openbb-cyan)' }}>Kelly Bounded</strong>
+                  </div>
+                </div>
+              </div>
+
+              {/* NODE 5: HITL Supervisor */}
               <div className="openbb-card" style={{ background: 'var(--openbb-bg-surface)', border: '1px solid var(--openbb-border)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--openbb-border)', paddingBottom: '6px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--openbb-amber)', fontWeight: 800, fontSize: '0.80rem' }}>
-                    <Shield size={14} /> 4. HITL Supervisor
+                    <Shield size={14} /> 5. HITL Supervisor
                   </div>
                   <span className={`openbb-badge ${isApproved ? 'profit' : 'loss'}`} style={{ fontSize: '0.58rem' }}>
                     {isApproved ? 'SIGNED OFF' : 'GATE ACTIVE'}
@@ -411,11 +439,11 @@ export const StateInspectorModal: React.FC<StateInspectorModalProps> = ({ isOpen
                 </div>
               </div>
 
-              {/* NODE 5: Execution Router */}
+              {/* NODE 6: Execution Router */}
               <div className="openbb-card" style={{ background: 'var(--openbb-bg-surface)', border: '1px solid var(--openbb-border)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--openbb-border)', paddingBottom: '6px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--openbb-cyan)', fontWeight: 800, fontSize: '0.80rem' }}>
-                    <Zap size={14} /> 5. Execution Trader
+                    <Zap size={14} /> 6. Execution Trader
                   </div>
                   <span className={`openbb-badge ${execution ? 'profit' : 'neutral'}`} style={{ fontSize: '0.58rem' }}>
                     {execution ? 'ROUTED' : 'STANDBY'}
@@ -439,11 +467,11 @@ export const StateInspectorModal: React.FC<StateInspectorModalProps> = ({ isOpen
                 )}
               </div>
 
-              {/* NODE 6: Portfolio Hedge */}
+              {/* NODE 7: Portfolio Hedge */}
               <div className="openbb-card" style={{ background: 'var(--openbb-bg-surface)', border: '1px solid var(--openbb-border)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--openbb-border)', paddingBottom: '6px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--openbb-emerald)', fontWeight: 800, fontSize: '0.80rem' }}>
-                    <TrendingUp size={14} /> 6. Portfolio Hedge
+                    <TrendingUp size={14} /> 7. Portfolio Hedge
                   </div>
                   <span className={`openbb-badge ${hedge?.hedge_required ? 'loss' : 'profit'}`} style={{ fontSize: '0.58rem' }}>
                     {hedge?.hedge_required ? 'HEDGE NEEDED' : 'BALANCED'}
@@ -461,11 +489,11 @@ export const StateInspectorModal: React.FC<StateInspectorModalProps> = ({ isOpen
                 </div>
               </div>
 
-              {/* NODE 7: Risk Bodyguard */}
+              {/* NODE 8: Risk Bodyguard */}
               <div className="openbb-card" style={{ background: 'var(--openbb-bg-surface)', border: '1px solid var(--openbb-border)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--openbb-border)', paddingBottom: '6px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--openbb-amber)', fontWeight: 800, fontSize: '0.80rem' }}>
-                    <Shield size={14} /> 7. Risk Bodyguard
+                    <Shield size={14} /> 8. Risk Bodyguard
                   </div>
                   <span className="openbb-badge profit" style={{ fontSize: '0.58rem' }}>
                     ARMED 15s
@@ -483,11 +511,11 @@ export const StateInspectorModal: React.FC<StateInspectorModalProps> = ({ isOpen
                 </div>
               </div>
 
-              {/* NODE 8: Analyst Memory Reflection */}
+              {/* NODE 9: Analyst Memory Reflection */}
               <div className="openbb-card" style={{ background: 'var(--openbb-bg-surface)', border: '1px solid var(--openbb-border)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--openbb-border)', paddingBottom: '6px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--openbb-cyan)', fontWeight: 800, fontSize: '0.80rem' }}>
-                    <Brain size={14} /> 8. Analyst Memory
+                    <Brain size={14} /> 9. Analyst Memory
                   </div>
                   <span className="openbb-badge neutral" style={{ fontSize: '0.58rem' }}>
                     EPISODIC
@@ -501,6 +529,28 @@ export const StateInspectorModal: React.FC<StateInspectorModalProps> = ({ isOpen
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ color: 'var(--text-dim)' }}>PnL Attribution:</span>
                     <strong style={{ color: 'var(--openbb-emerald)' }}>Post-Trade Hook</strong>
+                  </div>
+                </div>
+              </div>
+
+              {/* NODE 10: AI Copilot Desk */}
+              <div className="openbb-card" style={{ background: 'var(--openbb-bg-surface)', border: '1px solid var(--openbb-border)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--openbb-border)', paddingBottom: '6px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--openbb-cyan)', fontWeight: 800, fontSize: '0.80rem' }}>
+                    <Bot size={14} /> 10. AI Copilot Desk
+                  </div>
+                  <span className="openbb-badge profit" style={{ fontSize: '0.58rem' }}>
+                    INTERACTIVE
+                  </span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', fontSize: '0.72rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: 'var(--text-dim)' }}>Supervisory Desk:</span>
+                    <strong style={{ color: 'var(--openbb-cyan)' }}>LangChain LCEL</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: 'var(--text-dim)' }}>Guardrails:</span>
+                    <strong style={{ color: 'var(--openbb-emerald)' }}>Portfolio Scope Strict</strong>
                   </div>
                 </div>
               </div>

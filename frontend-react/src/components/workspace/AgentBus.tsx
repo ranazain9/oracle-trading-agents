@@ -62,7 +62,19 @@ export const AgentBus: React.FC<AgentBusProps> = ({ onOpenStateInspector, onNavi
     },
     {
       id: 4,
-      title: '4. HITL Supervisor',
+      title: '4. Risk Validator',
+      role: 'Deterministic 5-Rule Veto',
+      state: 'ACTIVE',
+      tag: 'Veto Gate PASS',
+      tab: 'agents',
+      color: '#10B981',
+      bg: 'rgba(16, 185, 129, 0.08)',
+      border: 'rgba(16, 185, 129, 0.35)',
+      detail: '5 deterministic mathematical veto rules enforced: Kelly boundary, hard stop, and assignment guard.',
+    },
+    {
+      id: 5,
+      title: '5. HITL Supervisor',
       role: 'Risk Budget & Gatekeeper',
       state: 'STANDBY',
       tag: 'Gov PASS',
@@ -73,8 +85,8 @@ export const AgentBus: React.FC<AgentBusProps> = ({ onOpenStateInspector, onNavi
       detail: 'All OCC risk gates verified. Order cluster budget bounded within $450-$600.',
     },
     {
-      id: 5,
-      title: '5. Order Router',
+      id: 6,
+      title: '6. Order Router',
       role: 'CBOE Midpoint Execution',
       state: 'STANDBY',
       tag: 'Midpoint Guard',
@@ -85,8 +97,8 @@ export const AgentBus: React.FC<AgentBusProps> = ({ onOpenStateInspector, onNavi
       detail: 'Midpoint algorithmic routing armed. 0% adverse selection defense active.',
     },
     {
-      id: 6,
-      title: '6. Portfolio Hedge',
+      id: 7,
+      title: '7. Portfolio Hedge',
       role: 'Delta Neutrality Guard',
       state: 'ACTIVE',
       tag: 'Δ 0.0 Neutral',
@@ -97,8 +109,8 @@ export const AgentBus: React.FC<AgentBusProps> = ({ onOpenStateInspector, onNavi
       detail: 'Net Delta monitored at 0.0 Δ (Within ±25 Δ safe corridor). No beta hedge needed.',
     },
     {
-      id: 7,
-      title: '7. Risk Bodyguard',
+      id: 8,
+      title: '8. Risk Bodyguard',
       role: 'Stop Loss & Profit Ratchet',
       state: 'ACTIVE',
       tag: '-$150 Stop Floor',
@@ -109,8 +121,8 @@ export const AgentBus: React.FC<AgentBusProps> = ({ onOpenStateInspector, onNavi
       detail: 'Circuit breaker active: -$150.00 hard floor per trade. +50% profit ratchet arming.',
     },
     {
-      id: 8,
-      title: '8. AI Memory',
+      id: 9,
+      title: '9. AI Memory',
       role: 'Episodic Vector Ledger',
       state: 'ACTIVE',
       tag: 'Ledger Synced',
@@ -118,7 +130,19 @@ export const AgentBus: React.FC<AgentBusProps> = ({ onOpenStateInspector, onNavi
       color: '#94A3B8',
       bg: 'rgba(148, 163, 184, 0.08)',
       border: 'rgba(148, 163, 184, 0.35)',
-      detail: '24 closed trades recorded. Vectorized trade memories committed to SQLite ledger.',
+      detail: '30 closed trades recorded. Vectorized trade memories committed to SQLite ledger.',
+    },
+    {
+      id: 10,
+      title: '10. AI Copilot Desk',
+      role: 'Operator Supervisory Bridge',
+      state: 'ACTIVE',
+      tag: 'Interactive Live',
+      tab: 'dashboard',
+      color: '#00E5FF',
+      bg: 'rgba(0, 229, 255, 0.08)',
+      border: 'rgba(0, 229, 255, 0.40)',
+      detail: 'Real-time conversational quantitative desk supervisor with strict portfolio risk guardrails.',
     },
   ];
 
@@ -137,7 +161,7 @@ export const AgentBus: React.FC<AgentBusProps> = ({ onOpenStateInspector, onNavi
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', paddingBottom: '6px', borderBottom: '1px solid var(--openbb-border)' }}>
           <div>
             <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '0.90rem', fontWeight: 800, color: 'var(--text-pure)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span>🤖</span> <span>LangGraph 8-Node Multi-Agent Decision Bus</span>
+              <span>🤖</span> <span>LangGraph 10-Agent Autonomous Decision Bus</span>
             </h3>
             <span style={{ fontSize: '0.66rem', color: 'var(--text-dim)', fontFamily: 'var(--font-mono)' }}>
               Autonomous Cognitive Pipeline • Active Runtime State
@@ -145,7 +169,7 @@ export const AgentBus: React.FC<AgentBusProps> = ({ onOpenStateInspector, onNavi
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <span className="openbb-badge profit" style={{ fontSize: '0.58rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <span className="pulse-dot-green" /> 5 ACTIVE • 3 STANDBY
+              <span className="pulse-dot-green" /> 7 ACTIVE • 3 STANDBY
             </span>
             <button className="btn-terminal primary" onClick={onOpenStateInspector} style={{ padding: '3px 8px', fontSize: '0.65rem' }}>
               <Terminal size={11} /> State Tree
