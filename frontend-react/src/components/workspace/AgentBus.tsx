@@ -177,12 +177,12 @@ export const AgentBus: React.FC<AgentBusProps> = ({ onOpenStateInspector, onNavi
           </div>
         </div>
 
-        {/* 8-Node Grid */}
+        {/* 10-Node Grid - 5 columns x 2 rows, perfectly filling all gaps */}
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
-            gap: '8px',
+            gridTemplateColumns: 'repeat(5, minmax(0, 1fr))',
+            gap: '6px',
             width: '100%',
           }}
         >

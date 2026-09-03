@@ -159,90 +159,98 @@ export const Sidebar: React.FC<SidebarProps> = ({
             }}
           >
             {!isCollapsed ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
-                {/* Glowing Logo Icon */}
-                <div
+              <>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
+                  {/* Glowing Logo Icon */}
+                  <div
+                    style={{
+                      width: '28px',
+                      height: '28px',
+                      borderRadius: '7px',
+                      background: 'linear-gradient(135deg, #00E5FF 0%, #3B82F6 100%)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      boxShadow: '0 0 14px rgba(0, 229, 255, 0.40)',
+                      flexShrink: 0,
+                    }}
+                  >
+                    <Radio size={16} style={{ color: '#000' }} />
+                  </div>
+                  <div>
+                    <div
+                      style={{
+                        fontFamily: 'var(--font-heading)',
+                        fontWeight: 900,
+                        fontSize: '0.98rem',
+                        letterSpacing: '-0.3px',
+                        color: 'var(--text-pure)',
+                        lineHeight: 1.1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                      }}
+                    >
+                      <span>ORACLE</span>
+                      <span style={{ color: 'var(--openbb-cyan)', fontSize: '0.72rem', fontWeight: 800 }}>PRO</span>
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '0.60rem',
+                        color: 'var(--text-dim)',
+                        fontFamily: 'var(--font-mono)',
+                        letterSpacing: '0.6px',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      Theta Engine v2.4
+                    </div>
+                  </div>
+                </div>
+
+                {/* Collapse Button */}
+                <button
+                  onClick={() => setIsCollapsed(true)}
                   style={{
-                    width: '28px',
-                    height: '28px',
-                    borderRadius: '7px',
-                    background: 'linear-gradient(135deg, #00E5FF 0%, #3B82F6 100%)',
+                    background: 'transparent',
+                    border: '1px solid var(--openbb-border)',
+                    borderRadius: '4px',
+                    color: 'var(--text-muted)',
+                    cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    boxShadow: '0 0 14px rgba(0, 229, 255, 0.40)',
-                    flexShrink: 0,
+                    padding: '3px',
+                    transition: 'all 0.15s ease',
                   }}
+                  title="Collapse Sidebar"
                 >
-                  <Radio size={16} style={{ color: '#000' }} />
-                </div>
-                <div>
-                  <div
-                    style={{
-                      fontFamily: 'var(--font-heading)',
-                      fontWeight: 900,
-                      fontSize: '0.98rem',
-                      letterSpacing: '-0.3px',
-                      color: 'var(--text-pure)',
-                      lineHeight: 1.1,
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                    }}
-                  >
-                    <span>ORACLE</span>
-                    <span style={{ color: 'var(--openbb-cyan)', fontSize: '0.72rem', fontWeight: 800 }}>PRO</span>
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '0.60rem',
-                      color: 'var(--text-dim)',
-                      fontFamily: 'var(--font-mono)',
-                      letterSpacing: '0.6px',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    Theta Engine v2.4
-                  </div>
-                </div>
-              </div>
+                  <ChevronLeft size={14} />
+                </button>
+              </>
             ) : (
-              <div
+              /* When Collapsed: ONLY show the Expand Arrow (No Logo) */
+              <button
+                onClick={() => setIsCollapsed(false)}
                 style={{
                   width: '32px',
                   height: '32px',
-                  borderRadius: '8px',
-                  background: 'linear-gradient(135deg, #00E5FF 0%, #3B82F6 100%)',
+                  background: 'rgba(0, 229, 255, 0.08)',
+                  border: '1px solid rgba(0, 229, 255, 0.35)',
+                  borderRadius: '6px',
+                  color: 'var(--openbb-cyan)',
+                  cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  boxShadow: '0 0 14px rgba(0, 229, 255, 0.40)',
+                  transition: 'all 0.15s ease',
+                  margin: '0 auto',
                 }}
-                title="Oracle Autonomous Options Terminal"
+                title="Expand Sidebar"
               >
-                <Radio size={18} style={{ color: '#000' }} />
-              </div>
+                <ChevronRight size={18} />
+              </button>
             )}
-
-            {/* Collapse / Expand Button */}
-            <button
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              style={{
-                background: 'transparent',
-                border: '1px solid var(--openbb-border)',
-                borderRadius: '4px',
-                color: 'var(--text-muted)',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '3px',
-                transition: 'all 0.15s ease',
-              }}
-              title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
-            >
-              {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
-            </button>
           </div>
 
           {/* Navigation Items */}
