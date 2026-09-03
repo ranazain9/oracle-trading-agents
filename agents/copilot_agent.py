@@ -88,17 +88,18 @@ class CopilotAgent:
     def __init__(self):
         self.alpaca = AlpacaTool()
         
-        # 1. Initialize Prebuilt LangChain ChatOpenAI Model via AIMLAPI
+        # 1. Initialize Prebuilt LangChain ChatOpenAI Model dynamically via active provider
+        self.llm_config = settings.get_active_llm_config("copilot")
         try:
             self.llm = ChatOpenAI(
-                model=settings.AI_MODEL,
-                api_key=settings.AIML_API_KEY,
-                base_url=settings.AIML_BASE_URL,
+                model=self.llm_config["model"],
+                api_key=self.llm_config["api_key"],
+                base_url=self.llm_config["base_url"],
                 temperature=0.15,
                 max_tokens=900,
                 timeout=18.0
             )
-            self.has_llm = bool(settings.AIML_API_KEY)
+            self.has_llm = bool(self.llm_config["api_key"])
         except Exception as e:
             logger.warning(f"LangChain LLM initialization warning: {e}")
             self.llm = None
@@ -217,7 +218,7 @@ class CopilotAgent:
                 elif role == "assistant":
                     chat_history.append(AIMessage(content=text))
 
-        # 1. Run LangChain LCEL Chain via AIMLAPI
+        # 1. Run LangChain LCEL Chain via Active Provider
         if self.chain and self.has_llm:
             try:
                 reply_text = self.chain.invoke({
@@ -226,10 +227,12 @@ class CopilotAgent:
                     "user_query": user_message
                 })
 
+                provider_tag = str(self.llm_config.get("provider", "GROQ")).upper()
                 return {
                     "reply": reply_text.strip(),
                     "timestamp": datetime.datetime.utcnow().isoformat(),
-                    "mode": "AIMLAPI_LANGCHAIN_LCEL",
+                    "mode": f"{provider_tag}_LANGCHAIN_LCEL",
+                    "model": self.llm_config.get("model", "openai/gpt-oss-120b"),
                     "context_included": True
                 }
             except Exception as e:

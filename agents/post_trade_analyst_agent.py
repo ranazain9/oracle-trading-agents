@@ -35,9 +35,10 @@ class PostTradeAnalystAgent:
     """
 
     def __init__(self, api_key: Optional[str] = None, base_url: Optional[str] = None, model: Optional[str] = None):
-        self.api_key = (api_key or settings.AIML_API_KEY or "").strip('\"\'')
-        self.base_url = base_url or settings.AIML_BASE_URL
-        self.model = model or settings.AI_MODEL
+        active_config = settings.get_active_llm_config("memory")
+        self.api_key = (api_key or active_config["api_key"] or "").strip('\"\'')
+        self.base_url = base_url or active_config["base_url"]
+        self.model = model or active_config["model"]
         self.memory_path = Path(__file__).resolve().parent.parent / "data" / "trade_memory.json"
 
     def analyze_trade_event(self, trade_data: Dict[str, Any]) -> TradeReflection:

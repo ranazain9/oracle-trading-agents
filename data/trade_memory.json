@@ -1,15 +1,5 @@
 [
   {
-    "timestamp": "2026-08-28T12:12:44.062823",
-    "symbol": "NVDA",
-    "strategy": "EARNINGS_STRADDLE",
-    "pnl_usd": 250.0,
-    "outcome": "OPTIMAL_ALPHA",
-    "primary_driver": "IV_CRUSH",
-    "grade": "A",
-    "lesson": "The trade successfully capitalized on the anticipated volatility crush post-earnings, resulting in a favorable PnL. Future earnings straddle strategies should consider locking in profits when IV ranks decline significantly post-event."
-  },
-  {
     "timestamp": "2026-08-28T12:13:32.963759",
     "symbol": "NVDA",
     "strategy": "EARNINGS_STRADDLE",
@@ -488,5 +478,25 @@
     "primary_driver": "DELTA_DIRECTIONAL",
     "grade": "A",
     "lesson": "NO_TRADE on SPY executed with realized PnL of $0.00. Risk controls respected."
+  },
+  {
+    "timestamp": "2026-09-03T17:41:59.077937",
+    "symbol": "SPY",
+    "strategy": "THETA_IRON_CONDOR",
+    "pnl_usd": 125.5,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "IV_CRUSH",
+    "grade": "A",
+    "lesson": "Early IV rank declines can dramatically boost short\u2011dated iron condor PnL; lock in profits when IV drops \u22655% within a day. Incorporate real\u2011time IV rank monitoring into the profit\u2011ratchet trigger to maximize theta harvest while minimizing exposure."
+  },
+  {
+    "timestamp": "2026-09-03T17:42:21.049986",
+    "symbol": "SPY",
+    "strategy": "NO_TRADE",
+    "pnl_usd": 0.0,
+    "outcome": "THESIS_INVALIDATED",
+    "primary_driver": "IV_CRUSH",
+    "grade": "A",
+    "lesson": "When IV rank drops, avoid initiating premium\u2011capture positions; monitor IV rank trends to prevent entering as IV crush approaches."
   }
 ]
