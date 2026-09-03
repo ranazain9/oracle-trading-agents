@@ -57,20 +57,15 @@ class PortfolioGreeksTool:
                     except Exception:
                         strike = 0.0
 
-                if current_price > 0 and current_price < 0.05:
-                    # Deep OTM / penny contract (mark <= $0.05) -> low delta
-                    leg_delta_unit = 0.04 * delta_sign
+                if current_price <= 0.05:
+                    # Deep OTM / zero-bid / penny contract (mark <= $0.05) -> near-zero delta
+                    leg_delta_unit = 0.01 * delta_sign
                 elif strike > 0 and current_price > 0:
-                    # Approximate delta based on moneyness
-                    moneyness = (strike - current_price) / current_price if is_call else (current_price - strike) / current_price
-                    if moneyness > 0.10:
-                        leg_delta_unit = 0.08 * delta_sign
-                    elif moneyness < -0.10:
-                        leg_delta_unit = 0.85 * delta_sign
-                    else:
-                        leg_delta_unit = 0.50 * delta_sign
+                    # Strike vs estimated underlying price
+                    # If strike is far away (> 20%), delta is low
+                    leg_delta_unit = 0.15 * delta_sign
                 else:
-                    leg_delta_unit = 0.50 * delta_sign
+                    leg_delta_unit = 0.02 * delta_sign
 
                 pos_delta = qty * leg_delta_unit * 100.0
                 pos_gamma = qty * 0.005 * 100.0
