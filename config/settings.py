@@ -38,7 +38,7 @@ class Settings:
         """
         provider = self.LLM_PROVIDER
         if provider == "hybrid":
-            if agent_type in ["macro", "strategy"]:
+            if agent_type in ["macro", "strategy", "analyst"]:
                 return {
                     "provider": "gemini",
                     "api_key": self.GEMINI_API_KEY,
