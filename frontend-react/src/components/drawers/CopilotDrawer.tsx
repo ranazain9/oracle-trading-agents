@@ -53,7 +53,7 @@ export const CopilotDrawer: React.FC<CopilotDrawerProps> = ({ isOpen, onClose, a
       timestamp: nowTime,
       mode: 'AIMLAPI_LANGCHAIN_LCEL',
       text: `### 🤖 Greetings Operator
-I am your **ORACLE Quantitative AI Copilot** powered by **LangChain & Claude 3.5 Sonnet / DeepSeek**. I synthesize real-time portfolio Greeks, multi-leg options risk envelopes, volatility surface skews, and autonomous LangGraph strategy theses.
+I am your **ORACLE Quantitative AI Copilot**, your autonomous options trading & risk desk supervisor. I synthesize real-time portfolio Greeks, multi-leg options risk envelopes, volatility surface skews, and autonomous multi-agent strategy theses.
 
 **Live Telemetry Snapshot:**
 - **Portfolio Equity:** **$${(account?.equity || 99580.95).toLocaleString('en-US', { minimumFractionDigits: 2 })}** | **Cash:** **$${(account?.cash || 98835.95).toLocaleString('en-US', { minimumFractionDigits: 2 })}**
@@ -164,7 +164,7 @@ How can I assist your quantitative trading desk today?`,
     all: [
       { text: 'Why do the agents buy and sell positions?', icon: <TrendingUp size={12} /> },
       { text: 'Explain my Net Delta, Daily Theta, and portfolio profit', icon: <Activity size={12} /> },
-      { text: 'What are all 8 agents doing right now?', icon: <Brain size={12} /> },
+      { text: 'What are the autonomous agents doing right now?', icon: <Brain size={12} /> },
       { text: 'What is my live cash, equity, and buying power?', icon: <DollarSign size={12} /> },
       { text: 'What phase is the 24/7 Auto-Pilot daemon in?', icon: <Zap size={12} /> },
     ],
@@ -181,8 +181,8 @@ How can I assist your quantitative trading desk today?`,
       { text: 'How does Tree-of-Thoughts calculate Expected Value (EV)?', icon: <Brain size={12} /> },
     ],
     agents: [
-      { text: 'What are all 8 agents doing right now?', icon: <Brain size={12} /> },
-      { text: 'Explain the 8-node LangGraph cognitive cycle', icon: <Zap size={12} /> },
+      { text: 'What are the autonomous agents doing right now?', icon: <Brain size={12} /> },
+      { text: 'Explain the autonomous LangGraph cognitive cycle', icon: <Zap size={12} /> },
       { text: 'What is the 15-second Risk Bodyguard checking?', icon: <Shield size={12} /> },
       { text: 'What is the current 24/7 Auto-Pilot daemon schedule?', icon: <Zap size={12} /> },
     ],
@@ -849,7 +849,7 @@ How can I assist your quantitative trading desk today?`,
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-          placeholder="Ask Copilot about Greeks, buy/sell rationales, 8 agents..."
+          placeholder="Ask Copilot about Greeks, buy/sell rationales, portfolio risk..."
           disabled={isLoading}
           style={{
             flex: 1,
