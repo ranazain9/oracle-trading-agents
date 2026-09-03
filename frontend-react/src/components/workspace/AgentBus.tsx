@@ -27,7 +27,7 @@ export const AgentBus: React.FC<AgentBusProps> = ({ onOpenStateInspector, onNavi
     {
       id: 1,
       title: '1. Macro Sentinel',
-      role: 'Macro Regime & Yield Curve',
+      role: 'Macro Regime & Yield',
       state: 'STANDBY',
       tag: 'MSI: 0.50 Risk-On',
       tab: 'agents',
@@ -212,8 +212,16 @@ export const AgentBus: React.FC<AgentBusProps> = ({ onOpenStateInspector, onNavi
                 }}
               >
                 {/* Title & State Pill */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.72rem', fontWeight: 800, color: isHovered ? node.color : 'var(--text-pure)', fontFamily: 'var(--font-heading)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', minHeight: '32px', minWidth: 0, gap: '4px' }}>
+                  <span
+                    style={{
+                      fontSize: '0.70rem',
+                      fontWeight: 800,
+                      color: isHovered ? node.color : 'var(--text-pure)',
+                      fontFamily: 'var(--font-heading)',
+                      lineHeight: 1.15,
+                    }}
+                  >
                     {node.title}
                   </span>
                   {isActive ? (
@@ -221,14 +229,16 @@ export const AgentBus: React.FC<AgentBusProps> = ({ onOpenStateInspector, onNavi
                       style={{
                         display: 'inline-flex',
                         alignItems: 'center',
-                        gap: '3px',
-                        fontSize: '0.54rem',
+                        gap: '2px',
+                        fontSize: '0.50rem',
                         fontWeight: 800,
                         color: 'var(--openbb-emerald)',
                         background: 'rgba(0, 230, 118, 0.15)',
                         border: '1px solid rgba(0, 230, 118, 0.35)',
-                        padding: '1px 4px',
+                        padding: '1px 3px',
                         borderRadius: '3px',
+                        flexShrink: 0,
+                        marginTop: '1px',
                       }}
                     >
                       <span className="pulse-dot-green" style={{ width: '4px', height: '4px' }} /> ACTIVE
@@ -236,12 +246,14 @@ export const AgentBus: React.FC<AgentBusProps> = ({ onOpenStateInspector, onNavi
                   ) : (
                     <span
                       style={{
-                        fontSize: '0.54rem',
+                        fontSize: '0.50rem',
                         fontWeight: 700,
                         color: 'var(--text-dim)',
                         background: 'rgba(255, 255, 255, 0.05)',
-                        padding: '1px 4px',
+                        padding: '1px 3px',
                         borderRadius: '3px',
+                        flexShrink: 0,
+                        marginTop: '1px',
                       }}
                     >
                       STANDBY
@@ -250,12 +262,12 @@ export const AgentBus: React.FC<AgentBusProps> = ({ onOpenStateInspector, onNavi
                 </div>
 
                 {/* Role */}
-                <div style={{ fontSize: '0.62rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <div style={{ fontSize: '0.60rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {node.role}
                 </div>
 
                 {/* Bottom Tag */}
-                <div style={{ fontSize: '0.64rem', fontFamily: 'var(--font-mono)', color: node.color, fontWeight: 800, marginTop: '2px' }}>
+                <div style={{ fontSize: '0.62rem', fontFamily: 'var(--font-mono)', color: node.color, fontWeight: 800, marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {node.tag}
                 </div>
               </div>
