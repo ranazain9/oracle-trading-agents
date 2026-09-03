@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-08-28T12:13:32.963759",
-    "symbol": "NVDA",
-    "strategy": "EARNINGS_STRADDLE",
-    "pnl_usd": 0.0,
-    "outcome": "THETA_HARVEST",
-    "primary_driver": "IV_CRUSH",
-    "grade": "B",
-    "lesson": "The trade did not realize any profit due to a decrease in implied volatility from entry to exit, indicating that the market's expectations were overly optimistic prior to earnings. Future strategies should consider tighter IV thresholds and potential adjustments based on pre-earnings sentiment."
-  },
-  {
-    "timestamp": "2026-08-28T12:14:48.503587",
-    "symbol": "NVDA",
-    "strategy": "EARNINGS_STRADDLE",
-    "pnl_usd": 250.0,
-    "outcome": "OPTIMAL_ALPHA",
-    "primary_driver": "IV_CRUSH",
-    "grade": "A",
-    "lesson": "The strategy effectively capitalized on the volatility crush post-earnings, leading to a significant profit. Maintaining a disciplined exit strategy, such as profit ratchet locking, can enhance overall performance while managing risk."
-  },
-  {
     "timestamp": "2026-08-28T12:15:32.678448",
     "symbol": "MSFT",
     "strategy": "THETA_IRON_CONDOR",
@@ -498,5 +478,25 @@
     "primary_driver": "IV_CRUSH",
     "grade": "A",
     "lesson": "When IV rank drops, avoid initiating premium\u2011capture positions; monitor IV rank trends to prevent entering as IV crush approaches."
+  },
+  {
+    "timestamp": "2026-09-03T17:51:35.475652",
+    "symbol": "SPY",
+    "strategy": "THETA_IRON_CONDOR",
+    "pnl_usd": 125.5,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "IV_CRUSH",
+    "grade": "A",
+    "lesson": "Short\u2011vol iron condors entered at mid\u2011range IV (\u224845th percentile) can generate outsized returns when IV contracts quickly (\u22487\u2011point drop) combined with one\u2011day theta decay. Deploy profit\u2011ratchet exits to lock the combined IV\u2011crush and theta gains while limiting exposure to adverse IV rebounds."
+  },
+  {
+    "timestamp": "2026-09-03T17:51:55.775293",
+    "symbol": "SPY",
+    "strategy": "NO_TRADE",
+    "pnl_usd": 0.0,
+    "outcome": "THESIS_INVALIDATED",
+    "primary_driver": "IV_CRUSH",
+    "grade": "A",
+    "lesson": "A drop in IV rank during the entry window signals potential IV crush; exercising discipline to stay out preserves capital and avoids negative PnL."
   }
 ]

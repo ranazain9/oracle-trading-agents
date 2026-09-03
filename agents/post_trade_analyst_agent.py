@@ -11,6 +11,10 @@ from pathlib import Path
 from typing import Dict, Any, Optional, List
 from pydantic import BaseModel, Field
 
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+
 from config.settings import settings
 from prompts.expanded_agent_prompts import (
     POST_TRADE_ANALYST_SYSTEM_PROMPT,
@@ -41,6 +45,18 @@ class PostTradeAnalystAgent:
         self.model = model or active_config["model"]
         self.memory_path = Path(__file__).resolve().parent.parent / "data" / "trade_memory.json"
 
+        # Prebuilt LangChain ChatOpenAI Model
+        try:
+            self.llm = ChatOpenAI(
+                model=self.model,
+                api_key=self.api_key,
+                base_url=self.base_url,
+                temperature=0.2,
+                timeout=25.0
+            ) if self.api_key else None
+        except Exception:
+            self.llm = None
+
     def analyze_trade_event(self, trade_data: Dict[str, Any]) -> TradeReflection:
         """
         Runs post-mortem on a trade or position exit event and updates persistent memory.
@@ -57,33 +73,26 @@ class PostTradeAnalystAgent:
         # Query LLM if available
         reflection = None
         if self.api_key:
-            try:
-                prompt = POST_TRADE_ANALYST_USER_TEMPLATE.format(
-                    symbol=symbol,
-                    strategy=strategy,
-                    pnl_usd=pnl,
-                    return_pct=return_pct,
-                    exit_reason=exit_reason,
-                    holding_period_days=holding_days,
-                    entry_iv_rank=entry_iv,
-                    exit_iv_rank=exit_iv
-                )
+            prompt_str = POST_TRADE_ANALYST_USER_TEMPLATE.format(
+                symbol=symbol,
+                strategy=strategy,
+                pnl_usd=pnl,
+                return_pct=return_pct,
+                exit_reason=exit_reason,
+                holding_period_days=holding_days,
+                entry_iv_rank=entry_iv,
+                exit_iv_rank=exit_iv
+            )
 
-                url = f"{self.base_url.rstrip('/')}/chat/completions"
-                headers = {"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"}
-                payload = {
-                    "model": self.model,
-                    "messages": [
-                        {"role": "system", "content": POST_TRADE_ANALYST_SYSTEM_PROMPT},
-                        {"role": "user", "content": prompt}
-                    ],
-                    "temperature": 0.2,
-                    "response_format": {"type": "json_object"}
-                }
-
-                resp = requests.post(url, headers=headers, json=payload, timeout=20)
-                if resp.status_code == 200:
-                    raw_content = resp.json()["choices"][0]["message"]["content"].strip()
+            # 1. Try LangChain LCEL Runnable Chain
+            if self.llm:
+                try:
+                    memory_prompt = ChatPromptTemplate.from_messages([
+                        ("system", POST_TRADE_ANALYST_SYSTEM_PROMPT),
+                        ("human", "{trade_reflection_query}")
+                    ])
+                    chain = memory_prompt | self.llm | StrOutputParser()
+                    raw_content = chain.invoke({"trade_reflection_query": prompt_str})
                     cleaned = re.sub(r"^```json\s*", "", raw_content)
                     cleaned = re.sub(r"\s*```$", "", cleaned).strip()
                     parsed = json.loads(cleaned)
@@ -94,8 +103,39 @@ class PostTradeAnalystAgent:
                         execution_grade=parsed.get("execution_grade", "A"),
                         core_lesson=parsed.get("core_lesson", "Strategy performed according to mathematical expectation.")
                     )
-            except Exception:
-                pass
+                except Exception:
+                    pass
+
+            # 2. HTTP Fallback
+            if not reflection:
+                try:
+                    url = f"{self.base_url.rstrip('/')}/chat/completions"
+                    headers = {"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"}
+                    payload = {
+                        "model": self.model,
+                        "messages": [
+                            {"role": "system", "content": POST_TRADE_ANALYST_SYSTEM_PROMPT},
+                            {"role": "user", "content": prompt_str}
+                        ],
+                        "temperature": 0.2,
+                        "response_format": {"type": "json_object"}
+                    }
+
+                    resp = requests.post(url, headers=headers, json=payload, timeout=20)
+                    if resp.status_code == 200:
+                        raw_content = resp.json()["choices"][0]["message"]["content"].strip()
+                        cleaned = re.sub(r"^```json\s*", "", raw_content)
+                        cleaned = re.sub(r"\s*```$", "", cleaned).strip()
+                        parsed = json.loads(cleaned)
+
+                        reflection = TradeReflection(
+                            trade_outcome_category=parsed.get("trade_outcome_category", "OPTIMAL_ALPHA"),
+                            primary_pnl_driver=parsed.get("primary_pnl_driver", "THETA_DECAY"),
+                            execution_grade=parsed.get("execution_grade", "A"),
+                            core_lesson=parsed.get("core_lesson", "Strategy performed according to mathematical expectation.")
+                        )
+                except Exception:
+                    pass
 
         if not reflection:
             # Deterministic fallback

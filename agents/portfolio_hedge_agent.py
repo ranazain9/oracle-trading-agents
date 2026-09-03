@@ -9,6 +9,10 @@ import requests
 from typing import Dict, Any, Optional
 from pydantic import BaseModel, Field
 
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+
 from config.settings import settings
 from tools.portfolio_greeks_tools import PortfolioGreeksTool
 from prompts.expanded_agent_prompts import (
@@ -40,6 +44,18 @@ class PortfolioHedgeAgent:
         self.base_url = base_url or active_config["base_url"]
         self.model = model or active_config["model"]
 
+        # Prebuilt LangChain ChatOpenAI Model
+        try:
+            self.llm = ChatOpenAI(
+                model=self.model,
+                api_key=self.api_key,
+                base_url=self.base_url,
+                temperature=0.1,
+                timeout=25.0
+            ) if self.api_key else None
+        except Exception:
+            self.llm = None
+
     def evaluate_portfolio_hedge(self) -> HedgeDecision:
         """
         Assesses live portfolio Greeks and synthesizes tail-risk hedge if required.
@@ -49,26 +65,51 @@ class PortfolioHedgeAgent:
         
         # If API key is available, query LLM for strategic narrative
         if self.api_key:
-            try:
-                prompt = PORTFOLIO_HEDGE_USER_TEMPLATE.format(
-                    total_positions=greeks.get("total_open_positions_count", 0),
-                    total_market_value=greeks.get("total_portfolio_market_value_usd", 0.0),
-                    net_delta=greeks.get("net_portfolio_delta", 0.0),
-                    net_gamma=greeks.get("net_portfolio_gamma", 0.0),
-                    net_theta=greeks.get("net_portfolio_theta_daily_usd", 0.0),
-                    net_vega=greeks.get("net_portfolio_vega_usd", 0.0),
-                    spy_price=greeks.get("spy_benchmark_price", 590.0),
-                    requires_hedge="YES" if greeks.get("requires_hedge") else "NO",
-                    recommended_hedge_bias=greeks.get("recommended_hedge_bias", "BALANCED")
-                )
+            prompt_str = PORTFOLIO_HEDGE_USER_TEMPLATE.format(
+                total_positions=greeks.get("total_open_positions_count", 0),
+                total_market_value=greeks.get("total_portfolio_market_value_usd", 0.0),
+                net_delta=greeks.get("net_portfolio_delta", 0.0),
+                net_gamma=greeks.get("net_portfolio_gamma", 0.0),
+                net_theta=greeks.get("net_portfolio_theta_daily_usd", 0.0),
+                net_vega=greeks.get("net_portfolio_vega_usd", 0.0),
+                spy_price=greeks.get("spy_benchmark_price", 590.0),
+                requires_hedge="YES" if greeks.get("requires_hedge") else "NO",
+                recommended_hedge_bias=greeks.get("recommended_hedge_bias", "BALANCED")
+            )
 
+            # 1. Try LangChain LCEL Runnable Chain
+            if self.llm:
+                try:
+                    hedge_prompt = ChatPromptTemplate.from_messages([
+                        ("system", PORTFOLIO_HEDGE_SYSTEM_PROMPT),
+                        ("human", "{hedge_query}")
+                    ])
+                    chain = hedge_prompt | self.llm | StrOutputParser()
+                    raw_content = chain.invoke({"hedge_query": prompt_str})
+                    cleaned = re.sub(r"^```json\s*", "", raw_content)
+                    cleaned = re.sub(r"\s*```$", "", cleaned).strip()
+                    parsed = json.loads(cleaned)
+
+                    return HedgeDecision(
+                        decision="EXECUTE_HEDGE" if greeks.get("requires_hedge") else parsed.get("decision", "HOLD_CURRENT_RISK"),
+                        recommended_structure=hedge_payload.get("hedge_structure", "NONE"),
+                        urgency_rating=parsed.get("urgency_rating", "LOW"),
+                        risk_commentary=parsed.get("risk_commentary", hedge_payload.get("rationale", "")),
+                        tail_risk_hedge_payload=hedge_payload,
+                        portfolio_greeks=greeks
+                    )
+                except Exception:
+                    pass
+
+            # 2. HTTP Fallback
+            try:
                 url = f"{self.base_url.rstrip('/')}/chat/completions"
                 headers = {"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"}
                 payload = {
                     "model": self.model,
                     "messages": [
                         {"role": "system", "content": PORTFOLIO_HEDGE_SYSTEM_PROMPT},
-                        {"role": "user", "content": prompt}
+                        {"role": "user", "content": prompt_str}
                     ],
                     "temperature": 0.1,
                     "response_format": {"type": "json_object"}

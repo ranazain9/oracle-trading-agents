@@ -10,6 +10,10 @@ from pathlib import Path
 from typing import Dict, Any, Optional, List
 from pydantic import BaseModel, Field
 
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+
 from config.settings import settings
 from prompts.strategy_advisor import SYSTEM_ORACLE_PROMPT, USER_STRATEGY_TEMPLATE
 from prompts.tot_reflexion_prompts import (
@@ -58,6 +62,18 @@ class StrategyBrainAgent:
         self.api_key = (api_key or active_config["api_key"] or "").strip('\"\'')
         self.base_url = base_url or active_config["base_url"]
         self.model = model or active_config["model"]
+
+        # Prebuilt LangChain ChatOpenAI Model
+        try:
+            self.llm = ChatOpenAI(
+                model=self.model,
+                api_key=self.api_key,
+                base_url=self.base_url,
+                temperature=0.1,
+                timeout=40.0
+            ) if self.api_key else None
+        except Exception:
+            self.llm = None
 
     def _get_trade_memory_stats(self) -> Dict[str, Any]:
         """
@@ -303,20 +319,23 @@ class StrategyBrainAgent:
         if not self.api_key or self.api_key == "your_aiml_api_key_here":
             return self._simulate_decision(market_overview, assets_data)
 
-        try:
-            formatted_prompt = USER_STRATEGY_TEMPLATE.format(
-                vix=market_overview["vix"],
-                vix_regime=market_overview["vix_regime"],
-                sp500_trend=market_overview["sp500_trend"],
-                market_sentiment=market_overview["market_sentiment"],
-                macro_event_summary=macro_env["event_summary"],
-                macro_risk_regime=macro_env["macro_risk_regime"],
-                portfolio_cash=portfolio_cash,
-                active_positions_count=0,
-                trade_memory_summary=trade_memory,
-                asset_data_json=json.dumps(assets_data, indent=2)
-            )
+        # 1. Try LangChain LCEL Runnable Chain
+        if self.llm:
+            try:
+                prompt = ChatPromptTemplate.from_messages([
+                    ("system", SYSTEM_ORACLE_PROMPT),
+                    ("human", "{formatted_prompt}")
+                ])
+                chain = prompt | self.llm | StrOutputParser()
+                raw_content = chain.invoke({"formatted_prompt": formatted_prompt})
+                cleaned = re.sub(r"^```json\s*", "", raw_content)
+                cleaned = re.sub(r"\s*```$", "", cleaned).strip()
+                return self._normalize_decision_dict(json.loads(cleaned))
+            except Exception:
+                pass
 
+        # 2. HTTP Fallback
+        try:
             url = f"{self.base_url.rstrip('/')}/chat/completions"
             headers = {"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"}
             payload = {
@@ -329,39 +348,55 @@ class StrategyBrainAgent:
                 "response_format": {"type": "json_object"}
             }
 
-            resp = requests.post(url, headers=headers, json=payload, timeout=45)
+            resp = requests.post(url, headers=headers, json=payload, timeout=30)
             if resp.status_code == 200:
                 raw_content = resp.json()["choices"][0]["message"]["content"].strip()
                 cleaned = re.sub(r"^```json\s*", "", raw_content)
                 cleaned = re.sub(r"\s*```$", "", cleaned).strip()
                 return self._normalize_decision_dict(json.loads(cleaned))
-            else:
-                return self._simulate_decision(market_overview, assets_data)
         except Exception:
-            return self._simulate_decision(market_overview, assets_data)
+            pass
+
+        return self._simulate_decision(market_overview, assets_data)
 
     def _call_red_team_critic(self, proposal: dict, asset: dict) -> dict:
-        """Invokes Asymmetric Red Team Critic for Pass 2 Self-Critique at temperature=0.0."""
+        """Invokes Asymmetric Red Team Critic for Pass 2 Self-Critique using LangChain LCEL."""
         if not self.api_key:
             return {"critique_verdict": "CONFIRMED_ROBUST", "identified_risks": "Mathematical alignment verified.", "recommended_adjustment": "None"}
 
-        try:
-            prompt = RED_TEAM_CRITIC_USER_TEMPLATE.format(
-                symbol=proposal.get("symbol", "NVDA"),
-                strategy=proposal.get("strategy", "EARNINGS_STRADDLE"),
-                direction=proposal.get("direction", "NEUTRAL"),
-                thesis=proposal.get("reasoning", "Alignment"),
-                iv_rank=asset.get("iv_rank", 40.0),
-                expected_move=asset.get("expected_move_usd", 12.0),
-                upper_be=asset.get("upper_breakeven", 0.0),
-                lower_be=asset.get("lower_breakeven", 0.0),
-                spread_pct=asset.get("bid_ask_spread_pct", 1.4),
-                open_interest=asset.get("open_interest", 5000),
-                skew_regime=asset.get("vol_25delta_skew_regime", "BALANCED"),
-                news_sentiment=asset.get("news_sentiment_score", 0.0),
-                pcr=asset.get("put_call_volume_ratio", 0.8)
-            )
+        prompt = RED_TEAM_CRITIC_USER_TEMPLATE.format(
+            symbol=proposal.get("symbol", "NVDA"),
+            strategy=proposal.get("strategy", "EARNINGS_STRADDLE"),
+            direction=proposal.get("direction", "NEUTRAL"),
+            thesis=proposal.get("reasoning", "Alignment"),
+            iv_rank=asset.get("iv_rank", 40.0),
+            expected_move=asset.get("expected_move_usd", 12.0),
+            upper_be=asset.get("upper_breakeven", 0.0),
+            lower_be=asset.get("lower_breakeven", 0.0),
+            spread_pct=asset.get("bid_ask_spread_pct", 1.4),
+            open_interest=asset.get("open_interest", 5000),
+            skew_regime=asset.get("vol_25delta_skew_regime", "BALANCED"),
+            news_sentiment=asset.get("news_sentiment_score", 0.0),
+            pcr=asset.get("put_call_volume_ratio", 0.8)
+        )
 
+        # 1. Try LangChain LCEL Runnable Chain
+        if self.llm:
+            try:
+                critic_prompt = ChatPromptTemplate.from_messages([
+                    ("system", RED_TEAM_CRITIC_SYSTEM_PROMPT),
+                    ("human", "{critic_user_prompt}")
+                ])
+                chain = critic_prompt | self.llm.bind(temperature=0.0) | StrOutputParser()
+                raw_content = chain.invoke({"critic_user_prompt": prompt})
+                cleaned = re.sub(r"^```json\s*", "", raw_content)
+                cleaned = re.sub(r"\s*```$", "", cleaned).strip()
+                return json.loads(cleaned)
+            except Exception:
+                pass
+
+        # 2. HTTP Fallback
+        try:
             url = f"{self.base_url.rstrip('/')}/chat/completions"
             headers = {"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"}
             payload = {
@@ -370,20 +405,20 @@ class StrategyBrainAgent:
                     {"role": "system", "content": RED_TEAM_CRITIC_SYSTEM_PROMPT},
                     {"role": "user", "content": prompt}
                 ],
-                "temperature": 0.0,  # Zero temperature for deterministic risk critique
+                "temperature": 0.0,
                 "response_format": {"type": "json_object"}
             }
 
-            resp = requests.post(url, headers=headers, json=payload, timeout=30)
+            resp = requests.post(url, headers=headers, json=payload, timeout=25)
             if resp.status_code == 200:
                 raw_content = resp.json()["choices"][0]["message"]["content"].strip()
                 cleaned = re.sub(r"^```json\s*", "", raw_content)
                 cleaned = re.sub(r"\s*```$", "", cleaned).strip()
                 return json.loads(cleaned)
-            else:
-                return {"critique_verdict": "CONFIRMED_ROBUST", "identified_risks": "Mathematical alignment verified.", "recommended_adjustment": "None"}
         except Exception:
-            return {"critique_verdict": "CONFIRMED_ROBUST", "identified_risks": "Mathematical alignment verified.", "recommended_adjustment": "None"}
+            pass
+
+        return {"critique_verdict": "CONFIRMED_ROBUST", "identified_risks": "Mathematical alignment verified.", "recommended_adjustment": "None"}
 
     def _normalize_decision_dict(self, data: dict) -> dict:
         symbol = data.get("symbol") or data.get("ticker") or "NVDA"
