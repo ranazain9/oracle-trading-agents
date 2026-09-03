@@ -323,12 +323,6 @@ class DashboardCacheService:
             try:
                 raw_pos = self._alpaca_tool.get_open_positions()
                 current_symbols = {p.get("symbol") for p in raw_pos if p.get("symbol")}
-                
-                # Zero-Burden Trigger: If open positions decreased, an option closed on Alpaca
-                if self._previous_open_symbols is not None and len(current_symbols) < len(self._previous_open_symbols):
-                    closed_diff = self._previous_open_symbols - current_symbols
-                    logger.info(f"🔔 [RECONCILER TRIGGER] Position closure detected ({len(closed_diff)} closed: {closed_diff}). Triggering Alpaca reconciliation.")
-                    threading.Thread(target=self._reconcile_closed_orders_from_alpaca, daemon=True).start()
                 self._previous_open_symbols = current_symbols
 
                 formatted_pos = [
@@ -431,116 +425,6 @@ class DashboardCacheService:
             logger.error(f"Error in background cache refresh: {e}")
         finally:
             self._is_refreshing = False
-
-    def _reconcile_closed_orders_from_alpaca(self, closed_syms=None):
-        """
-        Trigger-based automated reconciliation:
-        Finds newly filled closed orders on Alpaca, computes realized P&L,
-        and saves them into SQLite and trades.json.
-        """
-        try:
-            closed_orders = self._alpaca_tool.get_recent_closed_orders(limit=25)
-            if not closed_orders:
-                return
-
-            existing_ids = TradeRepository.get_existing_order_ids()
-            new_closed_orders = [
-                o for o in closed_orders 
-                if str(o.id) not in existing_ids and str(getattr(o, "status", "")).upper().endswith("FILLED")
-            ]
-
-            if not new_closed_orders:
-                return
-
-            from collections import defaultdict
-            grouped = defaultdict(list)
-            for o in new_closed_orders:
-                sym = o.symbol
-                # extract base symbol: e.g. NVDA from NVDA260904C... or AAPL from AAPL...
-                base = sym[:4].rstrip("0123456789") if len(sym) > 10 else sym
-                filled_date = str(o.filled_at)[:10] if getattr(o, "filled_at", None) else datetime.date.today().isoformat()
-                grouped[(base, filled_date)].append(o)
-
-            new_trades_added = 0
-            for (base_sym, fill_date), order_group in grouped.items():
-                trade_id = f"AUTO-REC-{base_sym}-{int(datetime.datetime.utcnow().timestamp())}"
-                
-                total_proceeds = 0.0
-                total_cost = 0.0
-                legs_data = []
-                for o in order_group:
-                    qty = float(getattr(o, "filled_qty", None) or getattr(o, "qty", 1.0) or 1.0)
-                    price = float(getattr(o, "filled_avg_price", 0.0) or 0.0)
-                    side_str = str(getattr(o, "side", "")).upper()
-                    is_sell = "SELL" in side_str
-                    multiplier = 100.0 if len(o.symbol) > 8 else 1.0
-                    leg_val = qty * price * multiplier
-                    if is_sell:
-                        total_proceeds += leg_val
-                    else:
-                        total_cost += leg_val
-
-                    legs_data.append({
-                        "order_id": str(o.id),
-                        "symbol": o.symbol,
-                        "qty": qty,
-                        "side": side_str,
-                        "filled_avg_price": price,
-                        "status": str(getattr(o, "status", "FILLED")),
-                        "filled_at": str(getattr(o, "filled_at", ""))
-                    })
-
-                net_pnl = total_proceeds - total_cost
-                status = "CLOSED_PROFIT" if net_pnl >= 0 else "CLOSED_STOPPED"
-                exit_reason = (
-                    f"Auto-Reconciled from Alpaca: Profit target captured (+${net_pnl:.2f})."
-                    if net_pnl >= 0 else
-                    f"Auto-Reconciled from Alpaca: Stop loss or closure (-${abs(net_pnl):.2f})."
-                )
-
-                strategy_guess = "THETA_IRON_CONDOR" if "AAPL" in base_sym else ("EARNINGS_STRADDLE" if "NVDA" in base_sym else "DIRECTIONAL_SPREAD")
-
-                trade_record = {
-                    "trade_id": trade_id,
-                    "symbol": base_sym,
-                    "strategy": strategy_guess,
-                    "status": status,
-                    "entry_date": fill_date,
-                    "exit_date": fill_date,
-                    "entry_price": 100.0,
-                    "exit_price": 100.0,
-                    "cost_or_credit_usd": round(total_cost, 2),
-                    "profit_target_usd": 150.0,
-                    "stop_loss_usd": 150.0,
-                    "pnl_usd": round(net_pnl, 2),
-                    "exit_reason": exit_reason,
-                    "order_legs": legs_data
-                }
-
-                # 1. Insert into SQLite
-                TradeRepository.insert_trade(trade_record)
-
-                # 2. Append to local trades.json
-                if TRADES_FILE.exists():
-                    try:
-                        with open(TRADES_FILE, "r") as f:
-                            disk_trades = json.load(f)
-                        disk_trades.append(trade_record)
-                        with open(TRADES_FILE, "w") as f:
-                            json.dump(disk_trades, f, indent=2)
-                    except Exception as e:
-                        logger.warning(f"Error persisting reconciled trade to trades.json: {e}")
-
-                new_trades_added += 1
-
-            if new_trades_added > 0:
-                logger.info(f"✅ [RECONCILER] Successfully reconciled {new_trades_added} closed trade(s) from Alpaca into SQLite.")
-                with self._lock:
-                    self._cache["trades"] = TradeRepository.get_all_trades()
-                    self._cache["stats"] = TradeRepository.get_trade_statistics()
-
-        except Exception as e:
-            logger.warning(f"Broker reconciliation notice: {e}")
 
     def update_positions_direct(self, positions: List[Dict[str, Any]]):
         """Allows direct WebSocket updates to mutate cache without re-fetching."""
