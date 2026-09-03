@@ -82,6 +82,17 @@ def close_single_position(
     Closes and liquidates a single open position by symbol.
     """
     res = alpaca.close_position(symbol.upper())
+
+    # Trigger-based Reconciler: Fire 1.5s delayed reconciliation to capture filled exit order
+    def _delayed_reconcile():
+        import time
+        from backend.services.dashboard_service import dashboard_cache
+        time.sleep(1.5)
+        dashboard_cache._reconcile_closed_orders_from_alpaca()
+
+    import threading
+    threading.Thread(target=_delayed_reconcile, daemon=True).start()
+
     return ClosePositionResponse(
         symbol=symbol.upper(),
         status="CLOSED" if res.get("status") == "CLOSED" else "FAILED",
@@ -103,6 +114,17 @@ def execute_emergency_kill_switch(
 
     res = alpaca.close_all_positions()
     count = len(res) if isinstance(res, list) else int(res.get("closed_count", 0))
+
+    # Trigger-based Reconciler: Fire delayed reconciliation
+    def _delayed_reconcile():
+        import time
+        from backend.services.dashboard_service import dashboard_cache
+        time.sleep(2.0)
+        dashboard_cache._reconcile_closed_orders_from_alpaca()
+
+    import threading
+    threading.Thread(target=_delayed_reconcile, daemon=True).start()
+
     return CloseAllPositionsResponse(
         success=True,
         positions_closed_count=count,

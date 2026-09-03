@@ -16,7 +16,7 @@ try:
     from alpaca.trading.requests import (
         MarketOrderRequest, LimitOrderRequest, GetOrdersRequest
     )
-    from alpaca.trading.enums import OrderSide, TimeInForce, OrderType
+    from alpaca.trading.enums import OrderSide, TimeInForce, OrderType, QueryOrderStatus
     ALPACA_SDK_AVAILABLE = True
 except ImportError:
     ALPACA_SDK_AVAILABLE = False
@@ -413,3 +413,17 @@ class AlpacaTool(BaseBroker):
         except Exception:
             print("🚨 [AlpacaTool] Emergency Kill-Switch: All positions liquidated in fund ledger.")
             return [{"status": "ALL_POSITIONS_CLOSED_PAPER"}]
+
+    def get_recent_closed_orders(self, limit: int = 25) -> List[Any]:
+        """
+        Retrieves recent filled closed orders directly from Alpaca for reconciliation.
+        """
+        if not self.client:
+            return []
+        try:
+            req = GetOrdersRequest(status=QueryOrderStatus.CLOSED, limit=limit)
+            return self.client.get_orders(req)
+        except Exception as e:
+            print(f"[!] Warning fetching Alpaca closed orders: {e}")
+            return []
+

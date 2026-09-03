@@ -92,6 +92,30 @@ class TradeRepository:
             conn.close()
 
     @staticmethod
+    def get_existing_order_ids() -> set:
+        """Returns set of all order IDs and trade IDs currently registered in SQLite."""
+        conn = get_db_connection()
+        try:
+            cursor = conn.cursor()
+            cursor.execute("SELECT trade_id, order_legs FROM trades;")
+            rows = cursor.fetchall()
+            ids = set()
+            for r in rows:
+                if r["trade_id"]:
+                    ids.add(str(r["trade_id"]))
+                if r["order_legs"]:
+                    try:
+                        legs = json.loads(r["order_legs"])
+                        for leg in legs:
+                            if isinstance(leg, dict) and leg.get("order_id"):
+                                ids.add(str(leg["order_id"]))
+                    except Exception:
+                        pass
+            return ids
+        finally:
+            conn.close()
+
+    @staticmethod
     def get_trade_statistics() -> Dict[str, Any]:
         conn = get_db_connection()
         try:
