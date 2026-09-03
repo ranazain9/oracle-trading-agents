@@ -1502,5 +1502,78 @@
       "status": "CLOSED_PAPER_POSITION",
       "closed_at": "2026-09-03T14:46:26.000000"
     }
+  },
+  {
+    "trade_id": "ORD-1788250003",
+    "symbol": "TSLA",
+    "strategy": "EARNINGS_STRADDLE",
+    "entry_date": "2026-09-03",
+    "underlying_entry_price": 252.1,
+    "cost_or_credit_usd": 1265.0,
+    "package_limit_price_usd": 1265.0,
+    "margin_requirement_usd": 0.0,
+    "is_credit": false,
+    "profit_target_usd": 632.5,
+    "stop_loss_usd": 150.0,
+    "status": "CLOSED_STOPPED",
+    "orders": [
+      {
+        "order_id": "bc005838-0cbc-48c6-a184-26e4cb274ee0",
+        "symbol": "TSLA260904C00380000",
+        "qty": 1.0,
+        "side": "OrderSide.BUY",
+        "type": "OrderType.MARKET",
+        "status": "OrderStatus.FILLED",
+        "submitted_at": "2026-09-03 18:18:54+00:00",
+        "filled_avg_price": 7.55,
+        "midpoint_limit_price": 7.55,
+        "occ_symbol": "TSLA260904C00380000"
+      },
+      {
+        "order_id": "1c788552-4d5d-4239-9848-e0121a638df0",
+        "symbol": "TSLA260904P00380000",
+        "qty": 1.0,
+        "side": "OrderSide.BUY",
+        "type": "OrderType.MARKET",
+        "status": "OrderStatus.FILLED",
+        "submitted_at": "2026-09-03 18:18:54+00:00",
+        "filled_avg_price": 5.1,
+        "midpoint_limit_price": 5.1,
+        "occ_symbol": "TSLA260904P00380000"
+      },
+      {
+        "order_id": "8c02fbba-d9e4-4f3d-a9c8-661554c0466f",
+        "symbol": "TSLA260904C00380000",
+        "qty": 1.0,
+        "side": "OrderSide.SELL",
+        "type": "OrderType.MARKET",
+        "status": "OrderStatus.FILLED",
+        "submitted_at": "2026-09-03 18:20:54+00:00",
+        "filled_avg_price": 7.4,
+        "midpoint_limit_price": 7.4,
+        "occ_symbol": "TSLA260904C00380000"
+      },
+      {
+        "order_id": "13f4f740-2442-4e85-9300-f3a6ba6a6895",
+        "symbol": "TSLA260904P00380000",
+        "qty": 1.0,
+        "side": "OrderSide.SELL",
+        "type": "OrderType.MARKET",
+        "status": "OrderStatus.FILLED",
+        "submitted_at": "2026-09-03 18:20:51+00:00",
+        "filled_avg_price": 5.1,
+        "midpoint_limit_price": 5.1,
+        "occ_symbol": "TSLA260904P00380000"
+      }
+    ],
+    "exit_date": "2026-09-03",
+    "exit_price": 251.9,
+    "pnl_usd": -15.0,
+    "exit_reason": "Flat exit executed (-.00; -1.18% slippage) to protect capital ahead of session close.",
+    "broker_exit_result": {
+      "symbol": "TSLA",
+      "status": "CLOSED_PAPER_POSITION",
+      "closed_at": "2026-09-03T18:20:55.000000"
+    }
   }
 ]

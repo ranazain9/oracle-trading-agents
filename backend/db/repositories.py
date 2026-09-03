@@ -20,7 +20,7 @@ class TradeRepository:
         conn = get_db_connection()
         try:
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM trades ORDER BY entry_date DESC;")
+            cursor.execute("SELECT * FROM trades ORDER BY COALESCE(exit_date, entry_date) DESC, created_at DESC;")
             rows = cursor.fetchall()
             results = []
             for r in rows:

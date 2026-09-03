@@ -198,10 +198,19 @@ class BodyguardAgent:
 
             updated_trades.append(trade)
 
-        # Atomic Write to trades.json
+        # Atomic Write to trades.json & SQLite
         try:
             with open(self.trades_file, "w") as f:
                 json.dump(updated_trades, f, indent=2)
+
+            # Sync closed trades directly to SQLite
+            try:
+                from backend.db.repositories import TradeRepository
+                for t in updated_trades:
+                    if t.get("status") in ["CLOSED_STOPPED", "CLOSED_PROFIT", "CLOSED_0DTE_RISK", "CLOSED"]:
+                        TradeRepository.insert_trade(t)
+            except Exception:
+                pass
         except Exception as e:
             print(f"[!] Error saving trades.json: {e}", flush=True)
 

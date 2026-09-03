@@ -344,13 +344,31 @@ class AlpacaTool(BaseBroker):
             try:
                 with open(TRADES_FILE, "r") as f:
                     trades = json.load(f)
-                updated = False
+                updated_trades = []
                 for t in trades:
-                    if t.get("symbol") == symbol_or_asset_id and t.get("status") in ["OPEN", "PENDING_MONITOR", "HOLD"]:
+                    sym = t.get("symbol", "")
+                    legs = t.get("orders", []) or t.get("order_legs", [])
+                    leg_symbols = [l.get("symbol") or l.get("occ_symbol") for l in legs if isinstance(l, dict)]
+                    
+                    is_match = (
+                        sym == symbol_or_asset_id
+                        or symbol_or_asset_id.startswith(sym)
+                        or symbol_or_asset_id in leg_symbols
+                    )
+                    
+                    if is_match and t.get("status") in ["OPEN", "PENDING_MONITOR", "HOLD"]:
                         t["status"] = "CLOSED"
                         t["exit_date"] = closed_at
-                        updated = True
-                if updated:
+                        updated_trades.append(t)
+                        
+                        # Sync to SQLite TradeRepository
+                        try:
+                            from backend.db.repositories import TradeRepository
+                            TradeRepository.insert_trade(t)
+                        except Exception as e:
+                            pass
+                
+                if updated_trades:
                     with open(TRADES_FILE, "w") as f:
                         json.dump(trades, f, indent=2)
             except Exception:
