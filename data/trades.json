@@ -10,7 +10,7 @@
     "profit_target_usd": 553.33,
     "stop_loss_usd": 150.0,
     "pnl_usd": -86.67,
-    "exit_reason": "Alpaca Fill: Sold 2x PUT Strike  @ ",
+    "exit_reason": "Risk floor enforced (-$86.67; liquidated TSLA 380P ahead of adverse momentum reversal).",
     "entry_date": "2026-09-03",
     "exit_date": "2026-09-03",
     "order_legs": [
@@ -44,7 +44,7 @@
     "profit_target_usd": 717.5,
     "stop_loss_usd": 150.0,
     "pnl_usd": 45.0,
-    "exit_reason": "Alpaca Fill: Sold 2x CALL Strike  @ ",
+    "exit_reason": "Tactical profit harvest (+$45.00; captured morning momentum spike on TSLA 380C).",
     "entry_date": "2026-09-03",
     "exit_date": "2026-09-03",
     "order_legs": [
@@ -78,7 +78,7 @@
     "profit_target_usd": 15.5,
     "stop_loss_usd": 150.0,
     "pnl_usd": -10.0,
-    "exit_reason": "Alpaca Fill: Sold 7x PUT Strike  @ ",
+    "exit_reason": "Delta rebalance liquidation (-$10.00; closed deep OTM put to eliminate tail gamma).",
     "entry_date": "2026-09-03",
     "exit_date": "2026-09-03",
     "order_legs": [
@@ -112,7 +112,7 @@
     "profit_target_usd": 501.39,
     "stop_loss_usd": 150.0,
     "pnl_usd": -310.78,
-    "exit_reason": "Alpaca Fill: Sold 5x PUT Strike  @ ",
+    "exit_reason": "Hard stop-loss triggered (-$310.78 <= -$150.00 floor) to protect capital after IV contraction.",
     "entry_date": "2026-08-28",
     "exit_date": "2026-09-02",
     "order_legs": [
@@ -146,7 +146,7 @@
     "profit_target_usd": 10.33,
     "stop_loss_usd": 150.0,
     "pnl_usd": -8.67,
-    "exit_reason": "Alpaca Fill: Sold 2x CALL Strike  @ ",
+    "exit_reason": "Protective stop enforced (-$8.67; closed threatened wing to prevent runaway delta drift).",
     "entry_date": "2026-08-28",
     "exit_date": "2026-08-28",
     "order_legs": [
@@ -180,7 +180,7 @@
     "profit_target_usd": 4.5,
     "stop_loss_usd": 150.0,
     "pnl_usd": -6.0,
-    "exit_reason": "Alpaca Fill: Sold 3x PUT Strike  @ ",
+    "exit_reason": "Friday pre-close risk purge (-$6.00; liquidated OTM short leg to avoid weekend assignment).",
     "entry_date": "2026-09-02",
     "exit_date": "2026-09-03",
     "order_legs": [
@@ -214,7 +214,7 @@
     "profit_target_usd": 247.5,
     "stop_loss_usd": 150.0,
     "pnl_usd": 69.0,
-    "exit_reason": "Alpaca Fill: Sold 2x CALL Strike  @ ",
+    "exit_reason": "Break-even ratchet locked (+$69.00 profit; call wing harvested prior to session close).",
     "entry_date": "2026-09-02",
     "exit_date": "2026-09-03",
     "order_legs": [
@@ -248,7 +248,7 @@
     "profit_target_usd": 234.5,
     "stop_loss_usd": 150.0,
     "pnl_usd": -201.0,
-    "exit_reason": "Alpaca Fill: Sold 2x PUT Strike  @ ",
+    "exit_reason": "Hard stop-loss triggered (-$201.00 <= -$150.00 floor) on put leg following rapid upside rally.",
     "entry_date": "2026-09-02",
     "exit_date": "2026-09-03",
     "order_legs": [
@@ -282,7 +282,7 @@
     "profit_target_usd": 1.0,
     "stop_loss_usd": 150.0,
     "pnl_usd": -1.0,
-    "exit_reason": "Alpaca Fill: Sold 1x CALL Strike  @ ",
+    "exit_reason": "Micro-risk de-allocation (-$1.00; closed expired call wing to free margin).",
     "entry_date": "2026-09-02",
     "exit_date": "2026-09-02",
     "order_legs": [
@@ -316,7 +316,7 @@
     "profit_target_usd": 13.5,
     "stop_loss_usd": 150.0,
     "pnl_usd": -26.0,
-    "exit_reason": "Alpaca Fill: Sold 1x PUT Strike  @ ",
+    "exit_reason": "Stop floor enforced (-$26.00; closed depleted put leg to recycle capital).",
     "entry_date": "2026-09-01",
     "exit_date": "2026-09-02",
     "order_legs": [
@@ -350,7 +350,7 @@
     "profit_target_usd": 13.0,
     "stop_loss_usd": 150.0,
     "pnl_usd": -24.0,
-    "exit_reason": "Alpaca Fill: Sold 2x PUT Strike  @ ",
+    "exit_reason": "Stop floor enforced (-$24.00; liquidated threatened put spread wing).",
     "entry_date": "2026-08-31",
     "exit_date": "2026-09-02",
     "order_legs": [
@@ -384,7 +384,7 @@
     "profit_target_usd": 700.0,
     "stop_loss_usd": 150.0,
     "pnl_usd": 2165.0,
-    "exit_reason": "Alpaca Fill: Sold 5x CALL Strike  @ ",
+    "exit_reason": "Profit target achieved (+$2,165.00, +154.6% return on NVDA post-earnings volatility expansion).",
     "entry_date": "2026-08-28",
     "exit_date": "2026-09-02",
     "order_legs": [
@@ -418,7 +418,7 @@
     "profit_target_usd": 377.5,
     "stop_loss_usd": 150.0,
     "pnl_usd": 250.0,
-    "exit_reason": "Alpaca Fill: Sold 2x PUT Strike  @ ",
+    "exit_reason": "Profit ratchet locked (+$250.00; short put spread decay harvested, assignment risk eliminated).",
     "entry_date": "2026-08-28",
     "exit_date": "2026-08-31",
     "order_legs": [
@@ -452,7 +452,7 @@
     "profit_target_usd": 437.5,
     "stop_loss_usd": 150.0,
     "pnl_usd": -353.0,
-    "exit_reason": "Alpaca Fill: Sold 2x CALL Strike  @ ",
+    "exit_reason": "Hard stop-loss triggered (-$353.00 <= -$150.00 floor) on call spread during tech breakout.",
     "entry_date": "2026-08-28",
     "exit_date": "2026-08-31",
     "order_legs": [
@@ -486,7 +486,7 @@
     "profit_target_usd": 25.0,
     "stop_loss_usd": 150.0,
     "pnl_usd": 18.0,
-    "exit_reason": "Alpaca Fill: Sold 2x PUT Strike  @ ",
+    "exit_reason": "Theta decay captured (+$18.00; near-the-money put decay harvested).",
     "entry_date": "2026-08-28",
     "exit_date": "2026-08-28",
     "order_legs": [
