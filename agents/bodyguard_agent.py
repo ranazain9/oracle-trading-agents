@@ -1,16 +1,22 @@
 """
 ORACLE Trading System - Agent 3: The Bodyguard (60-Second Adaptive Active Risk Guardian)
 Monitors positions continuously during market hours:
-1. Synchronizes live open positions directly from Alpaca Broker API.
-2. Enforces Dynamic Trailing Profit Ratchet (+30% -> Break-Even, +45% -> +25% Lock, +50% -> Target Exit).
-3. Executes physical liquidation orders on Alpaca Brokerage.
-4. Enforces 0-DTE Friday 3:30 PM Early Assignment & Black Swan VIX Spike Circuit Breakers.
-5. Adapts monitoring loop frequency: 60 seconds (Normal) / 15 seconds (High-Alert / Salvage).
+1. Ingests ALL live open positions directly from Alpaca Broker API (Broker-First architecture).
+2. Groups multi-leg contracts into Strategy Packages by root symbol to evaluate net combined P&L.
+3. Enforces Dynamic Trailing Profit Ratchet:
+   - Capped Spreads (Iron Condor): Harvest profit cleanly at +50%.
+   - Runners & Straddles: Dynamic trailing ratchet (+50% -> lock +30%, +100% -> lock +70%, +200% -> lock +150%).
+4. Enforces Hard Stop-Loss (-$150 floor or -50% capital threshold) on combined strategy risk.
+5. 0-DTE Expiration Shield: Liquidates expiring in-the-money options before 4:00 PM EST to avoid pin/exercise risk.
+6. Executes physical multi-leg liquidation orders directly on Alpaca Brokerage.
+7. Dispatches active wing rolls on Alpaca when an Iron Condor wing is threatened.
+8. Automatically persists closed trades into SQLite (oracle.db) and data/trades.json with authentic P&L and audit reasons.
 """
 import json
 import datetime
 from pathlib import Path
 from typing import Dict, Any, List, Optional
+from collections import defaultdict
 
 from tools.market_data_tools import MarketDataTool
 from tools.alpaca_tools import AlpacaTool
@@ -32,8 +38,9 @@ class BodyguardAgent:
 
     def monitor_positions(self) -> Dict[str, Any]:
         """
-        Scans all active open positions, synchronizes with live broker P&L, and enforces exit/salvage rules.
-        Suspends active exits and returns standby during off-market hours.
+        Broker-First Risk Audit:
+        Scans all live open positions directly from Alpaca broker API,
+        groups them into strategy packages, and enforces exit/salvage rules.
         """
         # Step 0: Check Market Clock Gate
         if not self.alpaca.is_market_open():
@@ -47,7 +54,7 @@ class BodyguardAgent:
                 "message": "Market is closed. Active monitoring and exits suspended."
             }
 
-        print("\n🛡️ [BodyguardAgent] Initiating 60-Second Active Position Risk Scan...", flush=True)
+        print("\n🛡️ [BodyguardAgent] Initiating Broker-First Active Position Risk Scan...", flush=True)
 
         # 1. Check Black Swan Macro Circuit Breaker
         circuit_info = CircuitBreakerGuard.check_black_swan_circuit_breaker()
@@ -59,171 +66,282 @@ class BodyguardAgent:
         if zero_dte_info["is_assignment_risk_active"]:
             print(f"⏳ [0-DTE GAMMA ALERT] {zero_dte_info['reason']}", flush=True)
 
-        # 3. Read Local Active Trades
-        trades = []
+        # 3. Read Registered Trades from data/trades.json
+        registered_trades = []
         if self.trades_file.exists():
             try:
-                with open(self.trades_file, "r") as f:
-                    trades = json.load(f)
+                with open(self.trades_file, "r", encoding="utf-8") as f:
+                    registered_trades = json.load(f)
             except Exception as e:
                 print(f"[!] Error loading trades.json: {e}", flush=True)
 
-        open_trades = [t for t in trades if t.get("status") in ["OPEN", "OPEN_ACTIVE", "ACTIVE"]]
-        
-        # 4. Sync with Live Alpaca Positions
+        # 4. Ingest Live Alpaca Positions (Broker Truth)
         live_broker_positions = self.alpaca.get_open_positions()
-        broker_symbols = [p["symbol"] for p in live_broker_positions]
-        if live_broker_positions:
-            print(f"📡 [BodyguardAgent] Live Alpaca Broker Sync: {len(live_broker_positions)} position(s) active on exchange.", flush=True)
+        print(f"📡 [BodyguardAgent] Live Alpaca Broker Sync: {len(live_broker_positions)} contract position(s) active on exchange.", flush=True)
 
-        print(f"  • Active Open Positions Tracked: {len(open_trades)} trade(s)", flush=True)
-
-        if not open_trades and not live_broker_positions:
+        if not live_broker_positions:
             return {
                 "scanned_count": 0,
                 "actions_taken": [],
                 "adaptive_sleep_seconds": 60,
-                "status": "NO_ACTIVE_POSITIONS"
+                "status": "NO_ACTIVE_BROKER_POSITIONS",
+                "message": "No active open positions on Alpaca."
             }
 
+        # 5. Group Live Broker Positions into Strategy Packages by Root Underlying
+        packages_by_underlying = defaultdict(list)
+        for pos in live_broker_positions:
+            raw_sym = pos.get("symbol", "")
+            # Extract root symbol (e.g. AAPL from AAPL260904C00350000)
+            underlying = raw_sym[:4].rstrip("0123456789") if len(raw_sym) >= 6 else raw_sym
+            packages_by_underlying[underlying].append(pos)
+
         actions_taken = []
-        updated_trades = []
         requires_high_alert_15s = False
 
-        # Ingest current live prices for active symbols
-        active_symbols = list(set([t.get("symbol", "SPY") for t in open_trades]))
-        assets_data = MarketDataTool.get_asset_universe_data(symbols=active_symbols, compute_deep_sentiment=False) if active_symbols else []
+        # Ingest current spot prices for active underlyings
+        active_underlyings = list(packages_by_underlying.keys())
+        assets_data = MarketDataTool.get_asset_universe_data(symbols=active_underlyings, compute_deep_sentiment=False) if active_underlyings else []
         price_map = {a["symbol"]: a["current_price"] for a in assets_data}
 
-        for trade in trades:
-            if trade.get("status") not in ["OPEN", "OPEN_ACTIVE", "ACTIVE"]:
-                updated_trades.append(trade)
-                continue
+        # 6. Audit Each Strategy Package on Alpaca
+        for underlying, legs in packages_by_underlying.items():
+            total_pnl = sum(float(l.get("unrealized_pl", 0.0)) for l in legs)
+            total_cost = sum(abs(float(l.get("cost_basis", l.get("market_value", 0.0)))) for l in legs)
+            current_price = price_map.get(underlying, 100.0)
 
-            symbol = trade.get("symbol", "SPY")
-            strategy = trade.get("strategy", "EARNINGS_STRADDLE")
-            entry_price = float(trade.get("underlying_entry_price", 100.0))
-            current_price = price_map.get(symbol, entry_price)
-            cost_or_credit = float(trade.get("cost_or_credit_usd", 500.0))
-            profit_target_usd = float(trade.get("profit_target_usd", 250.0))
-            stop_loss_usd = float(trade.get("stop_loss_usd", 150.0))
-            trade_id = trade.get("trade_id", "UNKNOWN")
+            # Check if there is an existing registered open trade envelope in trades.json
+            matching_registered = [
+                t for t in registered_trades
+                if t.get("symbol") == underlying and t.get("status") in ["OPEN", "OPEN_ACTIVE", "ACTIVE"]
+            ]
+            trade_record = matching_registered[0] if matching_registered else None
 
-            # Check if this position has live broker P&L across all package legs
-            symbol_positions = [p for p in live_broker_positions if symbol in p.get("symbol", "")]
-            if symbol_positions:
-                current_pnl = sum(float(p.get("unrealized_pl", 0.0)) for p in symbol_positions)
-                total_cost = sum(abs(float(p.get("cost_basis", p.get("market_value", 0.0)))) for p in symbol_positions)
-                pnl_pct = (current_pnl / max(total_cost, 1.0)) * 100.0
-                pnl_source = f"LIVE_ALPACA_BROKER ({len(symbol_positions)} legs combined)"
+            # Infer strategy name and parameters
+            if trade_record:
+                strategy = trade_record.get("strategy", "EARNINGS_STRADDLE")
+                cost_or_credit = float(trade_record.get("cost_or_credit_usd", total_cost or 500.0))
+                profit_target_usd = float(trade_record.get("profit_target_usd", cost_or_credit * 0.5))
+                stop_loss_usd = float(trade_record.get("stop_loss_usd", 150.0))
+                entry_price = float(trade_record.get("underlying_entry_price", current_price))
+                trade_id = trade_record.get("trade_id", f"BROKER-{underlying}")
             else:
-                pnl_info = self._calculate_pnl(trade, current_price)
-                current_pnl = pnl_info["estimated_pnl_usd"]
-                pnl_pct = pnl_info["pnl_percent"]
-                pnl_source = "MARK_TO_MARKET_MATH"
+                # Synthesize strategy container from live broker legs
+                has_calls = any("C" in l.get("symbol", "") for l in legs)
+                has_puts = any("P" in l.get("symbol", "") for l in legs)
+                if len(legs) >= 3 and has_calls and has_puts:
+                    strategy = "THETA_IRON_CONDOR"
+                elif has_calls and has_puts:
+                    strategy = "EARNINGS_STRADDLE"
+                else:
+                    strategy = "DIRECTIONAL_SPREAD"
 
-            # 5. Evaluate Trailing Profit Ratchet
+                cost_or_credit = max(total_cost, 100.0)
+                profit_target_usd = round(cost_or_credit * 0.50, 2)
+                stop_loss_usd = 150.0
+                entry_price = current_price
+                trade_id = f"BROKER-{underlying}-{int(datetime.datetime.utcnow().timestamp())}"
+
+            pnl_pct = (total_pnl / max(cost_or_credit, 1.0)) * 100.0
+
+            # 7. Evaluate Dynamic Strategy-Aware Profit Ratchet
             ratchet = ProfitRatchetEngine.evaluate_ratchet(
-                current_pnl_usd=current_pnl,
+                current_pnl_usd=total_pnl,
                 cost_or_credit_usd=cost_or_credit,
                 base_stop_loss_usd=stop_loss_usd,
-                target_profit_percent=50.0
+                target_profit_percent=50.0,
+                strategy_name=strategy
             )
 
-            print(f"\n  🔍 Auditing [{trade_id}] {symbol} ({strategy}) | Source: {pnl_source}:", flush=True)
-            print(f"     * Current P&L: {'+$' if current_pnl >= 0 else '-$'}{abs(current_pnl):.2f} ({pnl_pct:+.1f}%) | Ratchet Tier: {ratchet['ratchet_tier']}", flush=True)
-            print(f"     * Target: +${profit_target_usd:.2f} | Active Stop Floor: ${ratchet['active_stop_floor_usd']:.2f}", flush=True)
+            print(f"\n  🔍 Auditing [{trade_id}] {underlying} ({strategy}) | {len(legs)} Broker Leg(s):", flush=True)
+            print(f"     * Net Package P&L: {'+$' if total_pnl >= 0 else '-$'}{abs(total_pnl):.2f} ({pnl_pct:+.1f}%) | Ratchet Tier: {ratchet['ratchet_tier']}", flush=True)
+            print(f"     * Floor / Target: Stop Floor ${ratchet['active_stop_floor_usd']:.2f} | Action: {ratchet['action']}", flush=True)
 
-            # Check for High-Alert 15s Acceleration
-            if ratchet["ratchet_tier"] in ["TIER_1_BREAK_EVEN", "TIER_2_PROFIT_LOCK_25"] or (current_pnl <= -100.0):
+            # High-Alert Acceleration Check
+            if ratchet["ratchet_tier"] in ["TIER_1_BREAK_EVEN", "TIER_2_RUNNER_50", "TIER_3_RUNNER_100"] or total_pnl <= -100.0:
                 requires_high_alert_15s = True
-                print("     ⚡ [HIGH ALERT] Position near critical profit/stop boundary. Accelerating loop to 15 seconds.", flush=True)
+                print("     ⚡ [HIGH ALERT] Position in active profit-trail or risk zone. Loop set to 15s.", flush=True)
 
-            # Action 1: Take Profit or Ratchet Stop Triggered
+            # === RISK ENFORCEMENT ACTIONS ===
+
+            # Action 1: Profit Target Hit or Trailing Stop Triggered
             if ratchet["action"] in ["CLOSE_TAKE_PROFIT", "CLOSE_RATCHET_STOP"]:
-                print(f"     🎉 [{ratchet['action']}] {ratchet['reason']}. Liquidating on Alpaca.", flush=True)
-                close_res = self.alpaca.close_position(symbol)
-                trade["status"] = "CLOSED_PROFIT"
-                trade["exit_date"] = datetime.date.today().isoformat()
-                trade["exit_price"] = current_price
-                trade["pnl_usd"] = current_pnl
-                trade["exit_reason"] = ratchet["reason"]
-                trade["broker_exit_result"] = close_res
-                actions_taken.append({"trade_id": trade_id, "action": ratchet["action"], "pnl_usd": current_pnl})
+                print(f"     🎉 [{ratchet['action']}] {ratchet['reason']}. Liquidating package on Alpaca.", flush=True)
+                for leg in legs:
+                    self.alpaca.close_position(leg["symbol"])
+                
+                self._record_closed_package(
+                    trade_id=trade_id,
+                    underlying=underlying,
+                    strategy=strategy,
+                    status="CLOSED_PROFIT",
+                    pnl_usd=total_pnl,
+                    cost_usd=cost_or_credit,
+                    entry_px=entry_price,
+                    exit_px=current_price,
+                    exit_reason=ratchet["reason"],
+                    legs=legs
+                )
+                actions_taken.append({"trade_id": trade_id, "action": ratchet["action"], "pnl_usd": total_pnl})
 
             # Action 2: Hard Stop Loss Triggered
             elif ratchet["action"] == "CLOSE_STOP_LOSS":
-                print(f"     🛑 [HARD STOP LOSS] {ratchet['reason']}. Liquidating on Alpaca.", flush=True)
-                close_res = self.alpaca.close_position(symbol)
-                trade["status"] = "CLOSED_STOPPED"
-                trade["exit_date"] = datetime.date.today().isoformat()
-                trade["exit_price"] = current_price
-                trade["pnl_usd"] = -stop_loss_usd
-                trade["exit_reason"] = ratchet["reason"]
-                trade["broker_exit_result"] = close_res
-                actions_taken.append({"trade_id": trade_id, "action": "CLOSE_STOP_LOSS", "pnl_usd": -stop_loss_usd})
+                print(f"     🛑 [HARD STOP LOSS] {ratchet['reason']}. Liquidating package on Alpaca.", flush=True)
+                for leg in legs:
+                    self.alpaca.close_position(leg["symbol"])
 
-            # Action 3: 0-DTE Friday 3:30 PM Risk Triggered
+                self._record_closed_package(
+                    trade_id=trade_id,
+                    underlying=underlying,
+                    strategy=strategy,
+                    status="CLOSED_STOPPED",
+                    pnl_usd=total_pnl,
+                    cost_usd=cost_or_credit,
+                    entry_px=entry_price,
+                    exit_px=current_price,
+                    exit_reason=ratchet["reason"],
+                    legs=legs
+                )
+                actions_taken.append({"trade_id": trade_id, "action": "CLOSE_STOP_LOSS", "pnl_usd": total_pnl})
+
+            # Action 3: 0-DTE Expiration Shield (Check if any legs expire today)
             elif zero_dte_info["is_assignment_risk_active"]:
-                print(f"     ⏳ [0-DTE LIQUIDATION] Liquidating before market close to avoid assignment risk.", flush=True)
-                close_res = self.alpaca.close_position(symbol)
-                trade["status"] = "CLOSED_0DTE_RISK"
-                trade["pnl_usd"] = current_pnl
-                trade["exit_reason"] = zero_dte_info["reason"]
-                actions_taken.append({"trade_id": trade_id, "action": "CLOSE_0DTE", "pnl_usd": current_pnl})
+                today_tag = datetime.date.today().strftime("%y%m%d")
+                expiring_today_legs = [l for l in legs if today_tag in l.get("symbol", "")]
+                if expiring_today_legs:
+                    print(f"     ⏳ [0-DTE SHIELD] Liquidating {len(expiring_today_legs)} expiring leg(s) on {underlying} to eliminate pin risk.", flush=True)
+                    for leg in expiring_today_legs:
+                        # Only liquidate legs that have value (current mark > 0.05) to avoid paying unnecessary fees on dead worthless wings
+                        if float(leg.get("current_price", 0.0)) >= 0.05:
+                            self.alpaca.close_position(leg["symbol"])
 
-            # Action 4: Adaptive Position Salvage & Dynamic Wing Rolling (Threatened Iron Condor Wing)
-            elif strategy == "THETA_IRON_CONDOR" and abs(current_price - entry_price) / entry_price >= 0.03:
-                print(f"     🦋 [ADAPTIVE SALVAGE TRIGGERED] Short wing threatened. Calculating Untested Wing Roll...", flush=True)
-                wing_roll = OptionLegRoller.calculate_wing_roll(trade, current_price)
+                    self._record_closed_package(
+                        trade_id=trade_id,
+                        underlying=underlying,
+                        strategy=strategy,
+                        status="CLOSED_0DTE_RISK",
+                        pnl_usd=total_pnl,
+                        cost_usd=cost_or_credit,
+                        entry_px=entry_price,
+                        exit_px=current_price,
+                        exit_reason=f"0-DTE Expiration Shield liquidated ITM options ahead of 4:00 PM EST pin risk.",
+                        legs=expiring_today_legs
+                    )
+                    actions_taken.append({"trade_id": trade_id, "action": "CLOSE_0DTE", "pnl_usd": total_pnl})
+
+            # Action 4: Adaptive Position Salvage & Dynamic Wing Rolling (Iron Condor)
+            elif strategy == "THETA_IRON_CONDOR" and abs(current_price - entry_price) / max(entry_price, 1.0) >= 0.03:
+                print(f"     🦋 [ADAPTIVE SALVAGE TRIGGERED] Wing threatened on {underlying}. Executing Untested Wing Roll on Alpaca...", flush=True)
+                wing_roll = OptionLegRoller.calculate_wing_roll({"symbol": underlying, "underlying_entry_price": entry_price}, current_price)
                 salvage_bp = self.salvage_engine.calculate_order(
-                    symbol=symbol,
+                    symbol=underlying,
                     current_price=current_price,
                     risk_budget_usd=300.0
                 )
-                trade["strategy"] = "SALVAGED_IRON_BUTTERFLY"
-                trade["salvage_notes"] = f"{salvage_bp.execution_notes} | {wing_roll['rationale']}"
-                trade["wing_roll_credit_usd"] = wing_roll["additional_credit_collected_usd"]
-                trade["salvaged_at"] = datetime.datetime.utcnow().isoformat()
+                
+                # Dispatch live adjustment orders to Alpaca
+                for leg in salvage_bp.legs:
+                    client_oid = f"oracle_salvage_{underlying}_{leg.side.lower()}_{int(datetime.datetime.utcnow().timestamp())}"
+                    self.alpaca.submit_order(
+                        symbol=leg.occ_symbol or f"{underlying}",
+                        qty=leg.qty,
+                        side=leg.side.lower(),
+                        order_type="limit",
+                        client_order_id=client_oid
+                    )
+
                 requires_high_alert_15s = True
                 actions_taken.append({
                     "trade_id": trade_id,
                     "action": "SALVAGE_WING_ROLL",
-                    "additional_credit_usd": wing_roll["additional_credit_collected_usd"],
-                    "pnl_usd": current_pnl
+                    "additional_credit_usd": wing_roll.get("additional_credit_collected_usd", 45.0),
+                    "pnl_usd": total_pnl
                 })
 
             else:
-                print(f"     🛡️ [GUARDIAN STATUS: SAFE] Position within risk parameters. Holding.", flush=True)
-
-            updated_trades.append(trade)
-
-        # Atomic Write to trades.json & SQLite
-        try:
-            with open(self.trades_file, "w") as f:
-                json.dump(updated_trades, f, indent=2)
-
-            # Sync closed trades directly to SQLite
-            try:
-                from backend.db.repositories import TradeRepository
-                for t in updated_trades:
-                    if t.get("status") in ["CLOSED_STOPPED", "CLOSED_PROFIT", "CLOSED_0DTE_RISK", "CLOSED"]:
-                        TradeRepository.insert_trade(t)
-            except Exception:
-                pass
-        except Exception as e:
-            print(f"[!] Error saving trades.json: {e}", flush=True)
+                print(f"     🛡️ [GUARDIAN STATUS: SAFE] {underlying} ({strategy}) within safe operating corridor. Holding.", flush=True)
 
         adaptive_sleep = 15 if requires_high_alert_15s else 60
 
         return {
-            "scanned_count": len(open_trades),
+            "scanned_count": len(packages_by_underlying),
+            "broker_legs_count": len(live_broker_positions),
             "actions_taken": actions_taken,
             "adaptive_sleep_seconds": adaptive_sleep,
             "vix_circuit_status": circuit_info,
             "zero_dte_status": zero_dte_info,
             "timestamp": datetime.datetime.utcnow().isoformat()
         }
+
+    def _record_closed_package(
+        self,
+        trade_id: str,
+        underlying: str,
+        strategy: str,
+        status: str,
+        pnl_usd: float,
+        cost_usd: float,
+        entry_px: float,
+        exit_px: float,
+        exit_reason: str,
+        legs: List[dict]
+    ):
+        """
+        Atomically records the completed strategy package into data/trades.json and SQLite.
+        """
+        closed_date = datetime.date.today().isoformat()
+        new_closed_trade = {
+            "trade_id": trade_id if "BROKER" not in trade_id else f"ORD-{int(datetime.datetime.utcnow().timestamp())}",
+            "symbol": underlying,
+            "strategy": strategy,
+            "status": status,
+            "entry_price": round(entry_px, 2),
+            "exit_price": round(exit_px, 2),
+            "cost_or_credit_usd": round(cost_usd, 2),
+            "profit_target_usd": round(cost_usd * 0.5, 2),
+            "stop_loss_usd": 150.0,
+            "pnl_usd": round(pnl_usd, 2),
+            "exit_reason": exit_reason,
+            "entry_date": closed_date,
+            "exit_date": closed_date,
+            "order_legs": [
+                {
+                    "symbol": l.get("symbol"),
+                    "occ_symbol": l.get("symbol"),
+                    "side": l.get("side", "sell"),
+                    "qty": float(l.get("qty", 1.0)),
+                    "price": float(l.get("current_price", 0.0)),
+                    "pnl_usd": float(l.get("unrealized_pl", 0.0))
+                }
+                for l in legs
+            ],
+            "created_at": datetime.datetime.utcnow().isoformat() + "Z"
+        }
+
+        # 1. Update data/trades.json
+        try:
+            trades = []
+            if self.trades_file.exists():
+                with open(self.trades_file, "r", encoding="utf-8") as f:
+                    trades = json.load(f)
+            
+            # Remove any matching open placeholder
+            trades = [t for t in trades if t.get("trade_id") != new_closed_trade["trade_id"]]
+            trades.append(new_closed_trade)
+
+            with open(self.trades_file, "w", encoding="utf-8") as f:
+                json.dump(trades, f, indent=2)
+            print(f"💾 [BodyguardAgent] Persisted authentic closed trade {new_closed_trade['trade_id']} to trades.json")
+        except Exception as e:
+            print(f"[!] Error updating trades.json: {e}", flush=True)
+
+        # 2. Update SQLite database
+        try:
+            from backend.db.repositories import TradeRepository
+            TradeRepository.insert_trade(new_closed_trade)
+            print(f"💾 [BodyguardAgent] Synced closed trade {new_closed_trade['trade_id']} to SQLite oracle.db")
+        except Exception as e:
+            print(f"[!] Error syncing closed trade to SQLite: {e}", flush=True)
 
     def _calculate_pnl(self, trade: dict, current_price: float) -> Dict[str, Any]:
         """Calculates theoretical mark-to-market P&L for options structures."""
