@@ -508,5 +508,39 @@
       }
     ],
     "created_at": "2026-08-28T17:37:43.640547Z"
+  },
+  {
+    "trade_id": "ORD-1788240016",
+    "symbol": "TSLA",
+    "strategy": "EARNINGS_STRADDLE",
+    "status": "CLOSED_PROFIT",
+    "entry_price": 12.7,
+    "exit_price": 20.31,
+    "cost_or_credit_usd": 5080.0,
+    "profit_target_usd": 2540.0,
+    "stop_loss_usd": 150.0,
+    "pnl_usd": 3044.0,
+    "exit_reason": "Profit target achieved (+$3,044.00, +59.9% on TSLA Straddle; locked in massive $380P gain ahead of 0-DTE expiration).",
+    "entry_date": "2026-09-03",
+    "exit_date": "2026-09-04",
+    "order_legs": [
+      {
+        "symbol": "TSLA260904P00380000",
+        "occ_symbol": "TSLA260904P00380000",
+        "side": "sell",
+        "qty": 4.0,
+        "price": 20.25,
+        "pnl_usd": 5795.0
+      },
+      {
+        "symbol": "TSLA260904C00380000",
+        "occ_symbol": "TSLA260904C00380000",
+        "side": "sell",
+        "qty": 4.0,
+        "price": 0.06,
+        "pnl_usd": -2751.0
+      }
+    ],
+    "created_at": "2026-09-04T13:46:17.242460Z"
   }
 ]
