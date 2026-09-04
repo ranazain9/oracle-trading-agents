@@ -408,6 +408,7 @@ class AlpacaTool(BaseBroker):
             }
 
         # If this position wasn't tracked in an existing open trade record, calculate real P&L from Alpaca and record authentic closed trade
+        # If this position wasn't tracked in an existing open trade record, aggregate into a cohesive Strategy Package
         if not matched_any:
             try:
                 underlying = symbol_or_asset_id[:4].rstrip("0123456789") if len(symbol_or_asset_id) >= 6 else symbol_or_asset_id
@@ -417,6 +418,7 @@ class AlpacaTool(BaseBroker):
                 entry_px = 100.0
                 exit_px = 100.0
                 cost_basis = 500.0
+                qty = 1.0
                 
                 if self.client:
                     try:
@@ -439,42 +441,92 @@ class AlpacaTool(BaseBroker):
                     except Exception as e_pnl:
                         print(f"[*] Note calculating live PnL for close: {e_pnl}")
 
-                status = "CLOSED_PROFIT" if real_pnl >= 0 else "CLOSED_STOPPED"
-                exit_reason = (
-                    f"Profit target achieved (+${real_pnl:.2f} on {symbol_or_asset_id}; closed via dashboard operator action)."
-                    if real_pnl > 0
-                    else (
-                        f"Risk floor enforced (-${abs(real_pnl):.2f} on {symbol_or_asset_id}; closed via dashboard operator action)."
-                        if real_pnl < 0
-                        else f"Operator manual close on {symbol_or_asset_id} at expiration mark."
-                    )
-                )
-
-                new_trade = {
-                    "trade_id": f"ORD-{int(datetime.datetime.utcnow().timestamp())}",
-                    "symbol": underlying or symbol_or_asset_id,
-                    "strategy": "THETA_IRON_CONDOR" if "CONDOR" in symbol_or_asset_id else "EARNINGS_STRADDLE",
-                    "status": status,
-                    "entry_price": entry_px,
-                    "exit_price": exit_px,
-                    "cost_or_credit_usd": cost_basis,
-                    "profit_target_usd": round(cost_basis * 0.5, 2),
-                    "stop_loss_usd": 150.0,
-                    "pnl_usd": real_pnl,
-                    "exit_reason": exit_reason,
-                    "entry_date": closed_date,
-                    "exit_date": closed_date,
-                    "order_legs": [{"symbol": symbol_or_asset_id, "side": "sell", "qty": 1.0, "price": exit_px}]
-                }
+                # Check if there is an existing closed package for this underlying on the same exit_date
                 from backend.db.repositories import TradeRepository
-                TradeRepository.insert_trade(new_trade)
-                if TRADES_FILE.exists():
-                    with open(TRADES_FILE, "r", encoding="utf-8") as f:
-                        trades = json.load(f)
-                    trades.append(new_trade)
-                    with open(TRADES_FILE, "w", encoding="utf-8") as f:
-                        json.dump(trades, f, indent=2)
-                print(f"[OK] Recorded newly closed trade in DB & trades.json ({new_trade['trade_id']} | {real_pnl:+.2f})")
+                existing_trades = TradeRepository.get_all_trades()
+                matched_package = None
+                for t in existing_trades:
+                    if (
+                        t.get("symbol") == underlying
+                        and t.get("exit_date") == closed_date
+                        and str(t.get("status", "")).startswith("CLOSED")
+                    ):
+                        matched_package = t
+                        break
+
+                new_leg = {
+                    "symbol": symbol_or_asset_id,
+                    "occ_symbol": symbol_or_asset_id,
+                    "side": "sell",
+                    "qty": qty,
+                    "price": exit_px,
+                    "pnl_usd": real_pnl
+                }
+
+                if matched_package:
+                    # Merge leg into existing strategy package to prevent ledger fragmentation
+                    package_legs = matched_package.get("order_legs") or []
+                    # Avoid duplicate leg addition
+                    if not any(l.get("symbol") == symbol_or_asset_id for l in package_legs if isinstance(l, dict)):
+                        package_legs.append(new_leg)
+                    
+                    matched_package["order_legs"] = package_legs
+                    matched_package["pnl_usd"] = round(float(matched_package.get("pnl_usd", 0.0)) + real_pnl, 2)
+                    matched_package["cost_or_credit_usd"] = round(float(matched_package.get("cost_or_credit_usd", 0.0)) + cost_basis, 2)
+                    
+                    # Update status and reason
+                    tot_pnl = matched_package["pnl_usd"]
+                    matched_package["status"] = "CLOSED_PROFIT" if tot_pnl >= 0 else "CLOSED_STOPPED"
+                    matched_package["exit_reason"] = (
+                        f"Strategy package consolidated ({underlying}; {len(package_legs)} legs closed, net P&L ${tot_pnl:+.2f})."
+                    )
+
+                    TradeRepository.insert_trade(matched_package)
+                    if TRADES_FILE.exists():
+                        with open(TRADES_FILE, "r", encoding="utf-8") as f:
+                            all_t = json.load(f)
+                        all_t = [t for t in all_t if t.get("trade_id") != matched_package["trade_id"]]
+                        all_t.append(matched_package)
+                        with open(TRADES_FILE, "w", encoding="utf-8") as f:
+                            json.dump(all_t, f, indent=2)
+                    print(f"[OK] Aggregated leg {symbol_or_asset_id} into package trade {matched_package['trade_id']} (Net PnL: ${tot_pnl:+.2f})")
+                else:
+                    # New package record
+                    status = "CLOSED_PROFIT" if real_pnl >= 0 else "CLOSED_STOPPED"
+                    exit_reason = (
+                        f"Profit target achieved (+${real_pnl:.2f} on {symbol_or_asset_id}; closed via dashboard operator action)."
+                        if real_pnl > 0
+                        else (
+                            f"Risk floor enforced (-${abs(real_pnl):.2f} on {symbol_or_asset_id}; closed via dashboard operator action)."
+                            if real_pnl < 0
+                            else f"Operator manual close on {symbol_or_asset_id} at expiration mark."
+                        )
+                    )
+
+                    new_trade = {
+                        "trade_id": f"ORD-{int(datetime.datetime.utcnow().timestamp())}",
+                        "symbol": underlying or symbol_or_asset_id,
+                        "strategy": "THETA_IRON_CONDOR" if "CONDOR" in symbol_or_asset_id else "EARNINGS_STRADDLE",
+                        "status": status,
+                        "entry_price": entry_px,
+                        "exit_price": exit_px,
+                        "cost_or_credit_usd": cost_basis,
+                        "profit_target_usd": round(cost_basis * 0.5, 2),
+                        "stop_loss_usd": 150.0,
+                        "pnl_usd": real_pnl,
+                        "exit_reason": exit_reason,
+                        "entry_date": closed_date,
+                        "exit_date": closed_date,
+                        "order_legs": [new_leg]
+                    }
+                    TradeRepository.insert_trade(new_trade)
+                    if TRADES_FILE.exists():
+                        with open(TRADES_FILE, "r", encoding="utf-8") as f:
+                            trades = json.load(f)
+                        trades.append(new_trade)
+                        with open(TRADES_FILE, "w", encoding="utf-8") as f:
+                            json.dump(trades, f, indent=2)
+                    print(f"[OK] Recorded newly closed trade package in DB & trades.json ({new_trade['trade_id']} | {real_pnl:+.2f})")
             except Exception as e:
                 print(f"[!] Warning recording ad-hoc closed trade: {e}")
 
