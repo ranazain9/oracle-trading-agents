@@ -239,13 +239,15 @@ class AlpacaTool(BaseBroker):
         qty: int,
         side: str = "buy",
         order_type: str = "market",
-        limit_price: Optional[float] = None
+        limit_price: Optional[float] = None,
+        client_order_id: Optional[str] = None
     ) -> Dict[str, Any]:
         """
         Submits an order to Alpaca Paper Trading.
         Strictly enforces Market Hours Gate: if the market is closed, rejects order submission.
+        Supports client_order_id to trace orders back to Oracle strategy trade IDs.
         """
-        order_id = f"ORACLE-{int(datetime.datetime.utcnow().timestamp())}"
+        order_id = client_order_id or f"ORACLE-{int(datetime.datetime.utcnow().timestamp())}"
         fill_price = limit_price or 100.0
 
         # Check Market Open Status
@@ -281,21 +283,20 @@ class AlpacaTool(BaseBroker):
         try:
             req_side = OrderSide.BUY if side.lower() == "buy" else OrderSide.SELL
             
+            order_params = {
+                "symbol": symbol,
+                "qty": qty,
+                "side": req_side,
+                "time_in_force": TimeInForce.DAY,
+            }
+            if client_order_id:
+                order_params["client_order_id"] = client_order_id[:128]
+
             if order_type.lower() == "limit" and limit_price is not None:
-                order_data = LimitOrderRequest(
-                    symbol=symbol,
-                    qty=qty,
-                    side=req_side,
-                    time_in_force=TimeInForce.DAY,
-                    limit_price=round(limit_price, 2)
-                )
+                order_params["limit_price"] = round(limit_price, 2)
+                order_data = LimitOrderRequest(**order_params)
             else:
-                order_data = MarketOrderRequest(
-                    symbol=symbol,
-                    qty=qty,
-                    side=req_side,
-                    time_in_force=TimeInForce.DAY
-                )
+                order_data = MarketOrderRequest(**order_params)
 
             order = self.client.submit_order(order_data=order_data)
             return {

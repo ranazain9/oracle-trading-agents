@@ -171,14 +171,17 @@ class TraderAgent:
             }
 
         # Step 4: Execute Atomic Orders on Alpaca
+        trade_id = f"ORD-{int(datetime.datetime.utcnow().timestamp())}"
         executed_orders = []
-        for leg in blueprint.legs:
+        for leg_idx, leg in enumerate(blueprint.legs, start=1):
             order_symbol = leg.occ_symbol if leg.occ_symbol else f"{leg.symbol}"
+            client_oid = f"oracle_{trade_id}_leg{leg_idx}_{leg.side.lower()}"
             order_res = self.alpaca.submit_order(
                 symbol=order_symbol,
                 qty=leg.qty,
                 side=leg.side.lower(),
-                order_type="limit"
+                order_type="limit",
+                client_order_id=client_oid
             )
             order_res["midpoint_limit_price"] = leg.midpoint_limit_price
             order_res["occ_symbol"] = leg.occ_symbol
@@ -200,7 +203,7 @@ class TraderAgent:
 
         # Step 5: Persist Trade Record to data/trades.json
         trade_record = {
-            "trade_id": f"ORD-{int(datetime.datetime.utcnow().timestamp())}",
+            "trade_id": trade_id,
             "symbol": decision.symbol,
             "strategy": blueprint.strategy_name,
             "entry_date": datetime.date.today().isoformat(),

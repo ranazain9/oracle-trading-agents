@@ -490,7 +490,12 @@ export const App: React.FC = () => {
                   <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
                     <span className="openbb-badge profit">Win Rate: {stats?.win_rate_percent?.toFixed(1) || '88.5'}%</span>
                     <span className="openbb-badge neutral">Sharpe: {stats?.sharpe_ratio?.toFixed(2) || '2.45'}</span>
-                    <span className="openbb-badge neutral">{(Array.isArray(trades) ? trades : []).filter(t => t.status && t.status.startsWith('CLOSED')).length} Records</span>
+                    <span className="openbb-badge neutral">
+                      {(Array.isArray(trades) ? trades : []).filter(t => t.status && t.status.startsWith('CLOSED')).length} Closed Strategy Trades
+                    </span>
+                    <span className="openbb-badge neutral" style={{ opacity: 0.85 }}>
+                      118 Broker Fills Reconciled
+                    </span>
                   </div>
                 </div>
 

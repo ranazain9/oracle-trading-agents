@@ -147,7 +147,7 @@ export const KpiDeck: React.FC<KpiDeckProps> = ({ account, greeks, stats }) => {
           {winRate.toFixed(1)}%
         </div>
         <div style={{ fontSize: '0.64rem', color: 'var(--text-dim)', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>
-          {totalTrades > 0 ? `Based on ${totalTrades} Closed Trades` : 'Kelly Optimized Model'}
+          {totalTrades > 0 ? `Based on ${totalTrades} Closed Strategy Trades` : 'Kelly Optimized Model'}
         </div>
       </div>
 
