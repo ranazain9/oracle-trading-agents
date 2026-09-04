@@ -35,6 +35,13 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.error(f"Database initialization error: {e}")
 
+    # 1b. Perform initial Alpaca Broker Reconciliation asynchronously
+    try:
+        from backend.services.reconciliation_service import AlpacaReconciliationService
+        threading.Thread(target=AlpacaReconciliationService.sync_all, daemon=True).start()
+    except Exception as e:
+        logger.warning(f"Initial Alpaca reconciliation notice: {e}")
+
     # 2. Warm up in-memory dashboard cache asynchronously
     try:
         threading.Thread(target=dashboard_cache._refresh_data_background, daemon=True).start()

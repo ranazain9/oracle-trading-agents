@@ -207,6 +207,11 @@ class AutonomousDaemonService:
                         self._status_message = "Intraday Risk Bodyguard active. Monitoring 15s ratchet stop-loss floors."
 
                     res = orchestrator.run_intraday_monitoring_step()
+                    try:
+                        from backend.services.reconciliation_service import AlpacaReconciliationService
+                        AlpacaReconciliationService.sync_all()
+                    except Exception:
+                        pass
                     adaptive_sleep = max(15, min(res.get("adaptive_sleep_seconds", 60), 120))
                     time.sleep(adaptive_sleep)
                     continue
@@ -220,6 +225,12 @@ class AutonomousDaemonService:
                     run_id = f"AUTO-POST-{uuid.uuid4().hex[:6].upper()}"
                     logger.info(f"📊 [DAEMON: 04:30 PM EST] Generating Post-Market Summary: {run_id}")
                     res = orchestrator.run_postmarket_summary()
+
+                    try:
+                        from backend.services.reconciliation_service import AlpacaReconciliationService
+                        AlpacaReconciliationService.sync_all()
+                    except Exception:
+                        pass
 
                     with self._lock:
                         self._post_market_executed_today = True

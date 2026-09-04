@@ -226,7 +226,7 @@ class TraderAgent:
 
     def _record_trade(self, trade_record: dict):
         """
-        Saves the active trade into data/trades.json
+        Saves the active trade into data/trades.json and SQLite database.
         """
         trades_file = Path(__file__).resolve().parent.parent / "data" / "trades.json"
         trades = []
@@ -244,3 +244,11 @@ class TraderAgent:
             print(f"💾 [TraderAgent] Trade logged to data/trades.json ({trade_record['trade_id']})")
         except Exception as e:
             print(f"[!] Error recording trade: {e}")
+
+        # Also persist directly to SQLite TradeRepository
+        try:
+            from backend.db.repositories import TradeRepository
+            TradeRepository.insert_trade(trade_record)
+            print(f"💾 [TraderAgent] Trade synced to SQLite database ({trade_record['trade_id']})")
+        except Exception as e:
+            print(f"[!] Warning syncing trade to SQLite: {e}")

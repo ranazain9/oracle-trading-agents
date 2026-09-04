@@ -112,3 +112,18 @@ async def export_trades(req: ExportRequest):
         records_count=len(trades),
         content=content
     )
+
+
+@router.post("/sync")
+async def sync_alpaca_trades():
+    """
+    On-demand broker reconciliation endpoint.
+    Pulls live open positions & closed orders from Alpaca and syncs them directly into SQLite and trades.json.
+    """
+    try:
+        from backend.services.reconciliation_service import AlpacaReconciliationService
+        result = AlpacaReconciliationService.sync_all()
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Broker sync failed: {str(e)}")
+
