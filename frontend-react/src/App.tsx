@@ -490,7 +490,7 @@ export const App: React.FC = () => {
                   <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
                     <span className="openbb-badge profit">Win Rate: {stats?.win_rate_percent?.toFixed(1) || '88.5'}%</span>
                     <span className="openbb-badge neutral">Sharpe: {stats?.sharpe_ratio?.toFixed(2) || '2.45'}</span>
-                    <span className="openbb-badge neutral">{trades.length} Records</span>
+                    <span className="openbb-badge neutral">{(Array.isArray(trades) ? trades : []).filter(t => t.status && t.status.startsWith('CLOSED')).length} Records</span>
                   </div>
                 </div>
 
@@ -507,10 +507,12 @@ export const App: React.FC = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {(!Array.isArray(trades) || trades.length === 0) ? (
-                        <tr><td colSpan={6} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '24px 0' }}>No trade history recorded yet.</td></tr>
-                      ) : (
-                        (Array.isArray(trades) ? trades : []).slice().reverse().map((t, idx) => {
+                      {(() => {
+                        const closedList = (Array.isArray(trades) ? trades : []).filter(t => t.status && t.status.startsWith('CLOSED'));
+                        if (closedList.length === 0) {
+                          return <tr><td colSpan={6} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '24px 0' }}>No closed trade history recorded yet.</td></tr>;
+                        }
+                        return closedList.slice().reverse().map((t, idx) => {
                           const pnl = Number(t.pnl_usd ?? 0);
                           const isProfit = pnl > 0;
                           const isLoss = pnl < 0;
@@ -526,12 +528,12 @@ export const App: React.FC = () => {
                               <td style={{ color: isProfit ? 'var(--openbb-emerald)' : isLoss ? 'var(--openbb-crimson)' : 'var(--text-muted)', fontWeight: 800 }}>
                                 {pnl > 0 ? `+$${pnl.toFixed(2)}` : pnl < 0 ? `-$${Math.abs(pnl).toFixed(2)}` : '$0.00'}
                               </td>
-                              <td className="wrap-cell">{t.exit_reason || 'Automated profit exit'}</td>
-                              <td>{t.entry_date || t.date || t.exit_date || 'Today'}</td>
+                              <td className="wrap-cell">{t.exit_reason || (isProfit ? 'Profit target harvested' : 'Risk floor reached')}</td>
+                              <td>{t.exit_date || t.entry_date || t.date || 'Today'}</td>
                             </tr>
                           );
-                        })
-                      )}
+                        });
+                      })()}
                     </tbody>
                   </table>
                 </div>

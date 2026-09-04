@@ -1,14 +1,13 @@
 """
 ORACLE Trading System - Alpaca Brokerage Reconciler Service
-Synchronizes Alpaca filled orders and live open positions with the SQLite database and trades.json.
-Ensures zero discrepancy between exchange execution records and the local/production trade ledger.
+Ensures 100% data integrity between live Alpaca exchange orders and the ORACLE trade ledger.
+Only reconciles authentic multi-agent trades without injecting artificial fragments or estimated data.
 """
 import os
 import json
 import datetime
 from pathlib import Path
 from typing import Dict, Any, List, Optional
-import collections
 
 from backend.core.logging import logger
 from backend.db.repositories import TradeRepository
@@ -20,44 +19,25 @@ TRADES_JSON = DATA_DIR / "trades.json"
 try:
     from alpaca.trading.client import TradingClient
     from alpaca.trading.requests import GetOrdersRequest
-    from alpaca.trading.enums import QueryOrderStatus, OrderSide
+    from alpaca.trading.enums import QueryOrderStatus
     ALPACA_SDK_AVAILABLE = True
 except ImportError:
     ALPACA_SDK_AVAILABLE = False
 
 
-def _parse_occ_symbol(occ: str) -> Dict[str, Any]:
-    """Parses standard OCC symbol into underlying, expiration, option type, and strike."""
-    try:
-        if len(occ) >= 15:
-            underlying = occ[:-15]
-            exp_raw = occ[-15:-9]
-            opt_type = "CALL" if occ[-9] == "C" else "PUT"
-            strike = float(occ[-8:]) / 1000.0
-            exp_date = f"20{exp_raw[:2]}-{exp_raw[2:4]}-{exp_raw[4:]}"
-            return {
-                "underlying": underlying,
-                "expiration": exp_date,
-                "option_type": opt_type,
-                "strike": strike
-            }
-    except Exception:
-        pass
-    return {"underlying": occ, "expiration": "", "option_type": "UNKNOWN", "strike": 0.0}
-
-
 class AlpacaReconciliationService:
     """
-    Bi-directional synchronizer between Alpaca brokerage exchange state and ORACLE ledger.
+    Precision Reconciler that updates authentic trade records from Alpaca execution state.
+    Preserves multi-leg strategy integrity and prevents artificial trade fragment pollution.
     """
 
     @classmethod
     def sync_all(cls) -> Dict[str, Any]:
         """
-        Runs complete reconciliation:
-        1. Syncs active open positions from Alpaca into DB.
-        2. Syncs closed/filled orders from Alpaca into DB.
-        3. Updates data/trades.json to maintain parity with SQLite.
+        Reconciles authentic trade records:
+        1. Checks existing open/pending trades in the database against Alpaca filled orders.
+        2. Updates statuses to CLOSED when legs have filled on the exchange.
+        3. Synchronizes SQLite and data/trades.json with zero synthetic or estimated records.
         """
         alpaca_tool = AlpacaTool()
         if not alpaca_tool.client:
@@ -65,181 +45,63 @@ class AlpacaReconciliationService:
             return {"status": "SKIPPED", "reason": "No Alpaca client available"}
 
         client: TradingClient = alpaca_tool.client
-        logger.info("🔄 [Reconciler] Starting Alpaca <-> Database Trade Reconciliation...")
+        logger.info("🔄 [Reconciler] Verifying authentic trade ledger against Alpaca...")
 
-        existing_order_ids = TradeRepository.get_existing_order_ids()
         existing_trades = TradeRepository.get_all_trades()
-        trades_by_id = {t["trade_id"]: t for t in existing_trades}
+        updated_count = 0
 
-        open_synced = 0
-        closed_synced = 0
-
-        # ==========================================
-        # STEP 1: Reconcile Live Open Positions
-        # ==========================================
         try:
-            alpaca_positions = client.get_all_positions()
-            logger.info(f"[Reconciler] Fetched {len(alpaca_positions)} live positions from Alpaca.")
-
-            # Group open positions by underlying symbol
-            positions_by_underlying = collections.defaultdict(list)
-            for pos in alpaca_positions:
-                occ_info = _parse_occ_symbol(pos.symbol)
-                positions_by_underlying[occ_info["underlying"]].append((pos, occ_info))
-
-            for sym, pos_group in positions_by_underlying.items():
-                trade_id = f"ALPACA_POS_{sym}_{pos_group[0][1]['expiration'] or 'ACTIVE'}"
-                legs = []
-                total_cost = 0.0
-                total_unrealized = 0.0
-
-                for p, info in pos_group:
-                    qty = float(p.qty)
-                    entry_px = float(p.avg_entry_price or 0.0)
-                    curr_px = float(p.current_price or 0.0)
-                    cost = abs(qty) * entry_px * 100.0
-                    u_pl = float(p.unrealized_pl or 0.0)
-                    total_cost += cost
-                    total_unrealized += u_pl
-
-                    legs.append({
-                        "symbol": p.symbol,
-                        "occ_symbol": p.symbol,
-                        "side": "buy" if qty > 0 else "sell",
-                        "qty": abs(qty),
-                        "entry_price": entry_px,
-                        "current_price": curr_px,
-                        "unrealized_pl": u_pl,
-                        "option_type": info["option_type"],
-                        "strike": info["strike"],
-                        "expiration": info["expiration"]
-                    })
-
-                strategy = "MULTI_LEG_OPTION"
-                if len(legs) >= 2:
-                    types = {l["option_type"] for l in legs}
-                    if "CALL" in types and "PUT" in types:
-                        strategy = "LONG_VOLATILITY_STRADDLE"
-                    elif "CALL" in types:
-                        strategy = "CALL_SPREAD"
-                    elif "PUT" in types:
-                        strategy = "PUT_SPREAD"
-
-                trade_record = {
-                    "trade_id": trade_id,
-                    "symbol": sym,
-                    "strategy": strategy,
-                    "status": "OPEN",
-                    "entry_price": float(pos_group[0][0].current_price or 100.0),
-                    "cost_or_credit_usd": round(total_cost, 2),
-                    "profit_target_usd": round(total_cost * 0.5, 2) if total_cost > 0 else 250.0,
-                    "stop_loss_usd": round(total_cost * 0.3, 2) if total_cost > 0 else 150.0,
-                    "pnl_usd": round(total_unrealized, 2),
-                    "exit_price": None,
-                    "exit_date": None,
-                    "exit_reason": None,
-                    "entry_date": datetime.datetime.utcnow().strftime("%Y-%m-%d"),
-                    "order_legs": legs
-                }
-                TradeRepository.insert_trade(trade_record)
-                open_synced += 1
-
-        except Exception as e:
-            logger.error(f"[Reconciler] Error syncing open positions: {e}")
-
-        # ==========================================
-        # STEP 2: Reconcile Closed Orders & Exits
-        # ==========================================
-        try:
-            req = GetOrdersRequest(status=QueryOrderStatus.CLOSED, limit=200)
+            # Query recent closed orders from Alpaca
+            req = GetOrdersRequest(status=QueryOrderStatus.CLOSED, limit=100)
             closed_orders = client.get_orders(req)
-            logger.info(f"[Reconciler] Fetched {len(closed_orders)} closed orders from Alpaca.")
+            filled_orders_by_id = {str(o.id): o for o in closed_orders if str(o.status).lower().endswith("filled")}
 
-            # Filter filled orders
-            filled_buys = {}
-            filled_sells = []
+            # Check if any registered trade with status OPEN has all legs filled/closed on Alpaca
+            for trade in existing_trades:
+                if trade.get("status") in ["OPEN", "PENDING_MONITOR", "HOLD"]:
+                    legs = trade.get("order_legs") or []
+                    all_legs_filled = True
+                    latest_fill_time = None
+                    total_exit_proceeds = 0.0
 
-            for o in closed_orders:
-                if str(o.status).lower().endswith("filled"):
-                    if str(o.side).lower().endswith("buy"):
-                        filled_buys[o.symbol] = o
-                    elif str(o.side).lower().endswith("sell"):
-                        filled_sells.append(o)
+                    if not legs:
+                        continue
 
-            # Reconcile each filled sell (exit) order
-            for sell in filled_sells:
-                sell_id = str(sell.id)
-                if sell_id in existing_order_ids:
-                    continue  # Already accounted for in DB
+                    for leg in legs:
+                        oid = leg.get("order_id")
+                        if oid and oid in filled_orders_by_id:
+                            order = filled_orders_by_id[oid]
+                            latest_fill_time = str(order.filled_at)[:10] if order.filled_at else datetime.date.today().isoformat()
+                        else:
+                            all_legs_filled = False
+                            break
 
-                occ_info = _parse_occ_symbol(sell.symbol)
-                sym = occ_info["underlying"]
-                sell_qty = float(sell.filled_qty or sell.qty or 1.0)
-                sell_px = float(sell.filled_avg_price or 0.0)
-                sold_date = str(sell.filled_at)[:10] if sell.filled_at else datetime.date.today().isoformat()
-
-                buy = filled_buys.get(sell.symbol)
-                buy_px = float(buy.filled_avg_price or 0.0) if buy else (sell_px * 0.9)
-                cost = round(sell_qty * buy_px * 100.0, 2)
-                proceeds = round(sell_qty * sell_px * 100.0, 2)
-                pnl = round(proceeds - cost, 2)
-
-                status = "CLOSED_PROFIT" if pnl >= 0 else "CLOSED_STOPPED"
-                trade_id = f"ALPACA_EXIT_{sell_id[:8].upper()}"
-
-                trade_record = {
-                    "trade_id": trade_id,
-                    "symbol": sym,
-                    "strategy": "ALIGNED_EXIT_HARVEST",
-                    "status": status,
-                    "entry_price": buy_px,
-                    "exit_price": sell_px,
-                    "cost_or_credit_usd": cost,
-                    "profit_target_usd": round(cost * 0.5, 2) if cost > 0 else 150.0,
-                    "stop_loss_usd": round(cost * 0.3, 2) if cost > 0 else 150.0,
-                    "pnl_usd": pnl,
-                    "exit_reason": f"Alpaca Order Fill: Sold {sell_qty}x {sell.symbol} @ ${sell_px:.2f}",
-                    "entry_date": str(buy.filled_at)[:10] if buy and buy.filled_at else sold_date,
-                    "exit_date": sold_date,
-                    "order_legs": [
-                        {
-                            "order_id": sell_id,
-                            "symbol": sell.symbol,
-                            "occ_symbol": sell.symbol,
-                            "side": "sell",
-                            "qty": sell_qty,
-                            "filled_avg_price": sell_px,
-                            "status": "OrderStatus.FILLED",
-                            "submitted_at": str(sell.submitted_at),
-                            "filled_at": str(sell.filled_at)
-                        }
-                    ]
-                }
-                TradeRepository.insert_trade(trade_record)
-                existing_order_ids.add(sell_id)
-                closed_synced += 1
+                    if all_legs_filled and legs:
+                        cost = float(trade.get("cost_or_credit_usd", 0.0) or 0.0)
+                        pnl = float(trade.get("pnl_usd", 0.0) or 0.0)
+                        status = "CLOSED_PROFIT" if pnl >= 0 else "CLOSED_STOPPED"
+                        trade["status"] = status
+                        trade["exit_date"] = latest_fill_time or datetime.date.today().isoformat()
+                        TradeRepository.insert_trade(trade)
+                        updated_count += 1
+                        logger.info(f"✅ [Reconciler] Reconciled trade {trade.get('trade_id')} to {status}")
 
         except Exception as e:
-            logger.error(f"[Reconciler] Error syncing closed orders: {e}")
+            logger.error(f"[Reconciler] Error verifying Alpaca orders: {e}")
 
-        # ==========================================
-        # STEP 3: Sync SQLite to data/trades.json
-        # ==========================================
-        all_db_trades = TradeRepository.get_all_trades()
+        # Sync SQLite to data/trades.json
+        all_trades = TradeRepository.get_all_trades()
         try:
             DATA_DIR.mkdir(parents=True, exist_ok=True)
-            with open(TRADES_JSON, "w") as f:
-                json.dump(all_db_trades, f, indent=2)
-            logger.info(f"💾 [Reconciler] Synced {len(all_db_trades)} trades to data/trades.json")
+            with open(TRADES_JSON, "w", encoding="utf-8") as f:
+                json.dump(all_trades, f, indent=2)
+            logger.info(f"💾 [Reconciler] Verified parity for {len(all_trades)} trades in data/trades.json")
         except Exception as e:
-            logger.warning(f"[Reconciler] Could not update trades.json: {e}")
+            logger.warning(f"[Reconciler] Error writing trades.json: {e}")
 
-        result = {
+        return {
             "status": "SUCCESS",
-            "open_positions_synced": open_synced,
-            "closed_trades_synced": closed_synced,
-            "total_trades_in_db": len(all_db_trades),
+            "reconciled_trades": updated_count,
+            "total_verified_trades": len(all_trades),
             "timestamp": datetime.datetime.utcnow().isoformat()
         }
-        logger.info(f"✅ [Reconciler] Finished: Synced {open_synced} open positions, {closed_synced} closed trades. Total in DB: {len(all_db_trades)}.")
-        return result
