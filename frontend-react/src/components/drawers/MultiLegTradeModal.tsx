@@ -281,27 +281,33 @@ export const MultiLegTradeModal: React.FC<MultiLegTradeModalProps> = ({
               <table className="terminal-table" style={{ fontSize: '0.72rem' }}>
                 <thead>
                   <tr>
-                    <th>Leg #</th>
+                    <th>Execution Leg</th>
                     <th>OCC Symbol</th>
-                    <th>Side</th>
+                    <th>Action</th>
                     <th>Qty</th>
                     <th>Fill Px</th>
-                    <th>Leg P&L</th>
+                    <th>Leg Total</th>
                     <th>Alpaca Order ID</th>
                   </tr>
                 </thead>
                 <tbody>
                   {legs.length > 0 ? (
                     legs.map((leg, idx) => {
-                      const legPnl = Number(leg.pnl_usd ?? 0);
+                      const sideStr = String(leg.side || 'BUY').toUpperCase();
+                      const isBuy = sideStr === 'BUY';
+                      const qty = Number(leg.qty ?? 1);
+                      const price = Number(leg.price ?? 0);
+                      const legTotal = qty * price * 100.0;
+                      
                       const isCall = (leg.symbol || leg.occ_symbol || '').includes('C');
                       const isPut = (leg.symbol || leg.occ_symbol || '').includes('P');
-                      const legLabel = isCall ? 'Call Leg' : isPut ? 'Put Leg' : `Leg ${idx + 1}`;
+                      const typeLabel = isCall ? 'Call Wing' : isPut ? 'Put Wing' : 'Option Wing';
+                      const legLabel = `${typeLabel} (${isBuy ? 'Entry' : 'Exit'})`;
 
                       return (
                         <tr key={idx}>
                           <td>
-                            <span style={{ fontWeight: 700, color: isCall ? 'var(--openbb-emerald)' : 'var(--openbb-purple)' }}>
+                            <span style={{ fontWeight: 700, color: isBuy ? 'var(--openbb-cyan)' : 'var(--openbb-emerald)' }}>
                               {legLabel}
                             </span>
                           </td>
@@ -311,22 +317,22 @@ export const MultiLegTradeModal: React.FC<MultiLegTradeModalProps> = ({
                             </code>
                           </td>
                           <td>
-                            <span className={`openbb-badge ${String(leg.side).toLowerCase() === 'buy' ? 'profit' : 'neutral'}`}>
-                              {String(leg.side || 'SELL').toUpperCase()}
+                            <span className={`openbb-badge ${isBuy ? 'neutral' : 'profit'}`}>
+                              {sideStr}
                             </span>
                           </td>
-                          <td style={{ fontFamily: 'var(--font-mono)' }}>{Number(leg.qty ?? 1).toFixed(1)}</td>
+                          <td style={{ fontFamily: 'var(--font-mono)' }}>{qty.toFixed(1)}</td>
                           <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 700 }}>
-                            ${Number(leg.price ?? 0).toFixed(2)}
+                            ${price.toFixed(2)}
                           </td>
                           <td
                             style={{
                               fontFamily: 'var(--font-mono)',
                               fontWeight: 700,
-                              color: legPnl > 0 ? 'var(--openbb-emerald)' : legPnl < 0 ? 'var(--openbb-crimson)' : 'var(--text-dim)',
+                              color: isBuy ? 'var(--text-dim)' : 'var(--openbb-emerald)',
                             }}
                           >
-                            {legPnl > 0 ? `+$${legPnl.toFixed(2)}` : legPnl < 0 ? `-$${Math.abs(legPnl).toFixed(2)}` : '$0.00'}
+                            {isBuy ? `-$${legTotal.toFixed(2)} (Cost)` : `+$${legTotal.toFixed(2)} (Proceeds)`}
                           </td>
                           <td style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--text-dim)' }}>
                             {leg.order_id ? `${leg.order_id.slice(0, 12)}…` : 'Reconciled Fill'}
