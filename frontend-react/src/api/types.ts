@@ -214,15 +214,33 @@ export interface ToTScenarioMatrix {
   ev_rankings?: any[];
 }
 
+export interface TradeLegDetail {
+  symbol?: string;
+  occ_symbol?: string;
+  side?: string;
+  qty?: number;
+  price?: number;
+  pnl_usd?: number;
+  order_id?: string;
+}
+
 export interface ClosedTradeRecord {
+  trade_id?: string;
   symbol: string;
   strategy?: string;
   status: string;
+  entry_price?: number;
+  exit_price?: number;
+  cost_or_credit_usd?: number;
+  profit_target_usd?: number;
+  stop_loss_usd?: number;
   pnl_usd?: number;
   exit_reason?: string;
   entry_date?: string;
   date?: string;
   exit_date?: string;
+  order_legs?: TradeLegDetail[];
+  created_at?: string;
 }
 
 export interface TradeStatsData {

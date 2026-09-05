@@ -41,6 +41,7 @@ import {
 } from './api/types';
 import { NewsSentimentTable } from './components/workspace/NewsSentimentTable';
 import { AgentStrategyFlow } from './components/workspace/AgentStrategyFlow';
+import { MultiLegTradeModal } from './components/drawers/MultiLegTradeModal';
 
 export const App: React.FC = () => {
   // Navigation & Modal State
@@ -48,6 +49,7 @@ export const App: React.FC = () => {
   const [isCopilotOpen, setIsCopilotOpen] = useState(false);
   const [isInspectorOpen, setIsInspectorOpen] = useState(false);
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
+  const [selectedTradeForInspect, setSelectedTradeForInspect] = useState<ClosedTradeRecord | null>(null);
 
   // Active Trading Selection
   const [selectedSymbol, setSelectedSymbol] = useState('SPX');
@@ -522,8 +524,22 @@ export const App: React.FC = () => {
                           const isProfit = pnl > 0;
                           const isLoss = pnl < 0;
                           return (
-                            <tr key={idx}>
-                              <td><strong style={{ color: 'var(--openbb-cyan)' }}>{t.symbol}</strong></td>
+                            <tr
+                              key={idx}
+                              onClick={() => setSelectedTradeForInspect(t)}
+                              title="Click to inspect multi-leg option contracts & Alpaca order receipts"
+                              style={{
+                                cursor: 'pointer',
+                                transition: 'all 0.15s ease-in-out',
+                              }}
+                              className="interactive-trade-row hover-lift"
+                            >
+                              <td>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                  <strong style={{ color: 'var(--openbb-cyan)' }}>{t.symbol}</strong>
+                                  <span style={{ fontSize: '0.62rem', color: 'var(--text-dim)', opacity: 0.8 }}>🔍</span>
+                                </div>
+                              </td>
                               <td>{t.strategy || 'THETA_CONDOR'}</td>
                               <td>
                                 <span className={`openbb-badge ${isProfit ? 'profit' : isLoss ? 'loss' : 'neutral'}`}>
@@ -716,6 +732,13 @@ export const App: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* 4. Multi-Leg Option Strategy Pop-Up Inspector Modal */}
+      <MultiLegTradeModal
+        isOpen={!!selectedTradeForInspect}
+        trade={selectedTradeForInspect}
+        onClose={() => setSelectedTradeForInspect(null)}
+      />
     </div>
   );
 };
