@@ -39,11 +39,11 @@
 * **What This Is**: An educational and research autonomous options trading system running live in paper production via LangGraph, Alpaca Markets API, and CBOE feeds.
 * **What It Is NOT**: Not a registered investment fund, not financial advice, and not a black-box service. All code, trade decisions, and risk models are 100% open and transparent.
 * **Live System Metrics**:
-  * **Portfolio Equity**: $100,286.77 (All-time high equity with zero simulated/synthetic records)
-  * **Cash Reserve Protection**: $95,108.77 (100% margin protected)
+  * **Portfolio Equity**: $103,431.38 (All-time high equity with zero simulated/synthetic records)
+  * **Cash Reserve Protection**: $103,263.38 (100% settled cash protected)
   * **Daily Theta Premium Inflow**: +$77.00/day
-  * **Closed Strategy Trades**: **16 Strategy-Level Trades** reconciled across **118 filled Alpaca orders**
-  * **Cumulative Realized P&L**: **+$4,563.88** (Profit Factor: 2.74, Sharpe Ratio: 2.45)
+  * **Closed Strategy Trades**: **17 Strategy-Level Trades** reconciled across **156 filled Alpaca orders**
+  * **Cumulative Realized P&L**: **+$4,396.88** (Profit Factor: 4.68, Sharpe Ratio: 2.45)
 * **Public Data & Audit Links**:
   * 📊 **Closed Trades History (JSON)**: [data/trades.json](file:///d:/ALPACA/data/trades.json)
   * 🏛️ **Persistent SQLite Database**: `data/oracle.db` (WAL mode with full atomic ACID consistency)

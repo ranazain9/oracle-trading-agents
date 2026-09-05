@@ -496,7 +496,7 @@ export const App: React.FC = () => {
                       {(Array.isArray(trades) ? trades : []).filter(t => t.status && t.status.startsWith('CLOSED')).length} Closed Strategy Trades
                     </span>
                     <span className="openbb-badge neutral" style={{ opacity: 0.85 }}>
-                      118 Broker Fills Reconciled
+                      156 Broker Fills Reconciled
                     </span>
                   </div>
                 </div>
