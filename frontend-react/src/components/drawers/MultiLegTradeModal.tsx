@@ -142,30 +142,33 @@ export const MultiLegTradeModal: React.FC<MultiLegTradeModalProps> = ({
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <button
               onClick={handleCopyJson}
-              className="openbb-button"
+              className="btn-terminal primary"
               style={{
                 fontSize: '0.72rem',
-                padding: '4px 10px',
+                padding: '5px 12px',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '5px',
+                cursor: 'pointer',
               }}
             >
-              {copied ? <Check size={12} color="var(--openbb-emerald)" /> : <Copy size={12} />}
-              {copied ? 'Copied' : 'Copy JSON'}
+              {copied ? <Check size={13} color="var(--openbb-emerald)" /> : <Copy size={13} />}
+              {copied ? 'Copied!' : 'Copy JSON'}
             </button>
             <button
               onClick={onClose}
-              className="openbb-button"
+              className="btn-terminal"
               style={{
-                padding: '5px',
+                padding: '5px 8px',
                 minWidth: 'auto',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                cursor: 'pointer',
               }}
+              title="Close (ESC)"
             >
-              <X size={16} />
+              <X size={15} />
             </button>
           </div>
         </div>
@@ -409,7 +412,16 @@ export const MultiLegTradeModal: React.FC<MultiLegTradeModalProps> = ({
           <span style={{ fontSize: '0.68rem', color: 'var(--text-dim)', fontFamily: 'var(--font-mono)' }}>
             ESC to close • Client Order ID: oracle_{trade.trade_id || 'pkg'}_mleg
           </span>
-          <button onClick={onClose} className="openbb-button" style={{ fontSize: '0.72rem', padding: '5px 14px' }}>
+          <button
+            onClick={onClose}
+            className="btn-terminal primary"
+            style={{
+              fontSize: '0.74rem',
+              padding: '6px 18px',
+              fontWeight: 700,
+              cursor: 'pointer',
+            }}
+          >
             Done
           </button>
         </div>
