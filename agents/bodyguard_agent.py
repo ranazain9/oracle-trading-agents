@@ -287,24 +287,38 @@ class BodyguardAgent:
         legs: List[dict]
     ):
         """
-        Atomically records the completed strategy package into data/trades.json and SQLite.
+        Atomically records or aggregates the completed strategy package into data/trades.json and SQLite.
+        Uses deterministic package IDs and upsert aggregation to prevent duplicate rows on repeated polling cycles.
         """
         closed_date = datetime.date.today().isoformat()
-        new_closed_trade = {
-            "trade_id": trade_id if "BROKER" not in trade_id else f"ORD-{int(datetime.datetime.utcnow().timestamp())}",
-            "symbol": underlying,
-            "strategy": strategy,
-            "status": status,
-            "entry_price": round(entry_px, 2),
-            "exit_price": round(exit_px, 2),
-            "cost_or_credit_usd": round(cost_usd, 2),
-            "profit_target_usd": round(cost_usd * 0.5, 2),
-            "stop_loss_usd": 150.0,
-            "pnl_usd": round(pnl_usd, 2),
-            "exit_reason": exit_reason,
-            "entry_date": closed_date,
-            "exit_date": closed_date,
-            "order_legs": [
+        today_tag = datetime.date.today().strftime("%Y%m%d")
+
+        # Deterministic trade ID: if synthesised from broker, use consistent daily strategy package key
+        if not trade_id or "BROKER" in trade_id or not trade_id.startswith("ORD-"):
+            clean_trade_id = f"ORD-{underlying}-{strategy}-{today_tag}"
+        else:
+            clean_trade_id = trade_id
+
+        # 1. Inspect existing trades in data/trades.json for upsert aggregation
+        try:
+            trades = []
+            if self.trades_file.exists():
+                with open(self.trades_file, "r", encoding="utf-8") as f:
+                    trades = json.load(f)
+
+            # Check if this strategy package or daily closed envelope already exists
+            existing_pkg = None
+            for t in trades:
+                if t.get("trade_id") == clean_trade_id or (
+                    t.get("symbol") == underlying
+                    and t.get("strategy") == strategy
+                    and t.get("exit_date") == closed_date
+                    and str(t.get("status", "")).startswith("CLOSED")
+                ):
+                    existing_pkg = t
+                    break
+
+            new_legs_formatted = [
                 {
                     "symbol": l.get("symbol"),
                     "occ_symbol": l.get("symbol"),
@@ -314,34 +328,61 @@ class BodyguardAgent:
                     "pnl_usd": float(l.get("unrealized_pl", 0.0))
                 }
                 for l in legs
-            ],
-            "created_at": datetime.datetime.utcnow().isoformat() + "Z"
-        }
+            ]
 
-        # 1. Update data/trades.json
-        try:
-            trades = []
-            if self.trades_file.exists():
-                with open(self.trades_file, "r", encoding="utf-8") as f:
-                    trades = json.load(f)
-            
-            # Remove any matching open placeholder
-            trades = [t for t in trades if t.get("trade_id") != new_closed_trade["trade_id"]]
-            trades.append(new_closed_trade)
+            if existing_pkg:
+                # Merge legs avoiding duplicates
+                existing_legs = existing_pkg.get("order_legs") or []
+                existing_symbols = {l.get("symbol") for l in existing_legs if isinstance(l, dict)}
+                for nl in new_legs_formatted:
+                    if nl.get("symbol") not in existing_symbols:
+                        existing_legs.append(nl)
+
+                existing_pkg["order_legs"] = existing_legs
+                existing_pkg["pnl_usd"] = round(pnl_usd, 2)
+                existing_pkg["exit_price"] = round(exit_px, 2)
+                existing_pkg["cost_or_credit_usd"] = round(max(float(existing_pkg.get("cost_or_credit_usd", 0.0)), cost_usd), 2)
+                existing_pkg["status"] = status
+                existing_pkg["exit_reason"] = exit_reason
+                existing_pkg["exit_date"] = closed_date
+                final_record = existing_pkg
+                print(f"💾 [BodyguardAgent] Aggregated existing package {clean_trade_id} in trades.json (P&L: ${pnl_usd:+.2f})")
+            else:
+                final_record = {
+                    "trade_id": clean_trade_id,
+                    "symbol": underlying,
+                    "strategy": strategy,
+                    "status": status,
+                    "entry_price": round(entry_px, 2),
+                    "exit_price": round(exit_px, 2),
+                    "cost_or_credit_usd": round(cost_usd, 2),
+                    "profit_target_usd": round(cost_usd * 0.5, 2),
+                    "stop_loss_usd": 150.0,
+                    "pnl_usd": round(pnl_usd, 2),
+                    "exit_reason": exit_reason,
+                    "entry_date": closed_date,
+                    "exit_date": closed_date,
+                    "order_legs": new_legs_formatted,
+                    "created_at": datetime.datetime.utcnow().isoformat() + "Z"
+                }
+                trades = [t for t in trades if t.get("trade_id") != clean_trade_id]
+                trades.append(final_record)
+                print(f"💾 [BodyguardAgent] Persisted new authentic closed trade {clean_trade_id} to trades.json")
 
             with open(self.trades_file, "w", encoding="utf-8") as f:
                 json.dump(trades, f, indent=2)
-            print(f"💾 [BodyguardAgent] Persisted authentic closed trade {new_closed_trade['trade_id']} to trades.json")
         except Exception as e:
             print(f"[!] Error updating trades.json: {e}", flush=True)
+            final_record = None
 
         # 2. Update SQLite database
-        try:
-            from backend.db.repositories import TradeRepository
-            TradeRepository.insert_trade(new_closed_trade)
-            print(f"💾 [BodyguardAgent] Synced closed trade {new_closed_trade['trade_id']} to SQLite oracle.db")
-        except Exception as e:
-            print(f"[!] Error syncing closed trade to SQLite: {e}", flush=True)
+        if final_record:
+            try:
+                from backend.db.repositories import TradeRepository
+                TradeRepository.insert_trade(final_record)
+                print(f"💾 [BodyguardAgent] Synced closed trade {final_record['trade_id']} to SQLite oracle.db")
+            except Exception as e:
+                print(f"[!] Error syncing closed trade to SQLite: {e}", flush=True)
 
     def _calculate_pnl(self, trade: dict, current_price: float) -> Dict[str, Any]:
         """Calculates theoretical mark-to-market P&L for options structures."""
