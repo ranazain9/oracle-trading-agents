@@ -107,6 +107,19 @@ def _create_tables_if_not_exists(conn: sqlite3.Connection):
             net_vega REAL DEFAULT 0.0
         );
         """)
+
+        # 5. Daemon Autonomous Runs Table
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS daemon_runs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            run_id TEXT NOT NULL,
+            phase TEXT NOT NULL,
+            timestamp TEXT NOT NULL,
+            status TEXT NOT NULL,
+            summary TEXT,
+            details TEXT
+        );
+        """)
         conn.commit()
     except Exception as e:
         logger.warning(f"Auto-table creation notice: {e}")
