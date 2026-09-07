@@ -7,9 +7,11 @@
 [![React 19](https://img.shields.io/badge/React%2019-Vite%20UI-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
 [![WebSockets](https://img.shields.io/badge/WebSockets-Real--Time%20Stream-010101?style=for-the-badge&logo=socketdotio&logoColor=white)](https://websockets.spec.whatwg.org)
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue?style=for-the-badge)](LICENSE)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg?style=for-the-badge)](CODE_OF_CONDUCT.md)
 
-> 🌐 **Live Cloud Deployment & Command Center:** [https://oracle-trading-agents.onrender.com/](https://oracle-trading-agents.onrender.com/)
+> 🌐 **Live Cloud Deployment & Command Center:** [https://oracle-trading-agents.onrender.com/](https://oracle-trading-agents.onrender.com/)  
+> ⭐ **Star This Repository:** If you find this multi-agent quantitative options architecture useful, please consider giving it a star on GitHub!
 >
 > **ORACLE** is an institutional-grade, fully autonomous algorithmic options trading fund built for the **Alpaca AI Trading Agents Hackathon**. Powered by a coordinated **10-Agent LangGraph Swarm & 24+ Sub-Agents**, ORACLE unifies **Tree-of-Thoughts (ToT) Expected Value ($EV$) modeling**, **Asymmetric Red Team self-critique (`temp=0.0`)**, **7 quantitative options strategies**, **Unusual Options Flow / Dark Pool tracking**, **CBOE Strike Grid Snapping**, **OCC 21-character option routing**, **Midpoint Limit Pricing**, and a **60s/15s Adaptive Risk Bodyguard** paired with a full-stack **FastAPI enterprise backend** and a **React 19 glassmorphic command center**.
 
@@ -223,6 +225,19 @@ flowchart TD
     P1 --> P2 --> P3 --> P4 --> P5 --> P1
 ```
 
+### 🕒 24/7 Cognitive Planning vs. Broker Execution Gatekeeper
+
+A common pitfall in algorithmic trading is shutting down AI cognition when exchanges close. ORACLE solves this with an institutional **Two-Tier Separation Architecture**:
+
+1. **Continuous Cognitive Planning (Active 24/7):**
+   * The **Strategy Brain (Agent 1)** and **Market Scout (Agent 2)** can analyze closing auction data, macroeconomic catalysts, implied volatility skew, and historical distributions 24 hours a day, 7 days a week.
+   * Just like human quantitative research desks who formulate setups over evenings, weekends, and holidays, ORACLE formulates and validates mathematical blueprints ahead of time.
+2. **Broker Market Hours Gatekeeper (`check_trade_approval_edge`):**
+   * Real portfolio capital is strictly protected by the broker market clock.
+   * Before any order can reach the Alpaca TradingClient, the system evaluates live NYSE/CBOE market hours.
+   * If the market is **CLOSED** (e.g., overnight, weekends, or US Federal Holidays such as **Labor Day**), execution is automatically diverted to the **`capital_preservation_node`**, locking 100% of capital safely in cash.
+   * This eliminates off-hours order rejections, protects against illiquid gap slippage, and ensures 100% transparency with zero risk.
+
 ---
 
 ## 📈 The 7 Quantitative Options Strategies
@@ -274,10 +289,12 @@ ORACLE features a complete dual-tier architecture:
   * SQLite/SQLModel storage for trade signals, executions, and telemetry.
 
 ### 2. Modern React 19 Glassmorphic UI (`frontend-react/`)
-* Live Interactive Swarm Execution Graph.
-* Real-Time P&L, Equity Curve, and Greeks Exposure Charts.
-* Human-in-the-Loop (HITL) Trade Review Modal.
-* Embedded AI Copilot Terminal for natural-language fund queries.
+* **Interactive 10-Agent Decision Inspection:** Click any agent card in the cognitive architecture to pop open its live decision readout, ToT payoffs, Red Team critique, and trigger on-demand live test passes.
+* **Broker Market Clock & Exchange Holiday Sync:** Real-time synchronization with Alpaca exchange calendars dynamically distinguishing regular sessions (`NYSE LIVE`), weekend pauses (`CLOSED`), and US Federal Holidays (`HOLIDAY`).
+* **Live Interactive Swarm Execution Graph:** Real-time state machine visualizer tracing active nodes across the LangGraph state machine.
+* **Real-Time P&L, Equity Curve, and Greeks Exposure Charts:** Black-Scholes Delta, Gamma, Theta, and Vega risk gauges.
+* **Human-in-the-Loop (HITL) Trade Review Modal:** Dual-key approval gate for high-capital proposals and risk overrides.
+* **Embedded AI Copilot Terminal:** Powered by LangChain LCEL and real-time RAG context injection for natural-language portfolio analysis.
 
 ---
 
