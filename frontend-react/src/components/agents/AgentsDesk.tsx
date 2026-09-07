@@ -246,46 +246,36 @@ export const AgentsDesk: React.FC<AgentsDeskProps> = ({
           </span>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '8px' }}>
+        <div className="agents-matrix-grid">
           {agents.map((a) => (
             <div
               key={a.id}
-              className="openbb-card"
+              className="agent-card-terminal"
               onClick={() => setInspectedAgent(a)}
               title={`Click to inspect Agent ${a.id} (${a.name}) live decision & telemetry`}
-              style={{
-                background: 'var(--openbb-bg-surface)',
-                padding: '9px 11px',
-                cursor: 'pointer',
-                transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
-                border: '1px solid var(--openbb-border)',
-                position: 'relative',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = 'var(--openbb-cyan)';
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 6px 18px rgba(0, 229, 255, 0.12)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = 'var(--openbb-border)';
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-pure)' }}>
-                  {a.icon} {a.name}
-                </span>
-                <span className="openbb-badge profit" style={{ fontSize: '0.58rem' }}>ONLINE</span>
+              <div>
+                <div className="agent-card-header">
+                  <span className="agent-card-title" title={a.name}>
+                    <span style={{ fontSize: '0.85rem' }}>{a.icon}</span>
+                    <span>{a.name}</span>
+                  </span>
+                  <div className="agent-card-badges">
+                    <span className="agent-card-number">#{String(a.id).padStart(2, '0')}</span>
+                    <span className="openbb-badge profit" style={{ fontSize: '0.52rem', padding: '1px 4px' }}>ONLINE</span>
+                  </div>
+                </div>
+                <div className="agent-card-role" title={a.role}>{a.role}</div>
               </div>
-              <div style={{ fontSize: '0.70rem', color: 'var(--text-pure)', marginTop: '2px' }}>{a.role}</div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
-                <div style={{ fontSize: '0.64rem', fontFamily: 'var(--font-mono)', color: 'var(--openbb-emerald)' }}>
+
+              <div className="agent-card-footer">
+                <div className="agent-card-regime" title={a.regime}>
                   {a.regime}
                 </div>
-                <span style={{ fontSize: '0.62rem', color: 'var(--openbb-cyan)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '2px' }}>
-                  Inspect →
-                </span>
+                <div className="agent-inspect-btn">
+                  <span>Inspect</span>
+                  <span className="arrow-icon">→</span>
+                </div>
               </div>
             </div>
           ))}
