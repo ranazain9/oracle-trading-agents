@@ -97,6 +97,7 @@ export const App: React.FC = () => {
   const [trades, setTrades] = useState<ClosedTradeRecord[]>(() => getStored('trades', []));
   const [news, setNews] = useState<NewsItem[]>(() => getStored('news', []));
   const [daemonStatus, setDaemonStatus] = useState<DaemonStatusData | null>(() => getStored('daemon', null));
+  const [marketClock, setMarketClock] = useState<any>(() => getStored('marketClock', null));
   const [pipelineState, setPipelineState] = useState<PipelineState | null>(null);
   const [notification, setNotification] = useState<{
     id: number;
@@ -152,6 +153,7 @@ export const App: React.FC = () => {
         if (data.trades) { setTrades(data.trades); setStored('trades', data.trades); }
         if (data.news) { setNews(data.news); setStored('news', data.news); }
         if (data.daemon) { setDaemonStatus(data.daemon); setStored('daemon', data.daemon); }
+        if (data.market_clock) { setMarketClock(data.market_clock); setStored('marketClock', data.market_clock); }
       }
     } catch (err) {
       console.warn('Bootstrap sync warning, falling back to cached state', err);
@@ -207,7 +209,9 @@ export const App: React.FC = () => {
       const day = estDate.getDay();
       const currentMin = estDate.getHours() * 60 + estDate.getMinutes();
       const isWeekday = day >= 1 && day <= 5;
-      const isOpen = isWeekday && currentMin >= 570 && currentMin < 960;
+      const isOpen = marketClock !== null && marketClock !== undefined
+        ? Boolean(marketClock.is_open)
+        : (isWeekday && currentMin >= 570 && currentMin < 960);
       setIsMarketOpen((prev) => {
         if (prev !== isOpen) {
           // If market status toggled in real time, immediately refresh data
@@ -219,7 +223,7 @@ export const App: React.FC = () => {
     checkMarket();
     const timer = setInterval(checkMarket, 1000);
     return () => clearInterval(timer);
-  }, [loadData]);
+  }, [loadData, marketClock]);
 
   useEffect(() => {
     loadData();
@@ -414,6 +418,7 @@ export const App: React.FC = () => {
         <Header
           health={health}
           isMarketOpen={isMarketOpen}
+          marketClock={marketClock}
           isAutoPilotEnabled={daemonStatus?.auto_pilot_enabled ?? true}
           onToggleAutoPilot={handleToggleAutoPilot}
           onRunPipeline={handleRunPipeline}

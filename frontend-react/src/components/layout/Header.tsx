@@ -5,6 +5,12 @@ import { SystemHealth } from '../../api/types';
 interface HeaderProps {
   health: SystemHealth | null;
   isMarketOpen: boolean;
+  marketClock?: {
+    is_open: boolean;
+    next_open?: string;
+    next_close?: string;
+    timestamp?: string;
+  } | null;
   isAutoPilotEnabled?: boolean;
   onToggleAutoPilot?: () => void;
   onRunPipeline: () => void;
@@ -17,7 +23,8 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({
   health,
-  isMarketOpen,
+  isMarketOpen: propIsMarketOpen,
+  marketClock,
   isAutoPilotEnabled = true,
   onToggleAutoPilot,
   onRunPipeline,
@@ -31,6 +38,10 @@ export const Header: React.FC<HeaderProps> = ({
   const [sessionDetail, setSessionDetail] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const isMarketOpen = marketClock !== undefined && marketClock !== null
+    ? Boolean(marketClock.is_open)
+    : Boolean(propIsMarketOpen);
 
   useEffect(() => {
     const update = () => {
@@ -50,9 +61,12 @@ export const Header: React.FC<HeaderProps> = ({
 
       const isWeekend = day === 0 || day === 6;
       const isRegularHours = !isWeekend && totalMinutes >= 570 && totalMinutes < 960;
+      const isHoliday = isRegularHours && marketClock !== undefined && marketClock !== null && !marketClock.is_open;
 
-      if (isRegularHours) {
+      if (isMarketOpen) {
         setSessionDetail('Live Session • Closes 04:00 PM EST');
+      } else if (isHoliday) {
+        setSessionDetail('Exchange Holiday • Opens Tomorrow 09:30 AM EST');
       } else {
         if (day === 5 && totalMinutes >= 960) {
           setSessionDetail('Weekend • Opens Mon 09:30 AM EST');
@@ -71,7 +85,7 @@ export const Header: React.FC<HeaderProps> = ({
     update();
     const interval = setInterval(update, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [isMarketOpen, marketClock]);
 
   // Close mobile dropdown when clicking outside
   useEffect(() => {
@@ -126,7 +140,7 @@ export const Header: React.FC<HeaderProps> = ({
           }}
         >
           <span className={isMarketOpen ? 'pulse-dot-green' : 'pulse-dot-amber'} />
-          <span>{isMarketOpen ? 'NYSE LIVE' : 'CLOSED'}</span>
+          <span>{isMarketOpen ? 'NYSE LIVE' : sessionDetail.includes('Holiday') ? 'HOLIDAY' : 'CLOSED'}</span>
         </div>
 
         {/* 24/7 Auto-Pilot Status */}

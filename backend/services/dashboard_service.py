@@ -267,7 +267,13 @@ class DashboardCacheService:
                     "sentiment_label": "BULLISH",
                     "timestamp": datetime.datetime.utcnow().isoformat()
                 }
-            ]
+            ],
+            "market_clock": {
+                "is_open": False,
+                "timestamp": datetime.datetime.utcnow().isoformat(),
+                "next_open": "09:30:00 EST",
+                "next_close": "16:00:00 EST"
+            }
         }
 
     def get_bootstrap_data(self) -> Dict[str, Any]:
@@ -318,6 +324,14 @@ class DashboardCacheService:
                     }
             except Exception as e:
                 logger.debug(f"Account cache sync notice: {e}")
+
+            # 1b. Fetch Real-time Broker Market Clock
+            try:
+                clock = self._alpaca_tool.get_market_clock()
+                with self._lock:
+                    self._cache["market_clock"] = clock
+            except Exception as e:
+                logger.debug(f"Market clock sync notice: {e}")
 
             # 2. Fetch Open Positions
             try:

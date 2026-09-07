@@ -308,6 +308,12 @@ export interface DashboardBootstrapData {
   strategies?: StrategyOption[];
   news?: NewsItem[];
   daemon?: DaemonStatusData;
+  market_clock?: {
+    is_open: boolean;
+    next_open?: string;
+    next_close?: string;
+    timestamp?: string;
+  };
 }
 
 export interface ChatMessage {
