@@ -1,6 +1,7 @@
-import React from 'react';
-import { MacroSentinelData, PortfolioHedgeData, HitlProposal, HitlHistoryRecord, DaemonStatusData } from '../../api/types';
+import React, { useState } from 'react';
+import { MacroSentinelData, PortfolioHedgeData, HitlProposal, HitlHistoryRecord, DaemonStatusData, UniverseAsset, PortfolioGreeks, TradeStatsData } from '../../api/types';
 import { Zap, Clock, Shield, Activity, Calendar, Play, CheckCircle } from 'lucide-react';
+import { AgentInspectorModal, AgentInfo } from '../modals/AgentInspectorModal';
 
 interface AgentsDeskProps {
   macro: MacroSentinelData | null;
@@ -8,10 +9,14 @@ interface AgentsDeskProps {
   pendingProposals: HitlProposal[];
   hitlHistory: HitlHistoryRecord[];
   daemonStatus?: DaemonStatusData | null;
+  universe?: UniverseAsset[];
+  greeks?: PortfolioGreeks | null;
+  stats?: TradeStatsData | null;
   onApproveProposal: (id: string) => void;
   onRejectProposal: (id: string) => void;
   onToggleAutoPilot?: () => void;
   onRunImmediateCycle?: () => void;
+  onOpenCopilot?: () => void;
 }
 
 export const AgentsDesk: React.FC<AgentsDeskProps> = ({
@@ -20,11 +25,17 @@ export const AgentsDesk: React.FC<AgentsDeskProps> = ({
   pendingProposals,
   hitlHistory,
   daemonStatus,
+  universe,
+  greeks,
+  stats,
   onApproveProposal,
   onRejectProposal,
   onToggleAutoPilot,
   onRunImmediateCycle,
+  onOpenCopilot,
 }) => {
+  const [inspectedAgent, setInspectedAgent] = useState<AgentInfo | null>(null);
+
   const proposals = Array.isArray(pendingProposals) ? pendingProposals : [];
   const history = Array.isArray(hitlHistory) ? hitlHistory : [];
 
@@ -237,7 +248,30 @@ export const AgentsDesk: React.FC<AgentsDeskProps> = ({
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '8px' }}>
           {agents.map((a) => (
-            <div key={a.id} className="openbb-card" style={{ background: 'var(--openbb-bg-surface)', padding: '8px 10px' }}>
+            <div
+              key={a.id}
+              className="openbb-card"
+              onClick={() => setInspectedAgent(a)}
+              title={`Click to inspect Agent ${a.id} (${a.name}) live decision & telemetry`}
+              style={{
+                background: 'var(--openbb-bg-surface)',
+                padding: '9px 11px',
+                cursor: 'pointer',
+                transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
+                border: '1px solid var(--openbb-border)',
+                position: 'relative',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = 'var(--openbb-cyan)';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 6px 18px rgba(0, 229, 255, 0.12)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = 'var(--openbb-border)';
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-pure)' }}>
                   {a.icon} {a.name}
@@ -245,8 +279,13 @@ export const AgentsDesk: React.FC<AgentsDeskProps> = ({
                 <span className="openbb-badge profit" style={{ fontSize: '0.58rem' }}>ONLINE</span>
               </div>
               <div style={{ fontSize: '0.70rem', color: 'var(--text-pure)', marginTop: '2px' }}>{a.role}</div>
-              <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: 'var(--openbb-emerald)', marginTop: '4px' }}>
-                {a.regime}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
+                <div style={{ fontSize: '0.64rem', fontFamily: 'var(--font-mono)', color: 'var(--openbb-emerald)' }}>
+                  {a.regime}
+                </div>
+                <span style={{ fontSize: '0.62rem', color: 'var(--openbb-cyan)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '2px' }}>
+                  Inspect →
+                </span>
               </div>
             </div>
           ))}
@@ -377,6 +416,19 @@ export const AgentsDesk: React.FC<AgentsDeskProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Interactive Agent Decision Pop-up Modal */}
+      <AgentInspectorModal
+        agent={inspectedAgent}
+        isOpen={Boolean(inspectedAgent)}
+        onClose={() => setInspectedAgent(null)}
+        macro={macro}
+        hedge={hedge}
+        universe={universe}
+        greeks={greeks}
+        stats={stats}
+        onOpenCopilot={onOpenCopilot}
+      />
     </div>
   );
 };

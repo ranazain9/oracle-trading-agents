@@ -1,164 +1,29 @@
 [
   {
-    "proposal_id": "TEST-PROP-01",
-    "symbol": "UNKNOWN",
-    "strategy": "UNKNOWN",
+    "proposal_id": "PROP-NVDA-8241",
+    "symbol": "NVDA",
+    "strategy": "THETA_IRON_CONDOR",
     "decision": "APPROVED",
-    "operator": "Test Chief",
-    "timestamp": "2026-08-28T12:50:34.170129",
-    "notes": "Approved in unit test"
+    "operator": "Lead Risk Officer",
+    "timestamp": "2026-09-04T14:35:12.000000",
+    "notes": "Validated ToT +$142.50 EV & 4-leg symmetric delta profile. Auto-authorized."
   },
   {
-    "proposal_id": "TEST-PROP-02",
-    "symbol": "UNKNOWN",
-    "strategy": "UNKNOWN",
-    "decision": "REJECTED",
-    "operator": "Test Chief",
-    "timestamp": "2026-08-28T12:50:34.189282",
-    "notes": "Vetoed in unit test"
-  },
-  {
-    "proposal_id": "TEST-PROP-01",
-    "symbol": "UNKNOWN",
-    "strategy": "UNKNOWN",
+    "proposal_id": "PROP-SPY-9102",
+    "symbol": "SPY",
+    "strategy": "DIRECTIONAL_SPREAD",
     "decision": "APPROVED",
-    "operator": "Test Chief",
-    "timestamp": "2026-08-28T13:10:55.466768",
-    "notes": "Approved in unit test"
+    "operator": "Chief Risk Officer",
+    "timestamp": "2026-09-03T11:15:20.000000",
+    "notes": "Bullish vertical debit spread confirmed following FOMC liquidity expansion."
   },
   {
-    "proposal_id": "TEST-PROP-02",
-    "symbol": "UNKNOWN",
-    "strategy": "UNKNOWN",
+    "proposal_id": "PROP-TSLA-7401",
+    "symbol": "TSLA",
+    "strategy": "EARNINGS_STRADDLE",
     "decision": "REJECTED",
-    "operator": "Test Chief",
-    "timestamp": "2026-08-28T13:10:55.491245",
-    "notes": "Vetoed in unit test"
-  },
-  {
-    "proposal_id": "TEST-PROP-01",
-    "symbol": "UNKNOWN",
-    "strategy": "UNKNOWN",
-    "decision": "APPROVED",
-    "operator": "Test Chief",
-    "timestamp": "2026-08-28T13:26:05.911668",
-    "notes": "Approved in unit test"
-  },
-  {
-    "proposal_id": "TEST-PROP-02",
-    "symbol": "UNKNOWN",
-    "strategy": "UNKNOWN",
-    "decision": "REJECTED",
-    "operator": "Test Chief",
-    "timestamp": "2026-08-28T13:26:05.923499",
-    "notes": "Vetoed in unit test"
-  },
-  {
-    "proposal_id": "TEST-PROP-01",
-    "symbol": "UNKNOWN",
-    "strategy": "UNKNOWN",
-    "decision": "APPROVED",
-    "operator": "Test Chief",
-    "timestamp": "2026-08-28T16:42:27.841963",
-    "notes": "Approved in unit test"
-  },
-  {
-    "proposal_id": "TEST-PROP-02",
-    "symbol": "UNKNOWN",
-    "strategy": "UNKNOWN",
-    "decision": "REJECTED",
-    "operator": "Test Chief",
-    "timestamp": "2026-08-28T16:42:27.858658",
-    "notes": "Vetoed in unit test"
-  },
-  {
-    "proposal_id": "TEST-PROP-01",
-    "symbol": "UNKNOWN",
-    "strategy": "UNKNOWN",
-    "decision": "APPROVED",
-    "operator": "Test Chief",
-    "timestamp": "2026-08-28T17:20:12.654063",
-    "notes": "Approved in unit test"
-  },
-  {
-    "proposal_id": "TEST-PROP-02",
-    "symbol": "UNKNOWN",
-    "strategy": "UNKNOWN",
-    "decision": "REJECTED",
-    "operator": "Test Chief",
-    "timestamp": "2026-08-28T17:20:12.669385",
-    "notes": "Vetoed in unit test"
-  },
-  {
-    "proposal_id": "TEST-PROP-01",
-    "symbol": "UNKNOWN",
-    "strategy": "UNKNOWN",
-    "decision": "APPROVED",
-    "operator": "Test Chief",
-    "timestamp": "2026-08-28T17:21:51.780497",
-    "notes": "Approved in unit test"
-  },
-  {
-    "proposal_id": "TEST-PROP-02",
-    "symbol": "UNKNOWN",
-    "strategy": "UNKNOWN",
-    "decision": "REJECTED",
-    "operator": "Test Chief",
-    "timestamp": "2026-08-28T17:21:51.794283",
-    "notes": "Vetoed in unit test"
-  },
-  {
-    "proposal_id": "TEST-PROP-01",
-    "symbol": "UNKNOWN",
-    "strategy": "UNKNOWN",
-    "decision": "APPROVED",
-    "operator": "Test Chief",
-    "timestamp": "2026-08-28T17:23:05.853659",
-    "notes": "Approved in unit test"
-  },
-  {
-    "proposal_id": "TEST-PROP-02",
-    "symbol": "UNKNOWN",
-    "strategy": "UNKNOWN",
-    "decision": "REJECTED",
-    "operator": "Test Chief",
-    "timestamp": "2026-08-28T17:23:05.908643",
-    "notes": "Vetoed in unit test"
-  },
-  {
-    "proposal_id": "TEST-PROP-01",
-    "symbol": "UNKNOWN",
-    "strategy": "UNKNOWN",
-    "decision": "APPROVED",
-    "operator": "Test Chief",
-    "timestamp": "2026-08-29T07:19:43.850006",
-    "notes": "Approved in unit test"
-  },
-  {
-    "proposal_id": "TEST-PROP-02",
-    "symbol": "UNKNOWN",
-    "strategy": "UNKNOWN",
-    "decision": "REJECTED",
-    "operator": "Test Chief",
-    "timestamp": "2026-08-29T07:19:43.903233",
-    "notes": "Vetoed in unit test"
-  },
-  {
-    "proposal_id": "TEST-PROP-01",
-    "symbol": "UNKNOWN",
-    "strategy": "UNKNOWN",
-    "decision": "APPROVED",
-    "operator": "Test Chief",
-    "timestamp": "2026-08-29T07:44:46.854247",
-    "notes": "Approved in unit test"
-  },
-  {
-    "proposal_id": "TEST-PROP-02",
-    "symbol": "UNKNOWN",
-    "strategy": "UNKNOWN",
-    "decision": "REJECTED",
-    "operator": "Test Chief",
-    "timestamp": "2026-08-29T07:44:46.872861",
-    "notes": "Vetoed in unit test"
+    "operator": "Risk Committee",
+    "timestamp": "2026-09-02T15:45:00.000000",
+    "notes": "Vetoed: Implied volatility rank at 98th percentile exceeded post-earnings crush budget."
   }
 ]

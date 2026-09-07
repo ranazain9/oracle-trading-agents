@@ -587,10 +587,14 @@ export const App: React.FC = () => {
               pendingProposals={pendingProposals}
               hitlHistory={hitlHistory}
               daemonStatus={daemonStatus}
+              universe={universe}
+              greeks={greeks}
+              stats={stats}
               onApproveProposal={handleApproveProposal}
               onRejectProposal={handleRejectProposal}
               onToggleAutoPilot={handleToggleAutoPilot}
               onRunImmediateCycle={handleRunImmediateDaemonCycle}
+              onOpenCopilot={() => setIsCopilotOpen(true)}
             />
           )}
 
