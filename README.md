@@ -155,9 +155,14 @@ flowchart TD
 ## 🧠 How Each Agent Operates
 
 ### 1. 🧠 Strategy Brain Agent (`agents/strategy_brain_agent.py`)
-* **Multi-Branch ToT Evaluation:** Evaluates candidates across 3 forward market paths ($+4.5\%, 0\%, -4.5\%$) calculating net mathematical Expectancy ($EV$).
-* **Adversarial Red Team Audit:** Sub-agent executes a deterministic zero-temperature (`temp=0.0`) critique identifying volatility crush risks and low open-interest traps.
-* **Bayesian Position Sizing:** Shrinks empirical win rates ($M=15$) into a strict **`$450 – $600`** allocation corridor.
+* **6-Pass Cognitive Architecture:**
+  1. *Pass 1 (Proposer Thesis):* Evaluates universe candidates across 3 forward market paths ($+2.5\%, 0\%, -2.5\%$) calculating probability-weighted Tree-of-Thoughts Expected Value ($EV$).
+  2. *Pass 2 (Asymmetric Red Team Critique):* Independent adversarial sub-agent runs at `temperature=0.0` to attack trade thesis, flagging assignment traps, IV crush, and catalyst timing.
+  3. *Pass 3 (Sector Concentration Guard):* Strictly enforces max concurrent risk units across Semiconductors, Mega-Cap Tech, and Cyclicals to prevent sector concentration.
+  4. *Pass 4 (Deterministic 4-Hard-Veto Gatekeeper):* Validates liquidity depth ($\ge 500$ OI), spread tightness ($\le 5\%$), IV Rank ($\ge 30\%$ for credit, $\le 50\%$ for debit), and break-even feasibility.
+  5. *Pass 5 (Runner-Up Fallback Engine):* If Candidate #1 fails any gatekeeper veto or sector test, the brain automatically re-sorts remaining universe candidates by highest alternative ToT EV, stress-tests Candidate #2, and executes without halting.
+  6. *Pass 6 (Bayesian-Shrunk Quarter-Kelly Sizing):* Shrinks empirical win rate toward a conservative 55% prior ($M=15$), bounding risk allocations within **`$450 – $600`** scaled by the Macro Shock Index (MSI).
+* **Trade Rationale & Candidate Rejection Matrix:** Generates an explainable reasoning matrix outlining exactly why the winning ticker was selected (EV, IV Rank, institutional sweep flow) and why all alternatives were disqualified (e.g., TSLA Red-Team veto, MSFT sub-30% IV floor, AAPL low EV).
 
 ### 2. ⚡ Execution Trader Agent (`agents/trader_agent.py`)
 * **CBOE Strike Grid Snapping:** Snaps strikes to standard exchange intervals ($1.00, $2.50, $5.00).
@@ -290,6 +295,7 @@ ORACLE features a complete dual-tier architecture:
 
 ### 2. Modern React 19 Glassmorphic UI (`frontend-react/`)
 * **Interactive 10-Agent Decision Inspection:** Click any agent card in the cognitive architecture to pop open its live decision readout, ToT payoffs, Red Team critique, and trigger on-demand live test passes.
+* **Interactive "Why Did the Brain Pick This Trade?" Rationale Modal:** Click the interactive `💡 Why {Symbol}? →` badge on Step 3 of the Strategy Flow or inside the Strategy Brain Inspector to view the full autonomous rationale, candidate rejection matrix (e.g. TSLA, MSFT, AAPL, AMZN), multi-leg spread structure breakdown, and active profit/stop-loss exit rules.
 * **Broker Market Clock & Exchange Holiday Sync:** Real-time synchronization with Alpaca exchange calendars dynamically distinguishing regular sessions (`NYSE LIVE`), weekend pauses (`CLOSED`), and US Federal Holidays (`HOLIDAY`).
 * **Live Interactive Swarm Execution Graph:** Real-time state machine visualizer tracing active nodes across the LangGraph state machine.
 * **Real-Time P&L, Equity Curve, and Greeks Exposure Charts:** Black-Scholes Delta, Gamma, Theta, and Vega risk gauges.
