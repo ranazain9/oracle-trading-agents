@@ -42,12 +42,14 @@ import {
 import { NewsSentimentTable } from './components/workspace/NewsSentimentTable';
 import { AgentStrategyFlow } from './components/workspace/AgentStrategyFlow';
 import { MultiLegTradeModal } from './components/drawers/MultiLegTradeModal';
+import { AgentInspectorModal, AgentInfo } from './components/modals/AgentInspectorModal';
 
 export const App: React.FC = () => {
   // Navigation & Modal State
   const [activeTab, setActiveTab] = useState<TabKey>('dashboard');
   const [isCopilotOpen, setIsCopilotOpen] = useState(false);
   const [isInspectorOpen, setIsInspectorOpen] = useState(false);
+  const [inspectedAgent, setInspectedAgent] = useState<AgentInfo | null>(null);
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
   const [selectedTradeForInspect, setSelectedTradeForInspect] = useState<ClosedTradeRecord | null>(null);
 
@@ -461,6 +463,15 @@ export const App: React.FC = () => {
                   setSelectedStrategy(stratId);
                   showToast(`Strategy Selected: ${stratId}`, 'info');
                 }}
+                onInspectStrategyBrain={() =>
+                  setInspectedAgent({
+                    id: 3,
+                    name: 'Strategy Brain',
+                    role: 'ToT Scenarios & Red Team',
+                    regime: 'temp=0.0 Stress Test',
+                    icon: '🧠',
+                  })
+                }
               />
 
               {/* 4. Full-Width Quantitative Watchlist Table */}
@@ -640,6 +651,21 @@ export const App: React.FC = () => {
         isOpen={isInspectorOpen}
         onClose={() => setIsInspectorOpen(false)}
         state={pipelineState}
+      />
+
+      <AgentInspectorModal
+        agent={inspectedAgent}
+        isOpen={Boolean(inspectedAgent)}
+        onClose={() => setInspectedAgent(null)}
+        macro={macro}
+        hedge={hedge}
+        universe={universe}
+        greeks={greeks}
+        stats={stats}
+        onOpenCopilot={() => {
+          setInspectedAgent(null);
+          setIsCopilotOpen(true);
+        }}
       />
 
       <CommandPalette

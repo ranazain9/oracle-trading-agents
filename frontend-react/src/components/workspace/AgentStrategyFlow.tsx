@@ -7,6 +7,7 @@ interface AgentStrategyFlowProps {
   selectedStrategy: string;
   strategies: StrategyOption[];
   onSelectStrategy: (stratId: string) => void;
+  onInspectStrategyBrain?: () => void;
 }
 
 export const AgentStrategyFlow: React.FC<AgentStrategyFlowProps> = ({
@@ -14,6 +15,7 @@ export const AgentStrategyFlow: React.FC<AgentStrategyFlowProps> = ({
   selectedStrategy,
   strategies,
   onSelectStrategy,
+  onInspectStrategyBrain,
 }) => {
   const pipelineSteps = [
     {
@@ -184,6 +186,34 @@ export const AgentStrategyFlow: React.FC<AgentStrategyFlowProps> = ({
                 <div style={{ color: 'var(--text-dim)', fontSize: '0.66rem', fontFamily: 'var(--font-mono)' }}>
                   {step.sub}
                 </div>
+                {step.step === 3 && onInspectStrategyBrain && (
+                  <div
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onInspectStrategyBrain();
+                    }}
+                    style={{
+                      marginTop: '6px',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      padding: '2px 8px',
+                      borderRadius: '4px',
+                      background: 'rgba(168, 85, 247, 0.20)',
+                      border: '1px solid rgba(168, 85, 247, 0.50)',
+                      color: 'var(--openbb-purple)',
+                      fontSize: '0.62rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease',
+                      boxShadow: '0 0 10px rgba(168, 85, 247, 0.25)',
+                    }}
+                    title="Click to see why the Brain chose this symbol and rejected others"
+                  >
+                    <span>💡 Why {selectedSymbol || 'NVDA'}?</span>
+                    <span>→</span>
+                  </div>
+                )}
               </div>
             </div>
           );
