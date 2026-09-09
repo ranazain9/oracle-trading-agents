@@ -140,9 +140,9 @@ def get_portfolio_performance(
     losing_trades = []
     
     for t in trades:
-        status = t.get("status", "")
+        status = str(t.get("status") or "")
         pnl = float(t.get("pnl_usd", 0.0) or 0.0)
-        exit_reason = t.get("exit_reason", "")
+        exit_reason = str(t.get("exit_reason") or "")
         sym = t.get("symbol", "N/A")
         strat = t.get("strategy", "N/A")
         tid = t.get("trade_id", "N/A")
@@ -182,9 +182,11 @@ def get_portfolio_performance(
     running_eq = initial_balance
     equity_curve = [{"point": 0, "equity": initial_balance, "label": "Deposit"}]
     for idx, t in enumerate(trades, 1):
-        if "PROFIT" in t.get("status", "") or "Profit target" in t.get("exit_reason", ""):
+        status = str(t.get("status") or "")
+        exit_reason = str(t.get("exit_reason") or "")
+        if "PROFIT" in status or "Profit target" in exit_reason:
             running_eq += 125.0
-        elif "STOPPED" in t.get("status", "") or "stop-loss" in t.get("exit_reason", "").lower():
+        elif "STOPPED" in status or "stop-loss" in exit_reason.lower():
             running_eq -= 150.0
         equity_curve.append({
             "point": idx,
