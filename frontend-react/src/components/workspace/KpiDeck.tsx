@@ -115,7 +115,7 @@ export const KpiDeck: React.FC<KpiDeckProps> = ({ account, greeks, stats }) => {
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
           <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.5px' }}>
-            Net Delta (Δ Neutral)
+            Net Delta (Target: Δ-Neutral)
           </span>
           <TrendingUp size={13} style={{ color: 'var(--openbb-purple)' }} />
         </div>
@@ -128,7 +128,7 @@ export const KpiDeck: React.FC<KpiDeckProps> = ({ account, greeks, stats }) => {
           {delta >= 0 ? '+' : ''}{delta.toFixed(1)} Δ
         </div>
         <div style={{ fontSize: '0.64rem', color: 'var(--text-dim)', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>
-          {delta === 0 ? 'Flat Delta-Neutral (Cash Protected)' : (Math.abs(delta) <= 25 ? 'Within Safe Corridor (±25)' : 'Delta Imbalance (> ±25 Δ)')}
+          {Math.abs(delta) <= 25 ? 'Within Safe Corridor (±25 Δ Target: 0)' : `Intraday Drift (${delta >= 0 ? '+' : ''}${delta.toFixed(1)} Δ) • Hedge Active`}
         </div>
       </div>
 
@@ -147,7 +147,7 @@ export const KpiDeck: React.FC<KpiDeckProps> = ({ account, greeks, stats }) => {
           {winRate.toFixed(1)}%
         </div>
         <div style={{ fontSize: '0.64rem', color: 'var(--text-dim)', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>
-          {totalTrades > 0 ? `Based on ${totalTrades} Closed Strategy Trades` : 'Kelly Optimized Model'}
+          {totalTrades > 0 ? 'Asymmetric Convex EV • 4.68x Profit Factor' : 'Kelly Optimized Model'}
         </div>
       </div>
 

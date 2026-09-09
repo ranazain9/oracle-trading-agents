@@ -410,7 +410,7 @@ export const AgentInspectorModal: React.FC<AgentInspectorModalProps> = ({
                         All 4 Hard Veto Gates Passed
                       </div>
                       <div style={{ fontSize: '0.62rem', color: 'var(--text-body)', marginTop: '2px' }}>
-                        Complies with Sector Guard tech quota, Kelly cash bounds ($450), and -$150 stop floor.
+                        Complies with Sector Guard tech quota, Kelly cash bounds ($450), and -$150 risk-trigger threshold.
                       </div>
                     </div>
                   </div>
@@ -471,7 +471,7 @@ export const AgentInspectorModal: React.FC<AgentInspectorModalProps> = ({
                     <span>WHY DO MULTIPLE NVDA POSITIONS APPEAR ON THE BROKER?</span>
                   </div>
                   <div style={{ fontSize: '0.65rem', color: 'var(--text-body)', marginTop: '4px', lineHeight: 1.4 }}>
-                    The bot opened an <strong>Iron Condor options spread</strong>, NOT multiple separate stock gambles. Options spreads require entering <strong>4 defined-risk protective legs</strong> simultaneously (Short Call, Long Call, Short Put, Long Put). Alpaca logs each contract leg as an individual position. This structure generates <strong>+$59.50/day in passive theta decay</strong> while strictly capping maximum potential loss at -$150.00.
+                    The bot opened an <strong>Iron Condor options spread</strong>, NOT multiple separate stock gambles. Options spreads require entering <strong>4 defined-risk protective legs</strong> simultaneously (Short Call, Long Call, Short Put, Long Put). Alpaca logs each contract leg as an individual position. This structure generates <strong>+$59.50/day in passive theta decay</strong> with dynamic -$150.00 risk-trigger exit defense (buffered against market gap/spread slippage).
                   </div>
                 </div>
 
@@ -485,9 +485,9 @@ export const AgentInspectorModal: React.FC<AgentInspectorModalProps> = ({
                       </div>
                     </div>
                     <div style={{ borderLeft: '1px solid var(--openbb-border)', paddingLeft: '12px' }}>
-                      <span style={{ fontSize: '0.60rem', color: 'var(--text-dim)', textTransform: 'uppercase' }}>Hard Stop Floor</span>
+                      <span style={{ fontSize: '0.60rem', color: 'var(--text-dim)', textTransform: 'uppercase' }}>Risk-Trigger Stop</span>
                       <div style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--openbb-crimson)' }}>
-                        -$150.00 Stop Floor
+                        -$150.00 Trigger Level
                       </div>
                     </div>
                     <div style={{ borderLeft: '1px solid var(--openbb-border)', paddingLeft: '12px' }}>

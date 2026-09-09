@@ -106,19 +106,19 @@ export const AgentBus: React.FC<AgentBusProps> = ({ onOpenStateInspector, onNavi
       color: '#6366F1',
       bg: 'rgba(99, 102, 241, 0.08)',
       border: 'rgba(99, 102, 241, 0.40)',
-      detail: 'Net Delta monitored at 0.0 Δ (Within ±25 Δ safe corridor). No beta hedge needed.',
+      detail: 'Target at inception: Delta-Neutral (0.0 Δ). Intraday drift actively tracked by Hedge Watchdog.',
     },
     {
       id: 8,
       title: '8. Risk Bodyguard',
       role: 'Stop Loss & Profit Ratchet',
       state: 'ACTIVE',
-      tag: '-$150 Stop Floor',
+      tag: '-$150 Trigger Stop',
       tab: 'dashboard',
       color: '#FF3B30',
       bg: 'rgba(255, 59, 48, 0.08)',
       border: 'rgba(255, 59, 48, 0.40)',
-      detail: 'Circuit breaker active: -$150.00 hard floor per trade. +50% profit ratchet arming.',
+      detail: 'Dynamic risk threshold: -$150.00 trigger level per trade (execution buffered). +50% profit ratchet active.',
     },
     {
       id: 9,
@@ -148,8 +148,8 @@ export const AgentBus: React.FC<AgentBusProps> = ({ onOpenStateInspector, onNavi
 
   // Simulated live cognitive stream logs
   const cognitiveLogs = [
-    { time: '14:28:14', agent: 'BODYGUARD', text: 'Enforcing -$150.00 stop-loss floor across 3 open positions. Profit ratchet armed at +50%.' },
-    { time: '14:28:12', agent: 'HEDGE', text: 'Portfolio Net Delta is 0.0 Δ (Safe Corridor ±25). No hedging rebalance required.' },
+    { time: '14:28:14', agent: 'BODYGUARD', text: 'Monitoring -$150.00 risk-trigger threshold across active positions. Profit ratchet armed at +50%.' },
+    { time: '14:28:12', agent: 'HEDGE', text: 'Portfolio Net Delta actively tracked against safe corridor (±25 Δ). Hedge watchdog monitoring Greek drift.' },
     { time: '14:28:10', agent: 'BRAIN', text: 'Evaluated 3 ToT branches on SPY -> Range-Bound Theta Condor has 88.5% PoP (+$210 EV).' },
     { time: '14:28:08', agent: 'SCOUT', text: '14-Day Volume Profile POC scanned at $556.20. Spot $558.90 is inside 70% Value Area.' },
   ];

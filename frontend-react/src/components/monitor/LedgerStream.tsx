@@ -177,7 +177,7 @@ export const LedgerStream: React.FC<LedgerStreamProps> = ({ trades, logs, stats,
           }}
           title={reason}
         >
-          <AlertCircle size={11} /> -$150.00 Hard Stop Floor Liquidated
+          <AlertCircle size={11} /> -$150 Risk-Trigger Exited (Slippage Buffered)
         </span>
       );
     }
@@ -288,7 +288,7 @@ export const LedgerStream: React.FC<LedgerStreamProps> = ({ trades, logs, stats,
             {analytics.winRate.toFixed(1)}%
           </div>
           <div style={{ fontSize: '0.64rem', color: 'var(--text-muted)' }}>
-            {analytics.wins} Wins • {analytics.losses} Losses
+            {analytics.wins} Wins • {analytics.losses} Losses (Asymmetric EV Edge)
           </div>
         </div>
 

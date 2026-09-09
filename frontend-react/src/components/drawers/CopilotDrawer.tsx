@@ -57,8 +57,8 @@ I am your **ORACLE Quantitative AI Copilot**, your autonomous options trading & 
 
 **Live Telemetry Snapshot:**
 - **Portfolio Equity:** **$${(account?.equity || 99580.95).toLocaleString('en-US', { minimumFractionDigits: 2 })}** | **Cash:** **$${(account?.cash || 98835.95).toLocaleString('en-US', { minimumFractionDigits: 2 })}**
-- **Net Delta:** **${greeks?.net_portfolio_delta ?? 0.0} Δ** (Delta-Neutral, Safe Boundary ±25 Δ)
-- **Risk Floor:** **-$150.00/trade Hard Stop** | **+50% Profit Ratchet Gain Lock**
+- **Net Delta:** **${(greeks?.net_portfolio_delta ?? 0.0).toFixed(1)} Δ** (Inception: Delta-Neutral | Drift Corridor: ±25 Δ)
+- **Risk Control:** **-$150.00 Risk-Trigger Threshold** | **+50% Profit Ratchet Target**
 
 How can I assist your quantitative trading desk today?`,
     },
@@ -169,9 +169,9 @@ How can I assist your quantitative trading desk today?`,
       { text: 'What phase is the 24/7 Auto-Pilot daemon in?', icon: <Zap size={12} /> },
     ],
     greeks: [
-      { text: 'Explain Net Delta (+0.0 Δ) & safe corridor (±25 Δ)', icon: <Activity size={12} /> },
+      { text: 'Explain Net Delta drift & safe corridor (±25 Δ)', icon: <Activity size={12} /> },
       { text: 'How does Daily Theta harvest time-decay income?', icon: <Activity size={12} /> },
-      { text: 'What is my maximum risk limit & stop-loss floor?', icon: <Shield size={12} /> },
+      { text: 'What is my maximum risk limit & trigger threshold?', icon: <Shield size={12} /> },
       { text: 'How does the Profit Ratchet (+50% Lock) work?', icon: <ShieldCheck size={12} /> },
     ],
     strategy: [
