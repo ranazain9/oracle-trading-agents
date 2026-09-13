@@ -31,9 +31,29 @@ class SectorGuard:
     @staticmethod
     def check_sector_allocation(candidate_symbol: str, max_open_per_sector: int = 1) -> Dict[str, Any]:
         """
-        Checks data/trades.json for existing open trades in the candidate's sector.
+        Checks Alpaca live positions and data/trades.json for existing open trades in the candidate's sector
+        and prevents duplicate concurrent trades on the exact same underlying symbol.
         """
         candidate_sector = SectorGuard.get_sector(candidate_symbol)
+        cand_upper = candidate_symbol.upper()
+
+        # 1. Live Broker Check (Broker-First Verification)
+        try:
+            from tools.alpaca_tools import AlpacaTool
+            alpaca = AlpacaTool()
+            live_positions = alpaca.get_open_positions()
+            for pos in live_positions:
+                sym = str(pos.get("symbol", "")).upper()
+                if sym.startswith(cand_upper) or sym == cand_upper:
+                    return {
+                        "is_sector_permitted": False,
+                        "candidate_sector": candidate_sector,
+                        "active_sector_count": 1,
+                        "reason": f"Duplicate Position VETO: {cand_upper} already has active open contract(s) on broker ({sym})."
+                    }
+        except Exception:
+            pass
+
         trades_file = Path(__file__).resolve().parent.parent / "data" / "trades.json"
 
         if not trades_file.exists():
@@ -51,6 +71,16 @@ class SectorGuard:
             # Filter for ACTIVE / OPEN trades
             open_trades = [t for t in trades if t.get("status", "").upper() in ["OPEN", "OPEN_ACTIVE", "ACTIVE"]]
             
+            # Explicit duplicate ticker check in ledger
+            open_symbols = [str(t.get("symbol", "")).upper() for t in open_trades]
+            if cand_upper in open_symbols:
+                return {
+                    "is_sector_permitted": False,
+                    "candidate_sector": candidate_sector,
+                    "active_sector_count": 1,
+                    "reason": f"Duplicate Position VETO: {cand_upper} is already recorded as an ACTIVE open trade in ledger."
+                }
+
             # Count existing trades in this sector
             sector_counts = {}
             for t in open_trades:

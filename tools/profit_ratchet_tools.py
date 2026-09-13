@@ -45,6 +45,11 @@ class ProfitRatchetEngine:
         action = "HOLD_POSITION"
         reason = "Position within normal variance."
 
+        # Compute Soft-Stop Loss Buffer (70% of base stop floor)
+        # Initiating exit early absorbs multi-leg market spreads and execution latency,
+        # ensuring the final realized exit lands near base_stop_loss_usd rather than overshooting.
+        soft_stop_usd = round(base_stop_loss_usd * 0.70, 2)
+
         if is_uncapped_runner:
             # === DYNAMIC RUNNER TRAILING (STRADDLES & LONG OPTIONS) ===
             if pnl_pct >= 200.0:
@@ -83,11 +88,11 @@ class ProfitRatchetEngine:
                 else:
                     reason = f"Stop-loss ratcheted to Break-Even ($0.00) at +{pnl_pct:.1f}% gain."
 
-            elif pnl <= -base_stop_loss_usd:
+            elif pnl <= -soft_stop_usd:
                 active_stop_floor_usd = -base_stop_loss_usd
                 ratchet_tier = "TIER_0_HARD_STOP"
                 action = "CLOSE_STOP_LOSS"
-                reason = f"Hard stop-loss triggered (-${abs(pnl):.2f} <= -${base_stop_loss_usd:.2f})."
+                reason = f"Stop-loss buffer triggered (-${abs(pnl):.2f} <= -${soft_stop_usd:.2f}; early liquidation to cap slippage at -${base_stop_loss_usd:.2f})."
 
         else:
             # === CAPPED CREDIT SPREADS (IRON CONDOR / THETA SPREADS) ===
@@ -116,11 +121,11 @@ class ProfitRatchetEngine:
                 else:
                     reason = "Stop-loss ratcheted to Break-Even ($0.00)."
 
-            elif pnl <= -base_stop_loss_usd:
+            elif pnl <= -soft_stop_usd:
                 active_stop_floor_usd = -base_stop_loss_usd
                 ratchet_tier = "TIER_0_HARD_STOP"
                 action = "CLOSE_STOP_LOSS"
-                reason = f"Hard stop-loss triggered (-${abs(pnl):.2f} <= -${base_stop_loss_usd:.2f})."
+                reason = f"Stop-loss buffer triggered (-${abs(pnl):.2f} <= -${soft_stop_usd:.2f}; early liquidation to cap slippage at -${base_stop_loss_usd:.2f})."
 
         return {
             "action": action,

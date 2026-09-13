@@ -38,11 +38,12 @@ class PostTradeAnalystAgent:
     Agent 6: Trade Performance Auditor & Long-Term Memory Synthesis
     """
 
-    def __init__(self, api_key: Optional[str] = None, base_url: Optional[str] = None, model: Optional[str] = None):
+    def __init__(self, api_key: Optional[str] = None, base_url: Optional[str] = None, model: Optional[str] = None, max_retries: Optional[int] = None):
         active_config = settings.get_active_llm_config("memory")
         self.api_key = (api_key or active_config["api_key"] or "").strip('\"\'')
         self.base_url = base_url or active_config["base_url"]
         self.model = model or active_config["model"]
+        self.max_retries = max_retries if max_retries is not None else active_config.get("max_retries", 3)
         self.memory_path = Path(__file__).resolve().parent.parent / "data" / "trade_memory.json"
 
         # Prebuilt LangChain ChatOpenAI Model
@@ -52,7 +53,8 @@ class PostTradeAnalystAgent:
                 api_key=self.api_key,
                 base_url=self.base_url,
                 temperature=0.2,
-                timeout=25.0
+                timeout=25.0,
+                max_retries=self.max_retries
             ) if self.api_key else None
         except Exception:
             self.llm = None

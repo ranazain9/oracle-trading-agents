@@ -40,10 +40,13 @@ class ThetaIronCondorStrategy(BaseStrategy):
         wing_width = long_call_strike - short_call_strike
         max_risk_per_contract = (wing_width - net_credit_per_share) * 100
 
-        # Contract Sizing
-        qty = max(1, int(risk_budget_usd // max(100.0, max_risk_per_contract)))
-        if qty == 0:
+        # Contract Sizing: Bounded by both risk budget and stop-loss floor
+        # For small stop floors (e.g. <= $200), cap strictly at 1 contract to prevent oversized adverse fills
+        base_qty = max(1, int(risk_budget_usd // max(100.0, max_risk_per_contract)))
+        if max_loss_usd <= 200.0:
             qty = 1
+        else:
+            qty = min(base_qty, max(1, int(max_loss_usd // 150.0)))
 
         total_net_credit = round(net_credit_per_share * 100 * qty, 2)
         total_margin_requirement = round(wing_width * 100 * qty, 2)

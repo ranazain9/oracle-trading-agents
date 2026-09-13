@@ -58,6 +58,20 @@ class TraderAgent:
                 "orders_executed": []
             }
 
+        # Step 0.5: Duplicate Buy Prevention Check (Broker-First Gate)
+        live_pos = self.alpaca.get_open_positions()
+        target_sym = decision.symbol.upper()
+        for pos in live_pos:
+            pos_sym = str(pos.get("symbol", "")).upper()
+            if pos_sym.startswith(target_sym) or pos_sym == target_sym:
+                print(f"🛑 [TraderAgent] DUPLICATE BUY BLOCKED: Position for {decision.symbol} is already active on broker ({pos_sym}). Capital preserved.")
+                return {
+                    "status": "REJECTED_POSITION_ALREADY_OPEN",
+                    "reason": f"Broker already holds active position for {decision.symbol} ({pos_sym}).",
+                    "blueprint": None,
+                    "orders_executed": []
+                }
+
         # Step 1: Check Account Buying Power
         account = self.alpaca.get_account_status()
         cash = account.get("cash", 100000.0)

@@ -65,9 +65,10 @@ Traditional algorithmic trading bots rely on rigid if/else rules that fail when 
 * **Unusual Options Flow & Dark Pool Tracking:** Detects institutional aggressive sweeps, high-volume block transactions, and put/call sentiment skews in real time.
 * **Dual-Key Human-in-the-Loop (HITL) Governance:** Empowers human risk supervisors with real-time WebSocket approval queues and timeouts for oversized trades.
 * **Deterministic Code Gatekeeper:** Enforces 5 hard mathematical veto rules (Liquidity depth $\ge 500$, Bid/Ask Spread $\le 5\%$, IV Crush Risk $<80$, Break-Even clearance, and leverage caps).
-* **Bayesian Position Sizing:** Automatically shrinks win rates toward the 55% baseline ($M=15$) to keep trade risk strictly bounded within the **`$450 – $600`** safety corridor.
+* **Bayesian Position Sizing & Contract Caps:** Automatically shrinks win rates toward the 55% baseline ($M=15$) to keep trade risk strictly bounded within the **`$450 – $600`** safety corridor, with a hard **1-contract ceiling** on defined-risk spreads to prevent oversized capital exposure on small stop floors.
 * **OCC Standard Options Execution:** Formats official 21-character OCC option symbols (`MSFT260904C00530000`), tags orders with unique strategy trade IDs (`client_order_id`), and pegs limit orders to the natural midpoint ($\frac{\text{Bid}+\text{Ask}}{2}$), saving $\$15–\$50$ per trade in slippage.
-* **Broker-First Adaptive Risk Bodyguard:** Ingests live broker positions directly from Alpaca, groups option legs into strategy packages to audit net combined P&L, enforces dynamic trailing profit ratchets (+50% harvest on Iron Condors; uncapped multi-tier trailing on Straddles up to +200%), auto-closes expiring 0-DTE ITM options before 4:00 PM EST, and dispatches live wing repair orders on Alpaca.
+* **Broker-First Adaptive Risk Bodyguard:** Ingests live broker positions directly from Alpaca, groups option legs into strategy packages to audit net combined P&L, enforces dynamic trailing profit ratchets (+50% harvest on Iron Condors; uncapped multi-tier trailing on Straddles up to +200%), executes early **70% soft-stop liquidation buffers** (~$105 on $150 floor) to absorb real-world market slippage, auto-closes expiring 0-DTE ITM options before 4:00 PM EST, and dispatches protected wing repairs on Alpaca (gated to $\le 4$ legs and $>2$ DTE to prevent terminal gamma stacking).
+* **Broker-Level Duplicate Buy Protection:** Real-time pre-flight gate on Alpaca positions preventing redundant orders or multiple open positions on the same underlying ticker.
 * **Autonomous Broker Reconciliation Service:** Periodically reconciles Alpaca exchange fill events with SQLite and `trades.json` to ensure 100% mathematical audit parity without human intervention.
 * **AI Copilot & Real-Time Telemetry:** Streaming natural-language AI assistant backed by FastAPI REST v1 endpoints and real-time WebSockets.
 
@@ -172,6 +173,8 @@ flowchart TD
 ### 3. 🛡️ Active Bodyguard Agent (`agents/bodyguard_agent.py`)
 * **60s/15s Adaptive Scanner:** Reads live positions every 60s (accelerating to 15s during high-volatility events).
 * **Dynamic Trailing Profit Ratchet:** Locks in gains at $+30\%$ (Break-even), $+45\%$ ($+25\%$ lock), and exits at $+50\%$.
+* **70% Soft-Stop Loss Buffer:** Initiates stop-loss exit routine at 70% of max loss threshold (~`-$105` on `-$150` floor) to absorb market order fill latency and crossing spreads.
+* **Anti-Stacking Salvage Gate:** Restricts wing rolling to packages with $\le 4$ legs and suppresses rolls when $\text{DTE} \le 2$ days to prevent explosive gamma risk and multi-leg sprawl.
 * **Friday 3:30 PM 0-DTE Gamma Guard:** Automatically liquidates short options before market close to eliminate weekend assignment risk.
 
 ### 4. 🌐 Macro Intelligence Agent (`agents/macro_intelligence_agent.py`)
@@ -329,9 +332,9 @@ flowchart TD
 
     %% Shared Hard Stop and 0-DTE Defense
     B -->|"Any Trade: P&L >= +30%"| E["🛡️ BREAK-EVEN FLOOR<br>Ratchet Stop Floor to $0.00"]:::ratchet
-    B -->|"Net Package P&L <= -$150.00"| F["🛑 HARD STOP LOSS TRIGGERED<br>Liquidate on Alpaca Brokerage"]:::stop
+    B -->|"Net Package P&L <= -$105.00 (70% Buffer)"| F["🛑 SOFT-STOP BUFFER TRIGGERED<br>Liquidate on Alpaca (Caps Realized Exit at -$150)"]:::stop
     B -->|"0-DTE Friday >= 3:45 PM"| H["⏳ 0-DTE EXPIRATION SHIELD<br>Liquidate ITM Options (Avoid Assignment)"]:::stop
-    B -->|"Iron Condor Wing Threatened"| G["🦋 ADAPTIVE WING SALVAGE<br>Dispatch Live Wing Roll to Alpaca"]:::win
+    B -->|"Iron Condor Threatened (<=4 Legs & DTE > 2)"| G["🦋 PROTECTED WING SALVAGE<br>Dispatch Single Wing Roll to Alpaca"]:::win
 ```
 
 ---
