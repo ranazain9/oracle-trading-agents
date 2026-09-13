@@ -16,6 +16,7 @@ load_dotenv(env_path)
 class Settings:
     # Multi-Provider LLM Configuration (groq / gemini / hybrid / aimlapi)
     LLM_PROVIDER: str = os.getenv("LLM_PROVIDER", "groq").lower().strip('\"\'')
+    LLM_MAX_RETRIES: int = int(os.getenv("LLM_MAX_RETRIES", "3"))
 
     # Groq LPU Configuration (Ultra-Fast 120B Reasoning)
     GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "").strip('\"\'')
@@ -43,27 +44,31 @@ class Settings:
                     "provider": "gemini",
                     "api_key": self.GEMINI_API_KEY,
                     "base_url": "https://generativelanguage.googleapis.com/v1beta",
-                    "model": self.GEMINI_MODEL
+                    "model": self.GEMINI_MODEL,
+                    "max_retries": self.LLM_MAX_RETRIES
                 }
             return {
                 "provider": "groq",
                 "api_key": self.GROQ_API_KEY,
                 "base_url": self.GROQ_BASE_URL,
-                "model": self.GROQ_MODEL
+                "model": self.GROQ_MODEL,
+                "max_retries": self.LLM_MAX_RETRIES
             }
         elif provider == "gemini":
             return {
                 "provider": "gemini",
                 "api_key": self.GEMINI_API_KEY,
                 "base_url": "https://generativelanguage.googleapis.com/v1beta",
-                "model": self.GEMINI_MODEL
+                "model": self.GEMINI_MODEL,
+                "max_retries": self.LLM_MAX_RETRIES
             }
         elif provider == "aimlapi":
             return {
                 "provider": "aimlapi",
                 "api_key": self.AIML_API_KEY,
                 "base_url": self.AIML_BASE_URL,
-                "model": self.AI_MODEL
+                "model": self.AI_MODEL,
+                "max_retries": self.LLM_MAX_RETRIES
             }
         else:
             # Default to Groq 120B
@@ -71,7 +76,8 @@ class Settings:
                 "provider": "groq",
                 "api_key": self.GROQ_API_KEY,
                 "base_url": self.GROQ_BASE_URL,
-                "model": self.GROQ_MODEL
+                "model": self.GROQ_MODEL,
+                "max_retries": self.LLM_MAX_RETRIES
             }
 
     # Alpaca Paper Trading API

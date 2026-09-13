@@ -99,7 +99,8 @@ class CopilotAgent:
                 base_url=self.llm_config["base_url"],
                 temperature=0.15,
                 max_tokens=900,
-                timeout=18.0
+                timeout=18.0,
+                max_retries=self.llm_config.get("max_retries", 3)
             )
             self.has_llm = bool(self.llm_config["api_key"])
         except Exception as e:

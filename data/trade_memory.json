@@ -1,35 +1,5 @@
 [
   {
-    "timestamp": "2026-08-28T12:15:32.678448",
-    "symbol": "MSFT",
-    "strategy": "THETA_IRON_CONDOR",
-    "pnl_usd": 0.0,
-    "outcome": "THETA_HARVEST",
-    "primary_driver": "THETA_DECAY",
-    "grade": "B",
-    "lesson": "The trade successfully captured theta decay over a short holding period, but the lack of realized PnL indicates that the strategy may need refinement in terms of entry and exit timing. Future trades should consider tighter management of implied volatility to enhance profitability."
-  },
-  {
-    "timestamp": "2026-08-28T12:38:24.806629",
-    "symbol": "NVDA",
-    "strategy": "EARNINGS_STRADDLE",
-    "pnl_usd": 250.0,
-    "outcome": "OPTIMAL_ALPHA",
-    "primary_driver": "IV_CRUSH",
-    "grade": "A",
-    "lesson": "The trade successfully capitalized on the implied volatility contraction following the earnings announcement, leading to a favorable PnL outcome. Future strategies should continue to leverage earnings events with a focus on timing the exit around peak IV levels."
-  },
-  {
-    "timestamp": "2026-08-28T12:39:07.913975",
-    "symbol": "AAPL",
-    "strategy": "EARNINGS_STRADDLE",
-    "pnl_usd": 0.0,
-    "outcome": "THETA_HARVEST",
-    "primary_driver": "THETA_DECAY",
-    "grade": "B",
-    "lesson": "The trade did not realize any profit despite a favorable entry IV rank, indicating that the expected theta decay was insufficient to offset the lack of IV expansion. Future trades should consider tighter stop-loss parameters or adjustments to the exit strategy to capture more value from theta decay."
-  },
-  {
     "timestamp": "2026-08-28T12:50:37.023397",
     "symbol": "NVDA",
     "strategy": "EARNINGS_STRADDLE",
@@ -498,5 +468,35 @@
     "primary_driver": "IV_CRUSH",
     "grade": "A",
     "lesson": "A drop in IV rank during the entry window signals potential IV crush; exercising discipline to stay out preserves capital and avoids negative PnL."
+  },
+  {
+    "timestamp": "2026-09-10T15:45:01.956826",
+    "symbol": "AAPL",
+    "strategy": "THETA_IRON_CONDOR",
+    "pnl_usd": 0.0,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "IV_CRUSH",
+    "grade": "B",
+    "lesson": "One\u2011day iron condors require a noticeable IV decline or higher initial IV rank to generate net theta profit after costs; target entry IV rank >50% for reliable theta harvest."
+  },
+  {
+    "timestamp": "2026-09-13T23:01:10.558120",
+    "symbol": "SPY",
+    "strategy": "THETA_IRON_CONDOR",
+    "pnl_usd": 125.5,
+    "outcome": "THETA_HARVEST",
+    "primary_driver": "IV_CRUSH",
+    "grade": "A",
+    "lesson": "When entering short\u2011dated iron condors at an IV rank above 40% and the market outlook suggests a near\u2011term IV decline, lock in profits early (e.g., 50% of max credit) to capture the IV crush and theta decay. Tight profit ratchets on the first day can preserve >50% returns while minimizing exposure to adverse moves."
+  },
+  {
+    "timestamp": "2026-09-13T23:01:32.138193",
+    "symbol": "SPY",
+    "strategy": "NO_TRADE",
+    "pnl_usd": 0.0,
+    "outcome": "THESIS_INVALIDATED",
+    "primary_driver": "IV_CRUSH",
+    "grade": "A",
+    "lesson": "A modest drop in IV rank (45%\u219240%) signaled reduced volatility, justifying the decision to stay flat; use IV rank drift as a pre\u2011trade filter to avoid low\u2011volatility entries."
   }
 ]

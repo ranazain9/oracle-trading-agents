@@ -162,6 +162,11 @@ class BodyguardAgent:
                 requires_high_alert_15s = True
                 print("     ⚡ [HIGH ALERT] Position in active profit-trail or risk zone. Loop set to 15s.", flush=True)
 
+            # Check if any legs expire within 2 days (0-DTE / 1-DTE gamma danger zone)
+            today_tag = datetime.date.today().strftime("%y%m%d")
+            tomorrow_tag = (datetime.date.today() + datetime.timedelta(days=1)).strftime("%y%m%d")
+            is_near_expiry = any(today_tag in l.get("symbol", "") or tomorrow_tag in l.get("symbol", "") for l in legs)
+
             # === RISK ENFORCEMENT ACTIONS ===
 
             # Action 1: Profit Target Hit or Trailing Stop Triggered
@@ -230,7 +235,14 @@ class BodyguardAgent:
                     actions_taken.append({"trade_id": trade_id, "action": "CLOSE_0DTE", "pnl_usd": total_pnl})
 
             # Action 4: Adaptive Position Salvage & Dynamic Wing Rolling (Iron Condor)
-            elif strategy == "THETA_IRON_CONDOR" and abs(current_price - entry_price) / max(entry_price, 1.0) >= 0.03:
+            # Only permit salvage if package has <= 4 legs (prevents 10-leg stacking) and is not near expiry
+            elif (
+                strategy == "THETA_IRON_CONDOR"
+                and len(legs) <= 4
+                and not is_near_expiry
+                and not zero_dte_info.get("is_assignment_risk_active", False)
+                and abs(current_price - entry_price) / max(entry_price, 1.0) >= 0.03
+            ):
                 print(f"     🦋 [ADAPTIVE SALVAGE TRIGGERED] Wing threatened on {underlying}. Executing Untested Wing Roll on Alpaca...", flush=True)
                 wing_roll = OptionLegRoller.calculate_wing_roll({"symbol": underlying, "underlying_entry_price": entry_price}, current_price)
                 salvage_bp = self.salvage_engine.calculate_order(
