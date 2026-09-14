@@ -229,6 +229,7 @@ class TraderAgent:
             "profit_target_usd": blueprint.profit_target_usd,
             "stop_loss_usd": blueprint.stop_loss_usd,
             "status": "OPEN_ACTIVE",
+            "entry_reason": getattr(decision, "reasoning", f"{decision.symbol} {blueprint.strategy_name} algorithmic entry."),
             "orders": executed_orders
         }
 

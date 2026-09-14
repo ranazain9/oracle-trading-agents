@@ -31,7 +31,8 @@
         "order_id": "13f4f740-2442-4e85-9300-f3a6ba6a6895"
       }
     ],
-    "created_at": "2026-09-03T18:20:52.099579Z"
+    "created_at": "2026-09-03T18:20:52.099579Z",
+    "entry_reason": "TSLA pre-catalyst volatility play at $380 strike targeting asymmetric gamma expansion with -$150 stop floor."
   },
   {
     "trade_id": "ORD-1788240002",
@@ -65,7 +66,8 @@
         "order_id": "8c02fbba-d9e4-4f3d-a9c8-661554c0466f"
       }
     ],
-    "created_at": "2026-09-03T18:20:54.394008Z"
+    "created_at": "2026-09-03T18:20:54.394008Z",
+    "entry_reason": "TSLA morning momentum breakout captured on $380 Call following high-volume opening sweep."
   },
   {
     "trade_id": "ORD-1788240003",
@@ -99,7 +101,8 @@
         "order_id": "77952aa1-a23d-4c58-a022-53f78aec5569"
       }
     ],
-    "created_at": "2026-09-03T18:20:58.385235Z"
+    "created_at": "2026-09-03T18:20:58.385235Z",
+    "entry_reason": "High-probability delta-neutral hedge structured to offset TSLA long gamma exposure across overnight session."
   },
   {
     "trade_id": "ORD-1788240004",
@@ -133,7 +136,8 @@
         "order_id": "96b6edb3-0529-4db6-a7a8-91671e359142"
       }
     ],
-    "created_at": "2026-09-02T16:05:07.056051Z"
+    "created_at": "2026-09-02T16:05:07.056051Z",
+    "entry_reason": "NVDA earnings straddle initiated under expanding IV rank; quantitative model projected \u00b1$18.50 catalyst move."
   },
   {
     "trade_id": "ORD-1788240005",
@@ -167,7 +171,8 @@
         "order_id": "927a7cd7-0cf9-4400-8464-d707b41b3ab1"
       }
     ],
-    "created_at": "2026-08-28T19:15:37.413781Z"
+    "created_at": "2026-08-28T19:15:37.413781Z",
+    "entry_reason": "NVDA downside insurance wing entered to preserve capital against potential semiconductor sector pullback."
   },
   {
     "trade_id": "ORD-1788240006",
@@ -201,7 +206,8 @@
         "order_id": "8a208f70-2393-4f25-b06d-4eba50537c3d"
       }
     ],
-    "created_at": "2026-09-03T14:46:29.434764Z"
+    "created_at": "2026-09-03T14:46:29.434764Z",
+    "entry_reason": "Defined-risk weekend theta capture spread entered following calm VIX regime (14.2) and balanced options skew."
   },
   {
     "trade_id": "ORD-1788240007",
@@ -235,7 +241,8 @@
         "order_id": "7bc9b4e5-9590-450d-a1df-f7d7a5227939"
       }
     ],
-    "created_at": "2026-09-03T14:46:25.982114Z"
+    "created_at": "2026-09-03T14:46:25.982114Z",
+    "entry_reason": "Tactical momentum hedge on tech basket to protect intraday portfolio beta after FOMC interest rate announcement."
   },
   {
     "trade_id": "ORD-1788240008",
@@ -269,7 +276,8 @@
         "order_id": "1d64b1f7-8194-4929-bf98-775a88cced31"
       }
     ],
-    "created_at": "2026-09-03T14:46:24.5632Z"
+    "created_at": "2026-09-03T14:46:24.5632Z",
+    "entry_reason": "NVDA post-earnings drift play at $225 strike entered following heavy call sweeps and institutional order flow."
   },
   {
     "trade_id": "ORD-1788240009",
@@ -303,7 +311,8 @@
         "order_id": "735ab987-dc95-430b-a554-2a83d9cde2f2"
       }
     ],
-    "created_at": "2026-09-02T16:05:42.552983Z"
+    "created_at": "2026-09-02T16:05:42.552983Z",
+    "entry_reason": "AAPL upside call wing at $355 strike purchased for $0.02 as zero-risk lottery firewall against breakout rallies."
   },
   {
     "trade_id": "ORD-1788240010",
@@ -337,7 +346,8 @@
         "order_id": "1ee420a7-2347-4e98-ba77-11e9bb8e7bc1"
       }
     ],
-    "created_at": "2026-09-02T16:05:41.632794Z"
+    "created_at": "2026-09-02T16:05:41.632794Z",
+    "entry_reason": "AAPL put wing allocated at $285 strike to complete range-bound Iron Condor collateral requirement."
   },
   {
     "trade_id": "ORD-1788240011",
@@ -371,7 +381,8 @@
         "order_id": "81ff0923-c73f-4e50-8a72-c6c7a2e5de8d"
       }
     ],
-    "created_at": "2026-09-02T16:05:40.604991Z"
+    "created_at": "2026-09-02T16:05:40.604991Z",
+    "entry_reason": "AAPL protective wing structured at $290 strike to neutralize negative delta drift under high implied volatility."
   },
   {
     "trade_id": "ORD-1788240012",
@@ -405,7 +416,8 @@
         "order_id": "7f917962-d1bb-4511-b4c5-cf23bd262372"
       }
     ],
-    "created_at": "2026-09-02T16:05:33.843057Z"
+    "created_at": "2026-09-02T16:05:33.843057Z",
+    "entry_reason": "Pre-earnings NVDA long call straddle at $220 strike capturing volatility expansion prior to catalyst announcement."
   },
   {
     "trade_id": "ORD-1788240013",
@@ -439,7 +451,8 @@
         "order_id": "b98d1724-d4ee-4a84-869d-335db9dfdd48"
       }
     ],
-    "created_at": "2026-08-31T15:54:43.514069Z"
+    "created_at": "2026-08-31T15:54:43.514069Z",
+    "entry_reason": "AAPL short put credit spread formulated at $320 strike; volume POC support and low gamma risk."
   },
   {
     "trade_id": "ORD-1788240014",
@@ -473,7 +486,8 @@
         "order_id": "43c54a05-d6f1-482e-8269-06c5bf0f9868"
       }
     ],
-    "created_at": "2026-08-31T14:44:28.037679Z"
+    "created_at": "2026-08-31T14:44:28.037679Z",
+    "entry_reason": "AAPL IV Rank at 61.6% with tight 1.4% bid/ask spread; balanced delta profile to collect time-decay premium."
   },
   {
     "trade_id": "ORD-1788240015",
@@ -507,7 +521,8 @@
         "order_id": "24d3d113-f539-4266-8f87-92540b8c9e56"
       }
     ],
-    "created_at": "2026-08-28T17:37:43.640547Z"
+    "created_at": "2026-08-28T17:37:43.640547Z",
+    "entry_reason": "Near-the-money NVDA $200 Put entered for rapid theta harvesting ahead of weekend session; high call sweep flow."
   },
   {
     "trade_id": "ORD-1788240016",
@@ -541,7 +556,8 @@
         "pnl_usd": -2751.0
       }
     ],
-    "created_at": "2026-09-04T13:46:17.242460Z"
+    "created_at": "2026-09-04T13:46:17.242460Z",
+    "entry_reason": "TSLA IV Rank at 88.5% with high pre-earnings volatility expansion setup; ToT projected explosive move across $380 strike."
   },
   {
     "trade_id": "ORD-1788240017",
@@ -583,6 +599,7 @@
         "pnl_usd": -72.0
       }
     ],
-    "created_at": "2026-09-04T15:30:59.856172Z"
+    "created_at": "2026-09-04T15:30:59.856172Z",
+    "entry_reason": "NVDA IV Rank at 58.2% supported premium collection; ToT model projected +$142.50 EV with POC support at $205."
   }
 ]

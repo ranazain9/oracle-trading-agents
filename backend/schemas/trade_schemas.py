@@ -23,6 +23,7 @@ class TradeRecordSchema(BaseModel):
     exit_price: Optional[float] = None
     pnl_usd: Optional[float] = None
     exit_reason: Optional[str] = None
+    entry_reason: Optional[str] = None
     order_legs: List[Dict[str, Any]] = []
 
 

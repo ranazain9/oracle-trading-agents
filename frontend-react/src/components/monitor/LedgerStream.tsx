@@ -17,6 +17,9 @@ import {
   Percent,
   Layers,
   Search,
+  ChevronDown,
+  ChevronRight,
+  Brain,
 } from 'lucide-react';
 
 interface LedgerStreamProps {
@@ -31,6 +34,7 @@ export const LedgerStream: React.FC<LedgerStreamProps> = ({ trades, logs, stats,
   const [filterAgent, setFilterAgent] = useState<string>('ALL');
   const [tickerFilter, setTickerFilter] = useState<string>('ALL');
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
+  const [expandedTradeId, setExpandedTradeId] = useState<string | null>(null);
 
   const tradeList = Array.isArray(trades) ? trades : [];
   const logList = Array.isArray(logs) ? logs : [];
@@ -453,11 +457,11 @@ export const LedgerStream: React.FC<LedgerStreamProps> = ({ trades, logs, stats,
           <table className="openbb-table" style={{ width: '100%', tableLayout: 'auto' }}>
             <thead style={{ position: 'sticky', top: 0, zIndex: 5, background: '#0D1422' }}>
               <tr>
-                <th style={{ width: '10%' }}>Symbol</th>
+                <th style={{ width: '12%' }}>Symbol</th>
                 <th style={{ width: '18%' }}>Strategy</th>
                 <th style={{ width: '14%' }}>Status</th>
                 <th style={{ width: '14%' }}>Realized P&L</th>
-                <th style={{ width: '32%' }}>Exit Reason & Risk Attribution</th>
+                <th style={{ width: '30%' }}>Exit Reason &amp; Attribution</th>
                 <th style={{ width: '12%' }}>Close Date</th>
               </tr>
             </thead>
@@ -470,77 +474,191 @@ export const LedgerStream: React.FC<LedgerStreamProps> = ({ trades, logs, stats,
                 </tr>
               ) : (
                 filteredTrades.map((t, idx) => {
+                  const tradeKey = t.trade_id || `trade-${idx}`;
+                  const isExpanded = expandedTradeId === tradeKey;
                   const pnl = Number(t.pnl_usd ?? 0);
                   const isProfit = pnl > 0;
                   const isLoss = pnl < 0;
 
                   return (
-                    <tr key={idx} style={{ background: idx % 2 === 0 ? 'transparent' : 'rgba(255, 255, 255, 0.015)' }}>
-                      {/* Symbol */}
-                      <td>
-                        <strong
-                          style={{
-                            color: 'var(--openbb-cyan)',
-                            fontFamily: 'var(--font-heading)',
-                            fontSize: '0.80rem',
-                            letterSpacing: '0.3px',
-                          }}
-                        >
-                          {t.symbol}
-                        </strong>
-                      </td>
+                    <React.Fragment key={tradeKey}>
+                      <tr
+                        onClick={() => setExpandedTradeId(isExpanded ? null : tradeKey)}
+                        style={{
+                          background: isExpanded
+                            ? 'rgba(0, 229, 255, 0.08)'
+                            : idx % 2 === 0
+                            ? 'transparent'
+                            : 'rgba(255, 255, 255, 0.015)',
+                          cursor: 'pointer',
+                          transition: 'background 0.15s ease',
+                        }}
+                        title="Click to view Agent Entry Thesis ('Why We Bought') &amp; Legs Breakdown"
+                      >
+                        {/* Symbol with Expand Indicator */}
+                        <td>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span style={{ color: isExpanded ? 'var(--openbb-cyan)' : 'var(--text-dim)', display: 'inline-flex' }}>
+                              {isExpanded ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
+                            </span>
+                            <strong
+                              style={{
+                                color: 'var(--openbb-cyan)',
+                                fontFamily: 'var(--font-heading)',
+                                fontSize: '0.80rem',
+                                letterSpacing: '0.3px',
+                              }}
+                            >
+                              {t.symbol}
+                            </strong>
+                          </div>
+                        </td>
 
-                      {/* Strategy */}
-                      <td>
-                        <span
-                          style={{
-                            fontSize: '0.68rem',
-                            fontFamily: 'var(--font-mono)',
-                            color: 'var(--text-body)',
-                            background: 'rgba(255, 255, 255, 0.04)',
-                            padding: '2px 6px',
-                            borderRadius: '4px',
-                            border: '1px solid var(--openbb-border)',
-                          }}
-                        >
-                          {t.strategy || 'THETA_CONDOR'}
-                        </span>
-                      </td>
+                        {/* Strategy */}
+                        <td>
+                          <span
+                            style={{
+                              fontSize: '0.68rem',
+                              fontFamily: 'var(--font-mono)',
+                              color: 'var(--text-body)',
+                              background: 'rgba(255, 255, 255, 0.04)',
+                              padding: '2px 6px',
+                              borderRadius: '4px',
+                              border: '1px solid var(--openbb-border)',
+                            }}
+                          >
+                            {t.strategy || 'THETA_CONDOR'}
+                          </span>
+                        </td>
 
-                      {/* Status */}
-                      <td>
-                        <span
-                          className={`openbb-badge ${isProfit ? 'profit' : isLoss ? 'loss' : 'neutral'}`}
-                          style={{ fontSize: '0.62rem', fontWeight: 800 }}
-                        >
-                          {t.status}
-                        </span>
-                      </td>
+                        {/* Status */}
+                        <td>
+                          <span
+                            className={`openbb-badge ${isProfit ? 'profit' : isLoss ? 'loss' : 'neutral'}`}
+                            style={{ fontSize: '0.62rem', fontWeight: 800 }}
+                          >
+                            {t.status}
+                          </span>
+                        </td>
 
-                      {/* Realized PnL */}
-                      <td>
-                        <span
-                          style={{
-                            color: isProfit ? 'var(--openbb-emerald)' : isLoss ? 'var(--openbb-crimson)' : 'var(--text-muted)',
-                            fontWeight: 800,
-                            fontFamily: 'var(--font-mono)',
-                            fontSize: '0.78rem',
-                          }}
-                        >
-                          {pnl > 0 ? `+$${pnl.toFixed(2)}` : pnl < 0 ? `-$${Math.abs(pnl).toFixed(2)}` : '$0.00'}
-                        </span>
-                      </td>
+                        {/* Realized PnL */}
+                        <td>
+                          <span
+                            style={{
+                              color: isProfit ? 'var(--openbb-emerald)' : isLoss ? 'var(--openbb-crimson)' : 'var(--text-muted)',
+                              fontWeight: 800,
+                              fontFamily: 'var(--font-mono)',
+                              fontSize: '0.78rem',
+                            }}
+                          >
+                            {pnl > 0 ? `+$${pnl.toFixed(2)}` : pnl < 0 ? `-$${Math.abs(pnl).toFixed(2)}` : '$0.00'}
+                          </span>
+                        </td>
 
-                      {/* Exit Reason */}
-                      <td className="wrap-cell">
-                        {formatExitReasonBadge(t.exit_reason, t.status)}
-                      </td>
+                        {/* Exit Reason */}
+                        <td className="wrap-cell">
+                          {formatExitReasonBadge(t.exit_reason, t.status)}
+                        </td>
 
-                      {/* Date */}
-                      <td style={{ fontFamily: 'var(--font-mono)', fontSize: '0.68rem', color: 'var(--text-dim)' }}>
-                        {t.entry_date || t.date || t.exit_date || '2026-08-29'}
-                      </td>
-                    </tr>
+                        {/* Date */}
+                        <td style={{ fontFamily: 'var(--font-mono)', fontSize: '0.68rem', color: 'var(--text-dim)' }}>
+                          {t.entry_date || t.date || t.exit_date || '2026-08-29'}
+                        </td>
+                      </tr>
+
+                      {/* Expandable Agent Entry Thesis & Legs Drawer */}
+                      {isExpanded && (
+                        <tr style={{ background: 'linear-gradient(135deg, rgba(13, 21, 36, 0.98) 0%, rgba(20, 32, 54, 0.95) 100%)' }}>
+                          <td colSpan={6} style={{ padding: '12px 16px', borderTop: 'none', borderBottom: '1px solid rgba(0, 229, 255, 0.35)' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                              {/* Row 1: Why Bought vs Why Exited */}
+                              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '10px' }}>
+                                {/* 🧠 Why the Agent Bought */}
+                                <div style={{ background: 'rgba(0, 229, 255, 0.05)', border: '1px solid rgba(0, 229, 255, 0.25)', borderRadius: '6px', padding: '10px 12px' }}>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.70rem', fontWeight: 800, color: 'var(--openbb-cyan)', marginBottom: '4px' }}>
+                                    <Brain size={13} />
+                                    <span>WHY THE AGENT BOUGHT (ENTRY THESIS)</span>
+                                  </div>
+                                  <div style={{ fontSize: '0.68rem', color: 'var(--text-pure)', lineHeight: 1.45 }}>
+                                    {t.entry_reason || `${t.symbol} ${t.strategy} algorithmically formulated by Strategy Brain with ToT Expected Value edge and favorable volatility skew.`}
+                                  </div>
+                                </div>
+
+                                {/* 🛡️ Why the Agent Exited */}
+                                <div style={{ background: isProfit ? 'rgba(0, 230, 118, 0.05)' : 'rgba(255, 51, 102, 0.05)', border: `1px solid ${isProfit ? 'rgba(0, 230, 118, 0.25)' : 'rgba(255, 51, 102, 0.25)'}`, borderRadius: '6px', padding: '10px 12px' }}>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.70rem', fontWeight: 800, color: isProfit ? 'var(--openbb-emerald)' : 'var(--openbb-crimson)', marginBottom: '4px' }}>
+                                    <Shield size={13} />
+                                    <span>WHY THE AGENT EXITED (RISK &amp; PNL ATTRIBUTION)</span>
+                                  </div>
+                                  <div style={{ fontSize: '0.68rem', color: 'var(--text-body)', lineHeight: 1.45 }}>
+                                    {t.exit_reason || 'Autonomous position liquidation enforced by Risk Bodyguard under dynamic stop/ratchet rules.'}
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Row 2: Contract Legs & Financial Parameters */}
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--openbb-bg-canvas)', padding: '8px 12px', borderRadius: '4px', border: '1px solid var(--openbb-border)', flexWrap: 'wrap', gap: '10px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                                  <span style={{ fontSize: '0.62rem', color: 'var(--text-dim)', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', marginRight: '4px' }}>
+                                    Order Legs ({Array.isArray(t.order_legs) ? t.order_legs.length : 0}):
+                                  </span>
+                                  {Array.isArray(t.order_legs) && t.order_legs.length > 0 ? (
+                                    t.order_legs.map((leg: any, legIdx: number) => {
+                                      const isBuy = String(leg.side).toLowerCase() === 'buy';
+                                      return (
+                                        <span
+                                          key={legIdx}
+                                          style={{
+                                            fontSize: '0.62rem',
+                                            fontFamily: 'var(--font-mono)',
+                                            padding: '2px 6px',
+                                            borderRadius: '3px',
+                                            background: isBuy ? 'rgba(0, 229, 255, 0.12)' : 'rgba(168, 85, 247, 0.12)',
+                                            color: isBuy ? 'var(--openbb-cyan)' : 'var(--openbb-purple)',
+                                            border: `1px solid ${isBuy ? 'rgba(0, 229, 255, 0.3)' : 'rgba(168, 85, 247, 0.3)'}`,
+                                          }}
+                                        >
+                                          {leg.side?.toUpperCase()} {leg.qty}x {leg.occ_symbol || leg.symbol} {leg.price ? `@ $${Number(leg.price).toFixed(2)}` : ''}
+                                        </span>
+                                      );
+                                    })
+                                  ) : (
+                                    <span style={{ fontSize: '0.62rem', color: 'var(--text-muted)' }}>Symmetric Multi-Leg Package</span>
+                                  )}
+                                </div>
+
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                  {t.underlying_entry_price && (
+                                    <div>
+                                      <span style={{ fontSize: '0.58rem', color: 'var(--text-dim)' }}>ENTRY: </span>
+                                      <strong style={{ fontSize: '0.66rem', color: 'var(--text-pure)' }}>${Number(t.underlying_entry_price).toFixed(2)}</strong>
+                                    </div>
+                                  )}
+                                  {t.cost_or_credit_usd && (
+                                    <div>
+                                      <span style={{ fontSize: '0.58rem', color: 'var(--text-dim)' }}>BASIS: </span>
+                                      <strong style={{ fontSize: '0.66rem', color: 'var(--text-pure)' }}>${Number(t.cost_or_credit_usd).toFixed(2)}</strong>
+                                    </div>
+                                  )}
+                                  {t.profit_target_usd && (
+                                    <div>
+                                      <span style={{ fontSize: '0.58rem', color: 'var(--text-dim)' }}>TARGET: </span>
+                                      <strong style={{ fontSize: '0.66rem', color: 'var(--openbb-emerald)' }}>+${Number(t.profit_target_usd).toFixed(2)}</strong>
+                                    </div>
+                                  )}
+                                  {t.stop_loss_usd && (
+                                    <div>
+                                      <span style={{ fontSize: '0.58rem', color: 'var(--text-dim)' }}>STOP: </span>
+                                      <strong style={{ fontSize: '0.66rem', color: 'var(--openbb-crimson)' }}>-${Number(t.stop_loss_usd).toFixed(2)}</strong>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
                   );
                 })
               )}

@@ -236,6 +236,7 @@ export interface ClosedTradeRecord {
   stop_loss_usd?: number;
   pnl_usd?: number;
   exit_reason?: string;
+  entry_reason?: string;
   entry_date?: string;
   date?: string;
   exit_date?: string;

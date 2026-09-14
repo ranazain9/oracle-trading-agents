@@ -42,6 +42,7 @@ async def get_trade_history():
             exit_price=t.get("exit_price"),
             pnl_usd=t.get("pnl_usd"),
             exit_reason=t.get("exit_reason"),
+            entry_reason=t.get("entry_reason"),
             order_legs=t.get("order_legs", [])
         ))
     return result
