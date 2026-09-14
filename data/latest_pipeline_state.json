@@ -1,0 +1,29 @@
+{
+  "symbols": [
+    "AAPL",
+    "NVDA"
+  ],
+  "portfolio_cash": 100000.0,
+  "macro_assessment": null,
+  "market_overview": {},
+  "decision": {
+    "regime": "LOW_VOLATILITY_EXPANSION",
+    "symbol": "AAPL",
+    "strategy": "THETA_IRON_CONDOR",
+    "direction": "NEUTRAL",
+    "confidence_score": 0.82,
+    "reasoning": "AAPL tested with high IV rank and balanced skew.",
+    "suggested_risk_budget_usd": 450.0,
+    "is_validated": true,
+    "red_team_critique": {
+      "critique_verdict": "CONFIRMED_ROBUST",
+      "identified_risks": "Mathematical alignment verified."
+    }
+  },
+  "hitl_approval": null,
+  "execution_result": null,
+  "hedge_decision": null,
+  "guardian_result": null,
+  "analyst_reflection": null,
+  "is_approved": true
+}

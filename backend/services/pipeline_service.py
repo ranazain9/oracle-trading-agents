@@ -5,7 +5,9 @@ Executes the master 8-node LangGraph pipeline non-blockingly and tracks real-tim
 from typing import Dict, Any, List, Optional
 import asyncio
 import datetime
+import json
 import uuid
+from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 
 from graph import oracle_app
@@ -22,12 +24,72 @@ class PipelineRunnerService:
         self.is_running: bool = False
         self.current_node: str = "IDLE"
         self.progress_pct: int = 0
+        self.latest_state_file = Path(__file__).resolve().parent.parent.parent / "data" / "latest_pipeline_state.json"
         self.latest_state: Optional[Dict[str, Any]] = None
+        if self.latest_state_file.exists():
+            try:
+                with open(self.latest_state_file, "r") as f:
+                    self.latest_state = json.load(f)
+            except Exception as e:
+                logger.warning(f"Could not load previous pipeline state: {e}")
+                self.latest_state = None
+
         self.latest_run_id: Optional[str] = None
         self.started_at: Optional[str] = None
         self.completed_at: Optional[str] = None
         self.last_error: Optional[str] = None
         self._executor = ThreadPoolExecutor(max_workers=2)
+
+    def _persist_latest_state(self):
+        """Saves latest_state to disk so it survives server reboots."""
+        if not self.latest_state:
+            return
+        try:
+            self.latest_state_file.parent.mkdir(parents=True, exist_ok=True)
+            # Ensure serializable
+            serializable_state = {}
+            for k, v in self.latest_state.items():
+                if hasattr(v, "model_dump"):
+                    serializable_state[k] = v.model_dump()
+                elif isinstance(v, (dict, list, str, int, float, bool)) or v is None:
+                    serializable_state[k] = v
+                else:
+                    serializable_state[k] = str(v)
+            with open(self.latest_state_file, "w") as f:
+                json.dump(serializable_state, f, indent=2)
+        except Exception as e:
+            logger.warning(f"Failed to persist latest pipeline state: {e}")
+
+    def set_latest_decision(
+        self,
+        decision_dict: Dict[str, Any],
+        symbols: Optional[List[str]] = None,
+        macro_assessment: Optional[Dict[str, Any]] = None
+    ):
+        """Allows on-demand Strategy Brain tests to persist as the latest pipeline decision."""
+        if not self.latest_state:
+            self.latest_state = {
+                "symbols": symbols or ["NVDA", "AAPL", "MSFT", "TSLA", "AMZN", "SPY"],
+                "portfolio_cash": 100000.0,
+                "macro_assessment": macro_assessment,
+                "market_overview": {},
+                "decision": decision_dict,
+                "hitl_approval": None,
+                "execution_result": None,
+                "hedge_decision": None,
+                "guardian_result": None,
+                "analyst_reflection": None,
+                "is_approved": decision_dict.get("is_validated", True)
+            }
+        else:
+            self.latest_state["decision"] = decision_dict
+            if symbols:
+                self.latest_state["symbols"] = symbols
+            if macro_assessment:
+                self.latest_state["macro_assessment"] = macro_assessment
+            self.latest_state["is_approved"] = decision_dict.get("is_validated", True)
+
+        self._persist_latest_state()
 
     def get_status(self) -> Dict[str, Any]:
         """Returns the current pipeline execution status."""
@@ -113,6 +175,7 @@ class PipelineRunnerService:
             )
 
             self.latest_state = final_state
+            self._persist_latest_state()
             self.progress_pct = 100
             self.current_node = "COMPLETED"
             self.completed_at = datetime.datetime.utcnow().isoformat()

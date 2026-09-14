@@ -17,6 +17,9 @@ from agents.bodyguard_agent import BodyguardAgent
 from agents.post_trade_analyst_agent import PostTradeAnalystAgent
 from agents.trader_agent import TraderAgent
 
+from backend.services.pipeline_service import PipelineRunnerService
+from backend.api.dependencies import get_pipeline_service
+
 router = APIRouter(prefix="/agents", tags=["Agent Diagnostics"])
 
 
@@ -31,7 +34,10 @@ def get_macro_assessment():
 
 
 @router.post("/brain/decide", response_model=StrategyDecisionSchema)
-async def query_strategy_brain(req: BrainAnalysisRequest):
+async def query_strategy_brain(
+    req: BrainAnalysisRequest,
+    pipeline: PipelineRunnerService = Depends(get_pipeline_service)
+):
     """
     Agent 1 (Strategy Brain): On-demand multi-turn Tree-of-Thoughts & Red Team strategy formulation.
     """
@@ -44,7 +50,16 @@ async def query_strategy_brain(req: BrainAnalysisRequest):
         portfolio_cash=req.portfolio_cash,
         macro_assessment=macro_assessment.model_dump()
     )
-    return StrategyDecisionSchema(**decision.model_dump())
+
+    decision_dict = decision.model_dump()
+    # Persist into pipeline state so /api/v1/pipeline/latest-state and frontend retain the decision
+    pipeline.set_latest_decision(
+        decision_dict=decision_dict,
+        symbols=req.symbols,
+        macro_assessment=macro_assessment.model_dump()
+    )
+
+    return StrategyDecisionSchema(**decision_dict)
 
 
 @router.post("/trader/simulate-order", response_model=StrategyOrderBlueprintSchema)
