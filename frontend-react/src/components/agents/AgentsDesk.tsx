@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MacroSentinelData, PortfolioHedgeData, HitlProposal, HitlHistoryRecord, DaemonStatusData, UniverseAsset, PortfolioGreeks, TradeStatsData } from '../../api/types';
+import { MacroSentinelData, PortfolioHedgeData, HitlProposal, HitlHistoryRecord, DaemonStatusData, UniverseAsset, PortfolioGreeks, TradeStatsData, PositionData, ClosedTradeRecord } from '../../api/types';
 import { Zap, Clock, Shield, Activity, Calendar, Play, CheckCircle } from 'lucide-react';
 import { AgentInspectorModal, AgentInfo } from '../modals/AgentInspectorModal';
 
@@ -12,6 +12,8 @@ interface AgentsDeskProps {
   universe?: UniverseAsset[];
   greeks?: PortfolioGreeks | null;
   stats?: TradeStatsData | null;
+  positions?: PositionData[];
+  trades?: ClosedTradeRecord[];
   onApproveProposal: (id: string) => void;
   onRejectProposal: (id: string) => void;
   onToggleAutoPilot?: () => void;
@@ -28,6 +30,8 @@ export const AgentsDesk: React.FC<AgentsDeskProps> = ({
   universe,
   greeks,
   stats,
+  positions = [],
+  trades = [],
   onApproveProposal,
   onRejectProposal,
   onToggleAutoPilot,
@@ -417,6 +421,8 @@ export const AgentsDesk: React.FC<AgentsDeskProps> = ({
         universe={universe}
         greeks={greeks}
         stats={stats}
+        positions={positions}
+        trades={trades}
         onOpenCopilot={onOpenCopilot}
       />
     </div>

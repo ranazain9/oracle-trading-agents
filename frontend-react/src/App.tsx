@@ -601,6 +601,8 @@ export const App: React.FC = () => {
               universe={universe}
               greeks={greeks}
               stats={stats}
+              positions={positions}
+              trades={trades}
               onApproveProposal={handleApproveProposal}
               onRejectProposal={handleRejectProposal}
               onToggleAutoPilot={handleToggleAutoPilot}
@@ -662,6 +664,8 @@ export const App: React.FC = () => {
         universe={universe}
         greeks={greeks}
         stats={stats}
+        positions={positions}
+        trades={trades}
         onOpenCopilot={() => {
           setInspectedAgent(null);
           setIsCopilotOpen(true);
